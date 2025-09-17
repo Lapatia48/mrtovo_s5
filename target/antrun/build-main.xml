@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maven-antrun-" default="main">
+  <target name="main">
+    <copy file="L:\cours\prog\MrTovo\mrtovo_s5\target/projet_MrTovo.war" todir="C:\Program Files\Apache Software Foundation\Tomcat 11.0\webapps" overwrite="true" />
+  </target>
+</project>

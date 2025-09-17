@@ -30,13 +30,16 @@ public class dev1 {
     @Autowired
     private ManagerService managerService;
 
+    @Autowired
+    private AnnonceService annonceService;
+
     @GetMapping("/entrer")
     public String hello(Model model){
         return "index";
     }
 
 
-    // traitement login candidat
+    // traitement candidat
     @GetMapping("/formLogCandidat")
     public String formLogCandidat(Model model) {
         return "candidat/formLogCandidat"; 
@@ -48,8 +51,11 @@ public class dev1 {
                             @RequestParam("prenom") String prenom,
                             Model model) {
         var optCandidat = candidatService.login(mail, prenom);
+        List<Annonce> annonces = annonceService.getAllAnnonces();
+
         if (optCandidat.isPresent()) {
             model.addAttribute("candidat", optCandidat.get());
+            model.addAttribute("annonces", annonces);
             return "candidat/listAnnonce"; 
         } else {
             model.addAttribute("error", "Mail ou prénom incorrect.");
@@ -57,6 +63,9 @@ public class dev1 {
         }
     }
     
+
+
+
     // traitement login rh
     @GetMapping("/formLogRh")
         public String formLogRh(Model model) {
