@@ -21,6 +21,8 @@
             <p><strong>Date de publication :</strong> ${annonce.datePublication}</p>
             <p><strong>Nombre de personnes utiles :</strong> ${annonce.nbPersonneUtile}</p>
             <p><strong>Salaire proposé :</strong> ${annonce.salaire}</p>
+            <p><strong>Departement :</strong> ${departements[annonce.id]}</p>
+            <a href="/postuleCandidat?id="annonce.id">Postuler</a>
         </div>
     </c:forEach>
 </body>
