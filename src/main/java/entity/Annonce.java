@@ -11,6 +11,12 @@ public class Annonce {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "age_min")
+    private Integer ageMin;
+
+    @Column(name = "age_max")
+    private Integer ageMax;
+
     @Column(name = "id_departement")
     private Integer idDepartement;
 
@@ -28,6 +34,9 @@ public class Annonce {
 
     @Column(name = "salaire")
     private Integer salaire;
+
+    @Column(name = "id_diplome_requis")
+    private Integer idDiplomeRequis;
 
     // Getters et Setters
     public Long getId() {
@@ -84,5 +93,28 @@ public class Annonce {
 
     public void setSalaire(Integer salaire) {
         this.salaire = salaire;
+    }
+
+    public Integer getIdDiplomeRequis() {
+        return idDiplomeRequis;
+    }
+
+    public void setIdDiplomeRequis(Integer idDiplomeRequis) {
+        this.idDiplomeRequis = idDiplomeRequis;
+    }
+    public Integer getAgeMin() {
+        return ageMin;
+    }
+
+    public void setAgeMin(Integer ageMin) {
+        this.ageMin = ageMin;
+    }
+
+    public Integer getAgeMax() {
+        return ageMax;
+    }
+
+    public void setAgeMax(Integer ageMax) {
+        this.ageMax = ageMax;
     }
 }

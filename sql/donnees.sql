@@ -97,20 +97,82 @@ INSERT INTO reponse (id_question, reponse) VALUES
 
 -- Diplomes
 INSERT INTO diplome (nom_diplome) VALUES
-('Licence Informatique'),
-('Master Marketing'),
-('Licence Gestion'),
-('Master RH');
+('CEPE'),
+('BEPC'),
+('Baccalaureat'),
+('Licence'),
+('Master '),
+('doctorat');
 
--- Candidats
-INSERT INTO candidat (nom, prenom, mail, adresse, date_naissance, renseignement, id_diplome, annee_experience, id_departement)
-VALUES
-('Rasolofoson', 'Lova', 'lova.rasolofoson@gmail.com', 'Ambohidratrimo', '1996-04-15', 'Developpeur backend passionne par les API REST', 1, 3, 1),
-('Andriamihaja', 'Feno', 'feno.andriamihaja@gmail.com', 'Ivato', '1997-09-22', 'Specialiste en marketing digital et SEO', 2, 4, 2),
-('Ramanandraibe', 'Voahirana', 'voahirana.ramanandraibe@gmail.com', 'Sabotsy Namehana', '1995-12-03', 'Experience en gestion de stock et inventaire', 3, 5, 4),
-('Randrianarisoa', 'Tovo', 'tovo.randrianarisoa@gmail.com', 'Alasora', '1994-06-18', 'Gestionnaire RH avec 6 ans dexperience', 4, 6, 3),
-('Ratsimbazafy', 'Niry', 'niry.ratsimbazafy@gmail.com', 'Itaosy', '1998-02-27', 'Audit interne et gestion dimmobilisations', 3, 4, 5),
-('Rakotondramanana', 'Hanitra', 'hanitra.rakotondramanana@gmail.com', 'Ankadindramamy', '1999-11-10', 'Developpeuse fullstack en montee de competence', 1, 2, 1);
+-- Annonces avec age_min, age_max et id_diplome_requis
+INSERT INTO annonce (
+    id, age_min, age_max, id_departement, titre, description, date_publication, nb_personne_utile, salaire, id_diplome_requis
+) VALUES
+(1, 22, 28, 1, 'Developpeur Java Junior', 'Participation au developpement et a la maintenance d applications Java Spring.', '2025-09-17', 2, 1200000, 3),
+(2, 25, 35, 1, 'Administrateur Base de Donnees', 'Gestion et optimisation des bases PostgreSQL de l entreprise.', '2025-09-17', 1, 1500000, 3),
+(3, 23, 30, 2, 'Charge de Recrutement', 'Recherche et selection de candidats pour differents postes.', '2025-09-17', 1, 1000000, 4),
+(4, 24, 32, 3, 'Comptable', 'Gestion des factures et suivi budgetaire de l entreprise.', '2025-09-17', 1, 1100000, 4),
+(5, 21, 29, 4, 'Community Manager', 'Gestion des reseaux sociaux et creation de contenu marketing.', '2025-09-17', 1, 900000, 5),
+(6, 26, 36, 4, 'Responsable Marketing Digital', 'Elaboration de strategies publicitaires en ligne.', '2025-09-17', 1, 1400000, 5);
+
+-- Candidats avec id_departement_postule
+INSERT INTO candidat (
+    nom, prenom, mail, adresse, date_naissance, renseignement, 
+    id_diplome, annee_experience, id_departement, id_annonce_postule
+) VALUES
+('Rasolofoson', 'Lova', 'lova.rasolofoson@gmail.com', 'Ambohidratrimo', '1996-04-15', 'Developpeur backend passionne par les API REST', 1, 3, 1, 2),
+('Andriamihaja', 'Feno', 'feno.andriamihaja@gmail.com', 'Ivato', '1997-09-22', 'Specialiste en marketing digital et SEO', 2, 4, 2, 1),
+('Ramanandraibe', 'Voahirana', 'voahirana.ramanandraibe@gmail.com', 'Sabotsy Namehana', '1995-12-03', 'Experience en gestion de stock et inventaire', 3, 5, 4, 5),
+('Randrianarisoa', 'Tovo', 'tovo.randrianarisoa@gmail.com', 'Alasora', '1994-06-18', 'Gestionnaire RH avec 6 ans dexperience', 4, 6, 3, 3),
+('Ratsimbazafy', 'Niry', 'niry.ratsimbazafy@gmail.com', 'Itaosy', '1998-02-27', 'Audit interne et gestion dimmobilisations', 3, 4, 5, 4),
+('Rakotondramanana', 'Hanitra', 'hanitra.rakotondramanana@gmail.com', 'Ankadindramamy', '1999-11-10', 'Developpeuse fullstack en montee de competence', 1, 2, 1, 2);
+
+
+-- Vraies reponses Informatique
+INSERT INTO vrai_reponse (id_question, id_reponse) VALUES
+(1, 1), -- PHP
+(2, 1), -- PostgreSQL
+(3, 1), -- Figma
+(4, 1), -- Spring MVC
+(5, 1), -- Gestion des dependances
+(6, 1); -- SVG
+
+-- Vraies reponses Marketing
+INSERT INTO vrai_reponse (id_question, id_reponse) VALUES
+(7, 1), -- Google Analytics
+(8, 1), -- Profil type de client
+(9, 1), -- Optimisation pour les moteurs de recherche
+(10, 1), -- Email
+(11, 1), -- 2-5%
+(12, 1); -- Buffer
+
+-- Vraies reponses Ressources Humaines
+INSERT INTO vrai_reponse (id_question, id_reponse) VALUES
+(13, 1), -- Contrat de travail
+(14, 1), -- ATS
+(15, 1), -- Contrat a duree determinee
+(16, 1), -- Evaluer le profil
+(17, 1), -- eNPS
+(18, 1); -- 2 mois
+
+-- Vraies reponses Gestion de stock
+INSERT INTO vrai_reponse (id_question, id_reponse) VALUES
+(19, 1), -- Taux de rotation
+(20, 1), -- Bon de livraison
+(21, 1), -- Verifier les quantites reelles
+(22, 1), -- Logiciel de gestion de stock
+(23, 2), -- Rupture de stock
+(24, 1); -- Reapprovisionnement automatique
+
+-- Vraies reponses Gestion immobilisation
+INSERT INTO vrai_reponse (id_question, id_reponse) VALUES
+(25, 1), -- Bon de commande
+(26, 1), -- Immobilisation corporelle
+(27, 1), -- Repartir le cout sur plusieurs annees
+(28, 1), -- SAGE Immobilisations
+(29, 1), -- 218
+(30, 1); -- Duree damortissement
+
 
 -- Notes QCM
 INSERT INTO note_qcm (id_candidat, note) VALUES

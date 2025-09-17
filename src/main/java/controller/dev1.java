@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.stereotype.Controller;
 
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +35,9 @@ public class dev1 {
     @Autowired
     private AnnonceService annonceService;
 
+    @Autowired
+    private DepartementService departementService;
+
     @GetMapping("/entrer")
     public String hello(Model model){
         return "index";
@@ -56,6 +61,18 @@ public class dev1 {
         if (optCandidat.isPresent()) {
             model.addAttribute("candidat", optCandidat.get());
             model.addAttribute("annonces", annonces);
+
+        //annonce.id -> nom du département
+        Map<Long, String> annonceDepartementMap = new HashMap<>();
+        for (Annonce annonce : annonces) {
+            String nomDep = departementService.getNomDepartementById((long) annonce.getIdDepartement());
+            annonceDepartementMap.put(annonce.getId(), nomDep);
+        }
+
+        // Ajouter cette map au modèle
+        model.addAttribute("departements", annonceDepartementMap);
+
+
             return "candidat/listAnnonce"; 
         } else {
             model.addAttribute("error", "Mail ou prénom incorrect.");
