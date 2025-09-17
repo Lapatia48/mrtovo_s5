@@ -1,0 +1,16 @@
+service\RhService.class
+service\AnnonceService.class
+entity\Rh.class
+entity\Manager.class
+repository\AdminRepository.class
+repository\CandidatRepository.class
+service\ManagerService.class
+controller\dev1.class
+service\CandidatService.class
+entity\Candidat.class
+repository\AnnonceRepository.class
+repository\ManagerRepository.class
+repository\RhRepository.class
+entity\Annonce.class
+service\AdminService.class
+entity\Admin.class
