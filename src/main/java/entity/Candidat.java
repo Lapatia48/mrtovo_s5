@@ -42,6 +42,9 @@ public class Candidat {
     @Column(name = "date_postule")
     private LocalDate datePostule;
 
+    @Column(name = "id_annonce_postule")
+    private Integer idAnnoncePostule;
+
     // ===== Constructeurs =====
     public Candidat() {}
 
@@ -132,5 +135,12 @@ public class Candidat {
 
     public void setDatePostule(LocalDate datePostule) {
         this.datePostule = datePostule;
+    }
+
+    public Integer getIdAnnoncePostule() {
+        return idAnnoncePostule;
+    }
+    public void setIdAnnoncePostule(Integer idAnnoncePostule) {
+        this.idAnnoncePostule = idAnnoncePostule;
     }
 }

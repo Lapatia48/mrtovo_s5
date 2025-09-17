@@ -16,6 +16,19 @@ CREATE TABLE departement (
     libelle_departement VARCHAR(100)
 );
 
+CREATE TABLE annonce (
+    id SERIAL PRIMARY KEY,
+    age_min INT,
+    age_max INT,
+    id_departement INT REFERENCES departement(id),
+    titre VARCHAR(150),
+    description TEXT,
+    date_publication DATE DEFAULT CURRENT_DATE,
+    nb_personne_utile INT,
+    salaire INT,
+    id_diplome_requis INT REFERENCES diplome(id)
+);
+
 CREATE TABLE candidat (
     id SERIAL PRIMARY KEY,
     nom VARCHAR(100),
@@ -27,7 +40,8 @@ CREATE TABLE candidat (
     id_diplome INT REFERENCES diplome(id),
     annee_experience INT,
     id_departement  INT REFERENCES departement(id), 
-    date_postule DATE DEFAULT CURRENT_DATE
+    date_postule DATE DEFAULT CURRENT_DATE,
+    id_annonce_postule INT REFERENCES annonce(id)
 );
 
 CREATE TABLE candidat_refuse (
@@ -48,15 +62,7 @@ CREATE TABLE manager (
 
 
 
-CREATE TABLE annonce (
-    id SERIAL PRIMARY KEY,
-    id_departement INT REFERENCES departement(id),
-    titre VARCHAR(150),
-    description TEXT,
-    date_publication DATE DEFAULT CURRENT_DATE,
-    nb_personne_utile INT,
-    salaire INT
-);
+
 
 CREATE TABLE questions (
     id SERIAL PRIMARY KEY,
@@ -68,6 +74,12 @@ CREATE TABLE reponse (
     id SERIAL PRIMARY KEY,
     id_question INT REFERENCES questions(id) ON DELETE CASCADE,
     reponse VARCHAR(255)
+);
+
+CREATE TABLE vrai_reponse (
+    id SERIAL PRIMARY KEY,
+    id_question INT REFERENCES questions(id),
+    id_reponse INT REFERENCES reponse(id)
 );
 
 CREATE TABLE note_qcm (
