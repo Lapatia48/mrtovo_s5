@@ -55,7 +55,6 @@ CREATE TABLE annonce (
     description TEXT,
     date_publication DATE DEFAULT CURRENT_DATE,
     nb_personne_utile INT,
-
     salaire INT
 );
 
