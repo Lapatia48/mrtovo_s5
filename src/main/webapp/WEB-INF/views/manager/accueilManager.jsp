@@ -8,6 +8,7 @@
     <title>Ajouter une annonce</title>
 </head>
 <body>
+    <a href="${pageContext.request.contextPath}/listAnnonceManager">Liste des annonces</a>
     <h2>Ajouter une annonce</h2>
 
     <!-- Formulaire pour ajouter une annonce -->
@@ -61,11 +62,12 @@
         </div>
 
         <div>
-            <button type="submit">Parteger l'annonce</button>
+            <button type="submit">Partager l'annonce</button>
         </div>
     </form>
     <c:if test="${not empty message}">
         <p style="color:rgb(0, 255, 153);">${message}</p>
     </c:if>
+    <a href="${pageContext.request.contextPath}/entrer">Se deconnecter</a>
 </body>
 </html>

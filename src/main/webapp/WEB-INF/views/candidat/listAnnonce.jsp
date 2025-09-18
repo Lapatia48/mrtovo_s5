@@ -23,7 +23,7 @@
             <p><strong>Date de publication :</strong> ${annonce.datePublication}</p>
             <p><strong>Nombre de personnes utiles :</strong> ${annonce.nbPersonneUtile}</p>
             <p><strong>Salaire proposé :</strong> ${annonce.salaire}</p>
-            <a href="/postuleCandidat?id=${annonce.id}">Postuler</a>
+            <a href="${pageContext.request.contextPath}/postuleCandidat?id_annonce=${annonce.id}">Postuler</a>
         </div>
     </c:forEach>
 </body>
