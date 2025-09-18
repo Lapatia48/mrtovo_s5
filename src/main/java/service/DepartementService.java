@@ -16,7 +16,7 @@ public class DepartementService {
     }
 
     // Retourne tous les départements
-    public List<Departement> getAllDepartements() {
+    public List<Departement> findAll() {
         return departementRepository.findAll();
     }
 

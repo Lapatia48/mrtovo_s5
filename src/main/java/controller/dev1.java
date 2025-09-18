@@ -38,6 +38,9 @@ public class dev1 {
     @Autowired
     private DepartementService departementService;
 
+    @Autowired
+    private DiplomeService diplomeService;
+
     @GetMapping("/entrer")
     public String hello(Model model){
         return "index";
@@ -125,8 +128,8 @@ public class dev1 {
         }
     }
 
-    //traitement login manager
-        @GetMapping("/formLogManager")
+    //traitement manager
+    @GetMapping("/formLogManager")
     public String formLogManager(Model model) {
         return "manager/formLogManager"; 
     }
@@ -136,14 +139,49 @@ public class dev1 {
                             @RequestParam("nom") String nom,
                             @RequestParam("motDePasse") String motDePasse,
                             Model model) {
+
         var optManager = managerService.login(nom, motDePasse);
         if (optManager.isPresent()) {
-            model.addAttribute("manager", optManager.get());
+
+            // model.addAttribute("manager", optManager.get());
+            model.addAttribute("departements", departementService.findAll());
+            model.addAttribute("diplomes", diplomeService.findAll());
+
+
             return "manager/accueilManager"; 
         } else {
             model.addAttribute("error", "Nom ou mot de passe incorrect.");
             return "manager/formLogManager";
         }
+    }
+
+    @PostMapping("/ajoutAnnonce")
+    public String ajoutAnnonce(
+                            @RequestParam("idDepartement") Integer idDepartement,
+                            @RequestParam("titre") String titre,
+                            @RequestParam("description") String description,
+                            @RequestParam("datePublication") String datePublication,
+                            @RequestParam("nbPersonneUtile") Integer nbPersonneUtile,
+                            @RequestParam("salaire") Integer salaire,
+                            @RequestParam("idDiplomeRequis") Integer idDiplomeRequis,
+                            Model model) {
+
+        Annonce annonce = new Annonce();
+        annonce.setIdDepartement(idDepartement);
+        annonce.setTitre(titre);
+        annonce.setDescription(description);
+        annonce.setDatePublication(java.time.LocalDate.parse(datePublication));
+        annonce.setNbPersonneUtile(nbPersonneUtile);
+        annonce.setSalaire(salaire);
+        annonce.setIdDiplomeRequis(idDiplomeRequis);
+
+        annonceService.save(annonce);
+
+        model.addAttribute("message", "Annonce ajoutée avec succès !");
+        model.addAttribute("departements", departementService.findAll());
+        model.addAttribute("diplomes", diplomeService.findAll());
+
+        return "manager/accueilManager"; 
     }
 
 
