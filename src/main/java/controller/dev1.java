@@ -5,17 +5,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import entity.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import service.*;
 import repository.*;
 
@@ -48,12 +52,22 @@ public class dev1 {
         return "index";
     }
 
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate(); 
+        }
+        return "redirect:/entrer";
+    }
+
 
     // traitement candidat
     @GetMapping("/formLogCandidat")
     public String formLogCandidat(Model model) {
         return "candidat/formLogCandidat"; 
     }
+
 
     @PostMapping("/logCandidat")
     public String logCandidat(
@@ -84,7 +98,81 @@ public class dev1 {
             return "candidat/formLogCandidat";
         }
     }
+
+    @GetMapping("/formLogCandidat2")
+    public String formLogCandidat2(Model model) {
+        List<Annonce> annonces = annonceService.getAllAnnonces();
+
+      
+        model.addAttribute("annonces", annonces);
+
+        //annonce.id -> nom du département
+        Map<Long, String> annonceDepartementMap = new HashMap<>();
+        for (Annonce annonce : annonces) {
+            String nomDep = departementService.getNomDepartementById((long) annonce.getIdDepartement());
+            annonceDepartementMap.put(annonce.getId(), nomDep);
+        }
+        model.addAttribute("departements", annonceDepartementMap);
+        return "candidat/listAnnonce"; 
+        
+    }
+
     
+    @GetMapping("/postuleCandidat")
+    public String postuleCandidat(
+                            @RequestParam("id_annonce") Long id_annonce,
+                            Model model) {
+
+        Annonce annonce = annonceService.getAnnonceById(id_annonce).orElse(null);
+        List <Diplome> diplome = diplomeService.findAll();
+        
+        
+        model.addAttribute("annonce", annonce);
+        model.addAttribute("diplome", diplome);
+
+        return "candidat/FormPostule"; 
+
+    }
+
+    @PostMapping("/postuleCandidat")
+    public String postuleCandidat(
+            @RequestParam("nom") String nom,
+            @RequestParam("prenom") String prenom,
+            @RequestParam("mail") String mail,
+            @RequestParam("adresse") String adresse,
+            @RequestParam("dateNaissance") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateNaissance,
+            @RequestParam("renseignement") String renseignement,
+            @RequestParam("idDiplome") Integer idDiplome,
+            @RequestParam("anneeExperience") Integer anneeExperience,
+            @RequestParam("idDepartement") Integer idDepartement,
+            @RequestParam("idAnnoncePostule") Integer idAnnoncePostule,
+            @RequestParam("datePostule") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datePostule,
+            Model model) {
+
+        // Création d'un nouvel objet Candidat
+        Candidat candidat = new Candidat();
+        candidat.setNom(nom);
+        candidat.setPrenom(prenom);
+        candidat.setMail(mail);
+        candidat.setAdresse(adresse);
+        candidat.setDateNaissance(dateNaissance);
+        candidat.setRenseignement(renseignement);
+        candidat.setIdDiplome(idDiplome);
+        candidat.setAnneeExperience(anneeExperience);
+        candidat.setIdDepartement(idDepartement);
+        candidat.setIdAnnoncePostule(idAnnoncePostule);
+        candidat.setDatePostule(datePostule);
+
+        // Sauvegarde via le service
+        candidatService.addCandidat(candidat);
+
+        // Feedback + redirection ou vue
+        model.addAttribute("message", "Votre candidature a été envoyée avec succès !");
+        return "candidat/qcm"; 
+    }
+
+    
+
 
 
 
