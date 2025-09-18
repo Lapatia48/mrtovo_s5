@@ -104,14 +104,14 @@ INSERT INTO diplome (nom_diplome) VALUES
 
 -- Annonces avec age_min, age_max et id_diplome_requis
 INSERT INTO annonce (
-    id, age_min, age_max, id_departement, titre, description, date_publication, nb_personne_utile, salaire, id_diplome_requis
+    age_min, age_max, id_departement, titre, description, date_publication, nb_personne_utile, salaire, id_diplome_requis
 ) VALUES
-(1, 22, 28, 1, 'Developpeur Java Junior', 'Participation au developpement et a la maintenance d applications Java Spring.', '2025-09-17', 2, 1200000, 3),
-(2, 25, 35, 1, 'Administrateur Base de Donnees', 'Gestion et optimisation des bases PostgreSQL de l entreprise.', '2025-09-17', 1, 1500000, 3),
-(3, 23, 30, 2, 'Charge de Recrutement', 'Recherche et selection de candidats pour differents postes.', '2025-09-17', 1, 1000000, 2),
-(4, 24, 32, 3, 'Comptable', 'Gestion des factures et suivi budgetaire de l entreprise.', '2025-09-17', 1, 1100000, 3),
-(5, 21, 29, 4, 'Community Manager', 'Gestion des reseaux sociaux et creation de contenu marketing.', '2025-09-17', 1, 900000, 2),
-(6, 26, 36, 4, 'Responsable Marketing Digital', 'Elaboration de strategies publicitaires en ligne.', '2025-09-17', 1, 1400000, 2);
+(22, 28, 1, 'Developpeur Java Junior', 'Participation au developpement et a la maintenance d applications Java Spring.', '2025-09-17', 2, 1200000, 3),
+(25, 35, 1, 'Administrateur Base de Donnees', 'Gestion et optimisation des bases PostgreSQL de l entreprise.', '2025-09-17', 1, 1500000, 3),
+(23, 30, 2, 'Charge de Recrutement', 'Recherche et selection de candidats pour differents postes.', '2025-09-17', 1, 1000000, 2),
+(24, 32, 3, 'Comptable', 'Gestion des factures et suivi budgetaire de l entreprise.', '2025-09-17', 1, 1100000, 3),
+(21, 29, 4, 'Community Manager', 'Gestion des reseaux sociaux et creation de contenu marketing.', '2025-09-17', 1, 900000, 2),
+(26, 36, 4, 'Responsable Marketing Digital', 'Elaboration de strategies publicitaires en ligne.', '2025-09-17', 1, 1400000, 2);
 
 -- Candidats avec id_departement_postule
 INSERT INTO candidat (

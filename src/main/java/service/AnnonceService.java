@@ -32,5 +32,8 @@ public class AnnonceService {
         annonceRepository.deleteById(id);
     }
 
+    public Annonce updateAnnonce(Annonce annonce) {
+        return annonceRepository.save(annonce);
+    }
     
 }
