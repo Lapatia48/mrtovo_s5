@@ -18,12 +18,11 @@
         <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
             <h3>${annonce.titre}</h3>
             <p><strong>age entre:</strong>${annonce.ageMin}ans <strong> et: </strong>${annonce.ageMax}ans</p>
-            <p><strong>Description :</strong> ${annonce.description}</p>
+            <p><strong>Poste :</strong> ${annonce.description}</p>
+            <p><strong>Departement :</strong> ${departements[annonce.id]}</p>
             <p><strong>Date de publication :</strong> ${annonce.datePublication}</p>
             <p><strong>Nombre de personnes utiles :</strong> ${annonce.nbPersonneUtile}</p>
             <p><strong>Salaire proposé :</strong> ${annonce.salaire}</p>
-            <p><strong>Departement :</strong> ${departements[annonce.id]}</p>
-            <p><strong>Diplome recquis:</strong>${annonce.idDiplomeRequis}</p>
             <a href="/postuleCandidat?id=${annonce.id}">Postuler</a>
         </div>
     </c:forEach>

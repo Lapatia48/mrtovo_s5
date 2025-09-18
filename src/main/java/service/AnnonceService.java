@@ -24,11 +24,13 @@ public class AnnonceService {
         return annonceRepository.findById(id);
     }
 
-    public Annonce saveAnnonce(Annonce annonce) {
+    public Annonce save(Annonce annonce) {
         return annonceRepository.save(annonce);
     }
 
     public void deleteAnnonce(Long id) {
         annonceRepository.deleteById(id);
     }
+
+    
 }
