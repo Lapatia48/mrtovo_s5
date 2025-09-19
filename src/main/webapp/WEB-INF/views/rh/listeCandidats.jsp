@@ -19,6 +19,16 @@
             <option value="${d.nomDiplome}">${d.nomDiplome}</option>
         </c:forEach>
     </select>
+
+    <label for="departement">Poste :</label>
+    <select name="departement" id="departement">
+        <option value="">-- Sélectionner --</option>
+        <!-- Boucle sur les départements récupérés depuis la base -->
+        <c:forEach var="dept" items="${departements}">
+            <option value="${dept.libelleDepartement}">${dept.libelleDepartement}</option>
+        </c:forEach>
+    </select>
+
     <button type="submit">Filtrer</button>
 </form>
 
