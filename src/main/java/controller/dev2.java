@@ -47,19 +47,15 @@ public class dev2 {
         List<Map<String, Object>> candidats;
 
         if ((diplome != null && !diplome.isEmpty()) && (departement != null && !departement.isEmpty())) {
-            // Si les deux sont remplis → filtrer deux fois
             List<Map<String, Object>> parDiplome = candidatService.getCandidatsFiltres("diplome", diplome);
             candidats = parDiplome.stream()
                     .filter(c -> departement.equals(c.get("departement")))
                     .toList();
         } else if (diplome != null && !diplome.isEmpty()) {
-            // Si seulement diplome
             candidats = candidatService.getCandidatsFiltres("diplome", diplome);
         } else if (departement != null && !departement.isEmpty()) {
-            // Si seulement departement
             candidats = candidatService.getCandidatsFiltres("departement", departement);
         } else {
-            // Si aucun filtre → tout afficher
             candidats = candidatService.getAllCandidatsAvecDetails();
         }
 

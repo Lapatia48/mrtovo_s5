@@ -29,6 +29,14 @@
         </c:forEach>
     </select>
 
+    <label for="Date de naissance">Age</label>
+    <select name="dateNaissance" id="dateNaissance">
+        <option value="">-- Sélectionner --</option>
+        <option value="asc">Croissant</option>
+        <option value="desc">Decroissant</option>
+    </select>
+
+
     <button type="submit">Filtrer</button>
 </form>
 
@@ -40,6 +48,7 @@
         <th>Email</th>
         <th>Adresse</th>
         <th>Date de naissance</th>
+        <th>Age</th>
         <th>Poste</th>
         <th>Année d'expérience</th>
         <th>Diplôme</th>
@@ -52,6 +61,7 @@
             <td>${c.mail}</td>
             <td>${c.adresse}</td>
             <td>${c.dateNaissance}</td>
+            <td>${c.age}ans</td>
             <td>${c.departement}</td>
             <td>${c.anneeExperience}</td>
             <td>${c.diplome}</td>

@@ -14,12 +14,15 @@ public interface CandidatRepository extends JpaRepository<Candidat, Integer> {
     //fonc log
     Optional<Candidat> findByMailAndPrenom(String mail, String prenom);
 
-     // Récupération des candidats avec diplôme et département
-    @Query("SELECT c.id, c.nom, c.prenom, c.mail, c.adresse, c.dateNaissance, c.renseignement, " +
-           "c.anneeExperience, c.datePostule, d.nomDiplome, dep.libelleDepartement " +
-           "FROM Candidat c " +
-           "JOIN Diplome d ON c.idDiplome = d.id " +
-           "JOIN Departement dep ON c.idDepartement = dep.id " +
-           "ORDER BY c.nom ASC")
+     // Creation vue
+    @Query("SELECT c.id, c.nom, c.prenom, c.mail, c.adresse, c.dateNaissance, " +
+        "TIMESTAMPDIFF(YEAR, c.dateNaissance, CURRENT_DATE) as age, " +
+        "c.renseignement, c.anneeExperience, c.datePostule, " +
+        "d.nomDiplome, dep.libelleDepartement " +
+        "FROM Candidat c " +
+        "JOIN Diplome d ON c.idDiplome = d.id " +
+        "JOIN Departement dep ON c.idDepartement = dep.id " +
+        "ORDER BY c.nom ASC")
     List<Object[]> findAllCandidatsWithDetails();
+
 }

@@ -65,17 +65,19 @@ public class CandidatService {
             map.put("mail", r[3]);
             map.put("adresse", r[4]);
             map.put("dateNaissance", r[5]);
-            map.put("renseignement", r[6]);
-            map.put("anneeExperience", r[7]);
-            map.put("datePostule", r[8]);
-            map.put("diplome", r[9]);      // nom du diplôme
-            map.put("departement", r[10]);  // nom du département
+            map.put("age", r[6]);   
+            map.put("renseignement", r[7]);
+            map.put("anneeExperience", r[8]);
+            map.put("datePostule", r[9]);
+            map.put("diplome", r[10]);
+            map.put("departement", r[11]);
 
             list.add(map);
         }
 
         return list;
     }
+
 
 
     
@@ -91,11 +93,13 @@ public class CandidatService {
         indexMapping.put("mail", 3);
         indexMapping.put("adresse", 4);
         indexMapping.put("dateNaissance", 5);
-        indexMapping.put("renseignement", 6);
-        indexMapping.put("anneeExperience", 7);
-        indexMapping.put("datePostule", 8);
-        indexMapping.put("diplome", 9);
-        indexMapping.put("departement", 10);
+        indexMapping.put("age", 6);   
+        indexMapping.put("renseignement", 7);
+        indexMapping.put("anneeExperience", 8);
+        indexMapping.put("datePostule", 9);
+        indexMapping.put("diplome", 10);
+        indexMapping.put("departement", 11);
+
 
         Integer index = indexMapping.get(champ);
 
@@ -107,18 +111,20 @@ public class CandidatService {
             Object champValue = r[index];
 
             if (champValue != null && champValue.equals(valeur)) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("id", r[0]);
-                map.put("nom", r[1]);
-                map.put("prenom", r[2]);
-                map.put("mail", r[3]);
-                map.put("adresse", r[4]);
-                map.put("dateNaissance", r[5]);
-                map.put("renseignement", r[6]);
-                map.put("anneeExperience", r[7]);
-                map.put("datePostule", r[8]);
-                map.put("diplome", r[9]);
-                map.put("departement", r[10]);
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", r[0]);
+            map.put("nom", r[1]);
+            map.put("prenom", r[2]);
+            map.put("mail", r[3]);
+            map.put("adresse", r[4]);
+            map.put("dateNaissance", r[5]);
+            map.put("age", r[6]);   
+            map.put("renseignement", r[7]);
+            map.put("anneeExperience", r[8]);
+            map.put("datePostule", r[9]);
+            map.put("diplome", r[10]);
+            map.put("departement", r[11]);
+
 
                 list.add(map);
             }
