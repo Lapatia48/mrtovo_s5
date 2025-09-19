@@ -2,6 +2,8 @@
 /target/
 /.log/
 /*.log
+/*.xml
+/.xml/
 
 # Eclipse / STS
 .project

@@ -1,11 +1,16 @@
 package service;
 
-import entity.Candidat;
-import repository.CandidatRepository;
+import entity.*;
+import repository.*;
 import org.springframework.stereotype.Service;
+// import service.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+
+import java.util.Map;
 
 @Service
 public class CandidatService {
@@ -46,4 +51,80 @@ public class CandidatService {
     public Optional<Candidat> login(String mail, String prenom) {
         return candidatRepository.findByMailAndPrenom(mail, prenom);
     }
+
+
+    public List<Map<String, Object>> getAllCandidatsAvecDetails() {
+        List<Object[]> results = candidatRepository.findAllCandidatsWithDetails();
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        for (Object[] r : results) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", r[0]);
+            map.put("nom", r[1]);
+            map.put("prenom", r[2]);
+            map.put("mail", r[3]);
+            map.put("adresse", r[4]);
+            map.put("dateNaissance", r[5]);
+            map.put("renseignement", r[6]);
+            map.put("anneeExperience", r[7]);
+            map.put("datePostule", r[8]);
+            map.put("diplome", r[9]);      // nom du diplôme
+            map.put("departement", r[10]);  // nom du département
+
+            list.add(map);
+        }
+
+        return list;
+    }
+
+
+    
+    public List<Map<String, Object>> getCandidatsFiltres(String champ, Object valeur) {
+        List<Object[]> results = candidatRepository.findAllCandidatsWithDetails();
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        // correspondance champ → index
+        Map<String, Integer> indexMapping = new HashMap<>();
+        indexMapping.put("id", 0);
+        indexMapping.put("nom", 1);
+        indexMapping.put("prenom", 2);
+        indexMapping.put("mail", 3);
+        indexMapping.put("adresse", 4);
+        indexMapping.put("dateNaissance", 5);
+        indexMapping.put("renseignement", 6);
+        indexMapping.put("anneeExperience", 7);
+        indexMapping.put("datePostule", 8);
+        indexMapping.put("diplome", 9);
+        indexMapping.put("departement", 10);
+
+        Integer index = indexMapping.get(champ);
+
+        if (index == null) {
+            throw new IllegalArgumentException("Champ inconnu : " + champ);
+        }
+
+        for (Object[] r : results) {
+            Object champValue = r[index];
+
+            if (champValue != null && champValue.equals(valeur)) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", r[0]);
+                map.put("nom", r[1]);
+                map.put("prenom", r[2]);
+                map.put("mail", r[3]);
+                map.put("adresse", r[4]);
+                map.put("dateNaissance", r[5]);
+                map.put("renseignement", r[6]);
+                map.put("anneeExperience", r[7]);
+                map.put("datePostule", r[8]);
+                map.put("diplome", r[9]);
+                map.put("departement", r[10]);
+
+                list.add(map);
+            }
+        }
+
+        return list;
+    }
+
 }
