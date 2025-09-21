@@ -33,7 +33,7 @@ CREATE TABLE candidat (
     id SERIAL PRIMARY KEY,
     nom VARCHAR(100),
     prenom VARCHAR(100),
-    mail VARCHAR(150) UNIQUE,
+    mail VARCHAR(150),
     adresse VARCHAR(200),
     date_naissance DATE,
     renseignement TEXT,
@@ -42,6 +42,11 @@ CREATE TABLE candidat (
     id_departement  INT REFERENCES departement(id), 
     date_postule DATE DEFAULT CURRENT_DATE,
     id_annonce_postule INT REFERENCES annonce(id)
+);
+
+CREATE TABLE candidat_admis_qcm (
+    id SERIAL PRIMARY KEY,
+    id_candidat INT REFERENCES candidat(id) ON DELETE CASCADE
 );
 
 CREATE TABLE candidat_refuse (
@@ -59,9 +64,6 @@ CREATE TABLE manager (
     nom VARCHAR(100),
     mdp VARCHAR(100)
 );
-
-
-
 
 
 CREATE TABLE questions (
@@ -87,6 +89,8 @@ CREATE TABLE note_qcm (
     id_candidat INT REFERENCES candidat(id) ON DELETE CASCADE,
     note INT
 );
+
+
 
 
 
