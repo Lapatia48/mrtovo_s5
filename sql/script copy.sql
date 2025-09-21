@@ -159,3 +159,16 @@ JOIN diplome d ON c.id_diplome = d.id
 JOIN departement dep ON c.id_departement = dep.id
 ORDER BY c.nom ASC;
 
+
+CREATE OR REPLACE VIEW questions_reponses_view AS
+SELECT
+    q.id AS question_id,
+    q.question,
+    q.id_departement,
+    r.id AS reponse_id,
+    r.reponse,
+    CASE WHEN vr.id_reponse = r.id THEN true ELSE false END AS est_vraie
+FROM questions q
+JOIN reponse r ON r.id_question = q.id
+LEFT JOIN vrai_reponse vr ON vr.id_question = q.id
+ORDER BY q.id, r.id;

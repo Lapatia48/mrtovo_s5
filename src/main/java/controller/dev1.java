@@ -48,7 +48,13 @@ public class dev1 {
     private DiplomeService diplomeService;
 
     @Autowired
-    private CandidatRefuseService candidatRefuseService;
+    private QuestionService questionService;
+
+    @Autowired
+    private ReponseService reponseService;
+
+    @Autowired
+    private VraiReponseService vraiReponseService;
 
     @GetMapping("/entrer")
     public String hello(Model model){
@@ -153,13 +159,20 @@ public class dev1 {
             Model model,
             HttpSession session) {
 
-        // 1️⃣ Vérifier si l'email existe déjà
-        if (candidatService.existsByEmail(mail)) {
-            model.addAttribute("error", "Vous avez déjà postulé dans notre entreprise, veuillez attendre la réponse.");
+        // 1️⃣ Vérifier si l'email existe déjà pour cette annonce
+        if (candidatService.existsByMailAndIdAnnoncePostule(mail, idAnnoncePostule)) {
+            model.addAttribute("error", "Vous avez déjà postulé pour ce poste.");
             return "candidat/erreur"; 
         }
 
-        // 2️⃣ Création du candidat
+        // 2️⃣ Vérifier si l'âge est compatible avec l'annonce
+        boolean ageCompatible = annonceService.checkCV(dateNaissance, idAnnoncePostule);
+        if (!ageCompatible) {
+            model.addAttribute("error", "Votre âge n'est pas compatible avec l'annonce, candidature refusée.");
+            return "candidat/erreur"; 
+        }
+
+        // 3️⃣ Créer le candidat et sauvegarder
         Candidat candidat = new Candidat();
         candidat.setNom(nom);
         candidat.setPrenom(prenom);
@@ -173,33 +186,33 @@ public class dev1 {
         candidat.setIdAnnoncePostule(idAnnoncePostule);
         candidat.setDatePostule(datePostule);
 
-        //  Sauvegarde du candidat pour obtenir l'ID généré
+        // Sauvegarde et récupération de l'ID généré
         Candidat savedCandidat = candidatService.addCandidat(candidat);
 
         //  Stocker l'ID dans la session
-        session.setAttribute("idCandidat", savedCandidat.getId());
+        session.setAttribute("candidat", savedCandidat);
+            
+        List<Question> questions = questionService.getQuestionsByDepartement(idDepartement);
+        model.addAttribute("questions", questions);
 
-        //  Vérifier si l'âge est compatible avec l'annonce
-        boolean ageCompatible = annonceService.checkCV(savedCandidat.getDateNaissance(), savedCandidat.getIdAnnoncePostule());
-
-        if (!ageCompatible) {
-            // ⚠️ Insérer dans la table candidat_refuse
-            candidatRefuseService.addRefus(savedCandidat.getId(), "Check CV - âge non compatible");
-
-            model.addAttribute("error", "Votre âge n'est pas compatible avec l'annonce, candidature refusée.");
-            return "candidat/erreur"; 
+        // Map questionId -> List<Reponse>
+        Map<Integer, List<Reponse>> reponsesParQuestion = new HashMap<>();
+        for (Question q : questions) {
+            List<Reponse> reps = reponseService.getReponsesByQuestion(q.getId());
+            reponsesParQuestion.put(q.getId(), reps);
         }
+        model.addAttribute("reponsesParQuestion", reponsesParQuestion);
 
-        //  Tout est OK, feedback positif
+        // pour le precheck des bonnes reponses
+        Map<Integer, Integer> bonneReponseMap = vraiReponseService.getBonneReponseParQuestion(questions);
+        model.addAttribute("bonneReponseMap", bonneReponseMap);
+
+
         model.addAttribute("message", "Votre candidature a été envoyée avec succès !");
         return "candidat/qcm"; 
     }
 
         
-
-
-
-
     // traitement login rh
     @GetMapping("/formLogRh")
         public String formLogRh(Model model) {

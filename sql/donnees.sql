@@ -126,50 +126,50 @@ INSERT INTO candidat (
 ('Rakotondramanana', 'Hanitra', 'hanitra.rakotondramanana@gmail.com', 'Ankadindramamy', '1999-11-10', 'Developpeuse fullstack en montee de competence', 1, 2, 1, 2);
 
 
--- Vraies reponses Informatique
+-- Vraies réponses Informatique
 INSERT INTO vrai_reponse (id_question, id_reponse) VALUES
-(1, 1), -- PHP
-(2, 1), -- PostgreSQL
-(3, 1), -- Figma
-(4, 1), -- Spring MVC
-(5, 1), -- Gestion des dependances
-(6, 1); -- SVG
+(1, 1),  -- PHP
+(2, 4),  -- PostgreSQL
+(3, 7),  -- Figma
+(4, 10), -- Spring MVC
+(5, 13), -- Gestion des dependances
+(6, 16); -- SVG
 
--- Vraies reponses Marketing
+-- Vraies réponses Marketing
 INSERT INTO vrai_reponse (id_question, id_reponse) VALUES
-(7, 1), -- Google Analytics
-(8, 1), -- Profil type de client
-(9, 1), -- Optimisation pour les moteurs de recherche
-(10, 1), -- Email
-(11, 1), -- 2-5%
-(12, 1); -- Buffer
+(7, 19),  -- Google Analytics
+(8, 22),  -- Profil type de client
+(9, 25),  -- Optimisation pour les moteurs de recherche
+(10, 28), -- Email
+(11, 31), -- 2-5%
+(12, 34); -- Buffer
 
--- Vraies reponses Ressources Humaines
+-- Vraies réponses Ressources Humaines
 INSERT INTO vrai_reponse (id_question, id_reponse) VALUES
-(13, 1), -- Contrat de travail
-(14, 1), -- ATS
-(15, 1), -- Contrat a duree determinee
-(16, 1), -- Evaluer le profil
-(17, 1), -- eNPS
-(18, 1); -- 2 mois
+(13, 37), -- Contrat de travail
+(14, 40), -- ATS
+(15, 43), -- Contrat a duree determinee
+(16, 46), -- Evaluer le profil
+(17, 49), -- eNPS
+(18, 52); -- 2 mois
 
--- Vraies reponses Gestion de stock
+-- Vraies réponses Gestion de stock
 INSERT INTO vrai_reponse (id_question, id_reponse) VALUES
-(19, 1), -- Taux de rotation
-(20, 1), -- Bon de livraison
-(21, 1), -- Verifier les quantites reelles
-(22, 1), -- Logiciel de gestion de stock
-(23, 2), -- Rupture de stock
-(24, 1); -- Reapprovisionnement automatique
+(19, 55), -- Taux de rotation
+(20, 58), -- Bon de livraison
+(21, 61), -- Verifier les quantites reelles
+(22, 64), -- Logiciel de gestion de stock
+(23, 66), -- Rupture de stock
+(24, 70); -- Reapprovisionnement automatique
 
--- Vraies reponses Gestion immobilisation
+-- Vraies réponses Gestion immobilisation
 INSERT INTO vrai_reponse (id_question, id_reponse) VALUES
-(25, 1), -- Bon de commande
-(26, 1), -- Immobilisation corporelle
-(27, 1), -- Repartir le cout sur plusieurs annees
-(28, 1), -- SAGE Immobilisations
-(29, 1), -- 218
-(30, 1); -- Duree damortissement
+(25, 73), -- Bon de commande
+(26, 76), -- Immobilisation corporelle
+(27, 79), -- Repartir le cout sur plusieurs annees
+(28, 82), -- SAGE Immobilisations
+(29, 85), -- 218
+(30, 88); -- Duree damortissement
 
 
 -- Notes QCM

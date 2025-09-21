@@ -138,6 +138,9 @@ public class CandidatService {
         return candidatRepository.findByMail(mail).isPresent();
     }
 
+    public boolean existsByMailAndIdAnnoncePostule(String mail, Integer idAnnoncePostule) {
+        return candidatRepository.findByMailAndIdAnnoncePostule(mail, idAnnoncePostule).isPresent();
+    }
 
 
 

@@ -25,7 +25,8 @@ public interface CandidatRepository extends JpaRepository<Candidat, Integer> {
         "ORDER BY c.nom ASC")
     List<Object[]> findAllCandidatsWithDetails();
 
-;
+
     Optional<Candidat> findByMail(String mail);
+    Optional<Candidat> findByMailAndIdAnnoncePostule(String mail, Integer idAnnoncePostule);
 
 }
