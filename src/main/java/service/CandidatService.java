@@ -2,8 +2,9 @@ package service;
 
 import entity.*;
 import repository.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-// import service.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,11 +16,11 @@ import java.util.Map;
 @Service
 public class CandidatService {
 
-    private final CandidatRepository candidatRepository;
+        @Autowired
+    private CandidatRepository candidatRepository;
 
-    public CandidatService(CandidatRepository candidatRepository) {
-        this.candidatRepository = candidatRepository;
-    }
+    @Autowired
+    private AnnonceRepository annonceRepository;
 
     // Ajouter un candidat
     public Candidat addCandidat(Candidat candidat) {
@@ -136,6 +137,8 @@ public class CandidatService {
     public boolean existsByEmail(String mail) {
         return candidatRepository.findByMail(mail).isPresent();
     }
+
+
 
 
 }

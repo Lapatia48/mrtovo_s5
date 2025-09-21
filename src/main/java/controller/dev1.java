@@ -47,6 +47,9 @@ public class dev1 {
     @Autowired
     private DiplomeService diplomeService;
 
+    @Autowired
+    private CandidatRefuseService candidatRefuseService;
+
     @GetMapping("/entrer")
     public String hello(Model model){
         return "index";
@@ -147,15 +150,16 @@ public class dev1 {
             @RequestParam("idDepartement") Integer idDepartement,
             @RequestParam("idAnnoncePostule") Integer idAnnoncePostule,
             @RequestParam("datePostule") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datePostule,
-            Model model) {
+            Model model,
+            HttpSession session) {
 
-            // Vérifier si l'email existe déjà
+        // 1️⃣ Vérifier si l'email existe déjà
         if (candidatService.existsByEmail(mail)) {
-            model.addAttribute("error", "vous avez deja postulé dans notre entreprise, veuillez attendre la reponse.");
+            model.addAttribute("error", "Vous avez déjà postulé dans notre entreprise, veuillez attendre la réponse.");
             return "candidat/erreur"; 
         }
 
-        // Création d'un nouvel objet Candidat
+        // 2️⃣ Création du candidat
         Candidat candidat = new Candidat();
         candidat.setNom(nom);
         candidat.setPrenom(prenom);
@@ -169,15 +173,29 @@ public class dev1 {
         candidat.setIdAnnoncePostule(idAnnoncePostule);
         candidat.setDatePostule(datePostule);
 
-        // Sauvegarde via le service
-        candidatService.addCandidat(candidat);
+        //  Sauvegarde du candidat pour obtenir l'ID généré
+        Candidat savedCandidat = candidatService.addCandidat(candidat);
 
-        // Feedback + redirection ou vue
+        //  Stocker l'ID dans la session
+        session.setAttribute("idCandidat", savedCandidat.getId());
+
+        //  Vérifier si l'âge est compatible avec l'annonce
+        boolean ageCompatible = annonceService.checkCV(savedCandidat.getDateNaissance(), savedCandidat.getIdAnnoncePostule());
+
+        if (!ageCompatible) {
+            // ⚠️ Insérer dans la table candidat_refuse
+            candidatRefuseService.addRefus(savedCandidat.getId(), "Check CV - âge non compatible");
+
+            model.addAttribute("error", "Votre âge n'est pas compatible avec l'annonce, candidature refusée.");
+            return "candidat/erreur"; 
+        }
+
+        //  Tout est OK, feedback positif
         model.addAttribute("message", "Votre candidature a été envoyée avec succès !");
         return "candidat/qcm"; 
     }
 
-    
+        
 
 
 
