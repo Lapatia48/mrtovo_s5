@@ -56,6 +56,9 @@ public class dev1 {
     @Autowired
     private VraiReponseService vraiReponseService;
 
+    @Autowired
+    private CandidatRefuseService candidatRefuseService;
+
     @GetMapping("/entrer")
     public String hello(Model model){
         return "index";
@@ -190,7 +193,10 @@ public class dev1 {
         Candidat savedCandidat = candidatService.addCandidat(candidat);
 
         //  Stocker l'ID dans la session
-        session.setAttribute("candidat", savedCandidat);
+        model.addAttribute("candidat", savedCandidat);
+
+        model.addAttribute("idDepartement", idDepartement);
+
             
         List<Question> questions = questionService.getQuestionsByDepartement(idDepartement);
         model.addAttribute("questions", questions);
@@ -211,6 +217,60 @@ public class dev1 {
         model.addAttribute("message", "Votre candidature a été envoyée avec succès !");
         return "candidat/qcm"; 
     }
+
+    @PostMapping("/submitQCM")
+    public String submitQCM(@RequestParam Map<String, String> allParams,
+                            @RequestParam("idCandidat") Integer idCandidat,
+                            @RequestParam("nomCandidat") String nomCandidat,
+                            Model model,
+                            @RequestParam("idDepartement") Integer idDepartement) {
+
+        // 1. Récupérer toutes les questions du département
+        List<Question> questions = questionService.getQuestionsByDepartement(idDepartement);
+
+        // 2. Récupérer le Map des bonnes réponses
+        Map<Integer, Integer> bonneReponseMap = vraiReponseService.getBonneReponseParQuestion(questions);
+
+        // 3. Compter le nombre total de questions
+        int totalQuestions = questions.size();
+
+        // 4. Compter les réponses correctes cochées
+        int bonnesReponses = 0;
+        for (Question q : questions) {
+            String paramName = "q" + q.getId(); // correspond au name du radio input
+            if (allParams.containsKey(paramName)) {
+                Integer reponseChoisie = Integer.valueOf(allParams.get(paramName));
+                if (bonneReponseMap.get(q.getId()).equals(reponseChoisie)) {
+                    bonnesReponses++;
+                }
+            }
+        }
+
+        // 5. Calculer la note en pourcentage
+        double note = totalQuestions == 0 ? 0 : ((double) bonnesReponses / totalQuestions) * 100;
+
+        // 6. Envoyer les résultats vers la vue
+        model.addAttribute("idCandidat", idCandidat);
+        
+        model.addAttribute("departement", departementService.getNomDepartementById(idDepartement.longValue()));
+        model.addAttribute("nomCandidat", nomCandidat);
+
+        model.addAttribute("totalQuestions", totalQuestions);
+        model.addAttribute("bonnesReponses", bonnesReponses);
+        model.addAttribute("note", note);
+
+        
+        if (note < 50) {
+            candidatRefuseService.addRefus(idCandidat, "note_qcm");
+            model.addAttribute("resultat", "Votre candidature est refusée pour note QCM faible");
+        } else {
+            // candidatAdmisQcmService.addAdmis(idCandidat);
+            model.addAttribute("resultat", "Félicitations, vous allez passer a l'entretien");
+        }
+
+        return "candidat/resultatQcm"; // nom de la JSP résultat
+    }
+
 
         
     // traitement login rh

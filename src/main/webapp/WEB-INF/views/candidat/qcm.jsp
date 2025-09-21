@@ -13,6 +13,9 @@
     <p style="color: green;">${message}</p>
 
     <form action="submitQCM" method="post">
+        <input type="hidden" name="idDepartement" value="${idDepartement}">
+        <input type="hidden" name="idCandidat" value="${candidat.id}">
+        <input type="hidden" name="nomCandidat" value="${candidat.nom}">
         <c:forEach var="question" items="${questions}">
             <div style="margin-bottom: 20px;">
                 <p><strong>Question ${question.id} :</strong> ${question.question}</p>
