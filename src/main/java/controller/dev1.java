@@ -149,6 +149,12 @@ public class dev1 {
             @RequestParam("datePostule") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datePostule,
             Model model) {
 
+            // Vérifier si l'email existe déjà
+        if (candidatService.existsByEmail(mail)) {
+            model.addAttribute("error", "vous avez deja postulé dans notre entreprise, veuillez attendre la reponse.");
+            return "candidat/erreur"; 
+        }
+
         // Création d'un nouvel objet Candidat
         Candidat candidat = new Candidat();
         candidat.setNom(nom);

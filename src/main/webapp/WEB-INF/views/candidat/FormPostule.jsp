@@ -15,37 +15,37 @@
         <!-- Nom -->
         <div>
             <label for="nom">Nom :</label>
-            <input type="text" id="nom" name="nom" required>
+            <input type="text" id="nom" name="nom" value="Ravelojaona" required>
         </div>
 
         <!-- Prénom -->
         <div>
             <label for="prenom">Prénom :</label>
-            <input type="text" id="prenom" name="prenom" required>
+            <input type="text" id="prenom" name="prenom" value="lapatia" required>
         </div>
 
         <!-- Mail -->
         <div>
             <label for="mail">Email :</label>
-            <input type="email" id="mail" name="mail" required>
+            <input type="email" id="mail" name="mail" value="a@gmail.com" required>
         </div>
 
-        <!-- Adresse -->
+        <!-- Adresse --> 
         <div>
             <label for="adresse">Adresse :</label>
-            <input type="text" id="adresse" name="adresse">
+            <input type="text" id="adresse" name="adresse" value="Majunga" required>
         </div>
 
         <!-- Date de naissance -->
         <div>
             <label for="dateNaissance">Date de naissance :</label>
-            <input type="date" id="dateNaissance" name="dateNaissance" required>
+            <input type="date" id="dateNaissance" name="dateNaissance" value="15/10/2004" required>
         </div>
 
         <!-- Renseignement -->
         <div>
             <label for="renseignement">Renseignement :</label><br>
-            <textarea id="renseignement" name="renseignement" rows="4" cols="50"></textarea>
+            <textarea id="renseignement" name="renseignement" rows="4" cols="50" value="Tres experimente"></textarea>
         </div>
 
         <!-- Diplôme (liste déroulante) -->
@@ -61,7 +61,7 @@
         <!-- Années d'expérience -->
         <div>
             <label for="anneeExperience">Années d'expérience :</label>
-            <input type="number" id="anneeExperience" name="anneeExperience" min="0">
+            <input type="number" id="anneeExperience" name="anneeExperience" min="0" value="3" required>
         </div>
 
         <!-- Champs cachés -->
@@ -74,5 +74,6 @@
             <button type="submit">Postuler</button>
         </div>
     </form>
+
 </body>
 </html>

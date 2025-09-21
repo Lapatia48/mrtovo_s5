@@ -133,4 +133,9 @@ public class CandidatService {
         return list;
     }
 
+    public boolean existsByEmail(String mail) {
+        return candidatRepository.findByMail(mail).isPresent();
+    }
+
+
 }
