@@ -10,7 +10,11 @@
 <h2>Liste des candidats</h2>
 
 <!-- Formulaire de filtre par diplôme -->
-<form method="get" action="${pageContext.request.contextPath}/rh/candidats/diplome">
+<form method="get" action="${pageContext.request.contextPath}/rh/candidats/filtrer">
+
+    <label for="nom">Nom :</label>
+    <input type="text" id="nom" name="nom" />
+
     <label for="diplome">Diplôme :</label>
     <select name="diplome" id="diplome">
         <option value="">-- Sélectionner --</option>
@@ -29,13 +33,26 @@
         </c:forEach>
     </select>
 
-    <label for="Date de naissance">Age</label>
-    <select name="dateNaissance" id="dateNaissance">
+    <label for="age">Age</label>
+    <select name="age" id="age">
         <option value="">-- Sélectionner --</option>
         <option value="asc">Croissant</option>
         <option value="desc">Decroissant</option>
     </select>
 
+    <label for="anneeExperience">Annee d'experience</label>
+    <select name="anneeExperience" id="anneeExperience">
+        <option value="">-- Sélectionner --</option>
+        <option value="asc">Croissant</option>
+        <option value="desc">Decroissant</option>
+    </select>
+
+    <label for="datePostule">Date de postulation</label>
+    <select name="datePostule" id="datePostule">
+        <option value="">-- Sélectionner --</option>
+        <option value="asc">Croissant</option>
+        <option value="desc">Decroissant</option>
+    </select>
 
     <button type="submit">Filtrer</button>
 </form>

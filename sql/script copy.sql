@@ -134,3 +134,24 @@ CREATE TABLE dg_admin (
     nom VARCHAR(100),
     mdp VARCHAR(100)
 );
+
+
+CREATE OR REPLACE VIEW candidat_details_view AS
+SELECT 
+    c.id,
+    c.nom,
+    c.prenom,
+    c.mail,
+    c.adresse,
+    c.date_naissance,
+    EXTRACT(YEAR FROM AGE(CURRENT_DATE, c.date_naissance)) AS age,
+    c.renseignement,
+    c.annee_experience,
+    c.date_postule,
+    d.nom_diplome,
+    dep.libelle_departement
+FROM candidat c
+JOIN diplome d ON c.id_diplome = d.id
+JOIN departement dep ON c.id_departement = dep.id
+ORDER BY c.nom ASC;
+
