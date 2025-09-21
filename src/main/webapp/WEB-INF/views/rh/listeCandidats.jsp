@@ -70,6 +70,7 @@
         <th>Année d'expérience</th>
         <th>Diplôme</th>
         <th>Date de postulation</th>
+        <th>Pdf</th>
     </tr>
     <c:forEach var="c" items="${candidats}">
         <tr>
@@ -80,9 +81,10 @@
             <td>${c.dateNaissance}</td>
             <td>${c.age}ans</td>
             <td>${c.departement}</td>
-            <td>${c.anneeExperience}</td>
+            <td>${c.anneeExperience}ans</td>
             <td>${c.diplome}</td>
             <td>${c.datePostule}</td>
+            <td><a href="${pageContext.request.contextPath}/rh/candidats/pdf?id_cand=${c.id}">pdf</a></td>
         </tr>
     </c:forEach>
 </table>

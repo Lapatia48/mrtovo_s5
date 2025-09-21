@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import entity.*;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -102,6 +103,27 @@ public class dev2 {
 
         return "rh/listeCandidats";
     }
+
+    @GetMapping("/rh/candidats/pdf")
+    public void generatePdf(@RequestParam("id_cand") Integer id, HttpServletResponse response) throws Exception {
+        // Génération du PDF dans un fichier local
+        String fileName = candidatDetailsViewService.toPdf(id);
+
+        java.nio.file.Path path = java.nio.file.Paths.get(fileName);
+
+        // Définir le type MIME et forcer le téléchargement AVANT de copier le contenu
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        response.setContentLengthLong(java.nio.file.Files.size(path));
+
+        // Copier le contenu du PDF dans le flux de réponse
+        java.nio.file.Files.copy(path, response.getOutputStream());
+        response.getOutputStream().flush();
+    }
+
+
+
+
 
 
     
