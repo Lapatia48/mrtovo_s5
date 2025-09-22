@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "note_qcm")
-public class NoteQCM {
+public class NoteQcm {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,15 +13,8 @@ public class NoteQCM {
     @Column(name = "id_candidat", nullable = false)
     private Integer idCandidat;
 
-    @Column(name = "note", nullable = false)
+    @Column(nullable = false)
     private Integer note;
-
-    public NoteQCM() {}
-
-    public NoteQCM(Integer idCandidat, Integer note) {
-        this.idCandidat = idCandidat;
-        this.note = note;
-    }
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
