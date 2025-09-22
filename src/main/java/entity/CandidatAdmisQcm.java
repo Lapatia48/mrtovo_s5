@@ -3,8 +3,8 @@ package entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "candidat_refuse")
-public class CandidatRefuse {
+@Table(name = "candidat_admis_qcm")
+public class CandidatAdmisQcm {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,34 +13,20 @@ public class CandidatRefuse {
     @Column(name = "id_candidat", nullable = false)
     private Integer idCandidat;
 
-    @Column(name = "libelle_etape", length = 100)
-    private String libelleEtape;
-
+    // Champs temporaires pour l'affichage
     @Transient
-    private String nom;
+    private String  nom;
     @Transient
     private String prenom;
     @Transient
     private String mail;
 
-    // ===== Constructeur vide obligatoire pour JPA =====
-    public CandidatRefuse() {}
-
-    // Optionnel : constructeur pratique avec params
-    public CandidatRefuse(Integer idCandidat, String libelleEtape) {
-        this.idCandidat = idCandidat;
-        this.libelleEtape = libelleEtape;
-    }
-
-    // Getters & Setters
+    // Getters et Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
     public Integer getIdCandidat() { return idCandidat; }
     public void setIdCandidat(Integer idCandidat) { this.idCandidat = idCandidat; }
-
-    public String getLibelleEtape() { return libelleEtape; }
-    public void setLibelleEtape(String libelleEtape) { this.libelleEtape = libelleEtape; }
 
     public String getNom() { return nom; }
     public void setNom(String nom) { this.nom = nom; }

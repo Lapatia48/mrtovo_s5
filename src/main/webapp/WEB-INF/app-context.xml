@@ -49,3 +49,4 @@
     <!-- Activer Spring Data JPA si tu veux utiliser des interfaces extends JpaRepository -->
     <jpa:repositories base-package="controller,service,repository" />
 </beans>
+
