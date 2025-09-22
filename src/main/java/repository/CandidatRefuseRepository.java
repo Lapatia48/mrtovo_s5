@@ -13,4 +13,8 @@ public interface CandidatRefuseRepository extends JpaRepository<CandidatRefuse, 
 
     // Supprimer tous les refus d’un candidat donné
     void deleteByIdCandidat(Integer idCandidat);
+
+    
+    // Vérifie si un candidat est déjà dans la table refus
+    boolean existsByIdCandidat(Integer idCandidat);
 }

@@ -1,0 +1,132 @@
+Étape 1 : Lister les candidats qui ont validé l’entretien
+
+Objectif : montrer uniquement les candidats dont le champ statut de la table entretien est "Validé".
+
+Action RH : choisir qui passe en période d’essai.
+
+Détails techniques :
+
+Créer une méthode dans EntretienRepository pour récupérer les candidats avec statut = "Validé".
+
+List<Entretien> findByStatut(String statut);
+
+
+Créer un controller RH :
+
+Route GET /rh/essai/liste
+
+Récupère tous les entretiens validés
+
+Enrichir avec infos du candidat (nom, prenom, mail)
+
+Envoyer la liste à la JSP
+
+JSP affichera un tableau :
+
+ID, Nom, Prénom, Email, Date entretien, Action
+
+Action = bouton ou formulaire « Passer en Essai », avec champ periode (par défaut 3 mois)
+
+Étape 2 : Créer la période d’essai
+
+Objectif : insérer dans la table essai.
+
+Controller POST :
+
+Route /rh/essai/valider/{idCandidat}
+
+Paramètre : periode (entière, défaut = 3)
+
+Action : créer un objet Essai et sauvegarder dans essaiRepo
+
+Exemple service :
+
+public void passerEnEssai(Integer idCandidat, Integer periode) {
+    Essai e = new Essai();
+    e.setIdCandidat(idCandidat);
+    e.setPeriode(periode != null ? periode : 3);
+    essaiRepo.save(e);
+}
+
+
+Redirection après POST : revenir à la liste pour que le candidat disparaisse de la liste des entretiens validés.
+
+Étape 3 : Lister les candidats en période d’essai
+
+Objectif : voir tous ceux qui sont actuellement en essai.
+
+GET /rh/essai/liste-en-cours
+
+Afficher tableau avec :
+
+ID, Nom, Prénom, Email, Période, Action
+
+Actions possibles pour chaque candidat :
+
+Renouveler essai → bouton ou formulaire
+
+Valider comme employé → bouton ou formulaire
+
+Étape 4 : Renouvellement d’essai
+
+Objectif : prolonger la période d’essai si nécessaire.
+
+POST /rh/essai/renouveler/{idCandidat}
+
+Paramètre : periode (par défaut 3 mois)
+
+Action :
+
+Insérer un enregistrement dans renouvellement_essai
+
+Optionnel : mettre à jour essai.periode si tu veux garder le suivi
+
+Étape 5 : Valider en employé
+
+Objectif : inscrire le candidat dans la table employe.
+
+POST /rh/essai/embaucher/{idCandidat}
+
+Récupérer le salaire de l’annonce du candidat
+
+Créer un objet Employe avec :
+
+id_candidat
+
+date_embauche = LocalDate.now()
+
+poste = titre de l’annonce
+
+salaire = salaire de l’annonce
+
+Sauvegarder dans employeRepo
+
+Supprimer le candidat de essai si tu veux éviter doublons dans la liste des essais.
+
+Étape 6 : Liaisons JSP / Controller
+
+Liste entretien validés → passer en essai
+
+Liste en essai → renouveler ou embaucher
+
+Boutons « Oui / Non » pour chaque action
+
+Chaque action fait un POST vers le controller approprié
+
+Après action : redirection vers la liste correspondante pour mise à jour visuelle
+
+Étape 7 : Workflow global RH
+
+RH valide entretien → entretien.statut = Validé
+
+RH sélectionne candidats → essai (par défaut 3 mois)
+
+RH suit les candidats en période d’essai
+
+RH peut renouveler ou embaucher
+
+Après embauche → candidat disparaît de la liste des essais
+
+Si tu veux, je peux te coder directement le controller complet + services + JSP pour gérer toute la partie Essai et 
+Renouvellement 
+/ Embauche, avec les boutons qui disparaissent au fur et à mesure et prennent la période automatiquement.
