@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import service.*;
 import entity.*;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,37 +30,46 @@ public class rh {
     @Autowired
     private CandidatRefuseDetailsService candidatRefuseDetailsService;
 
+    @Autowired
+    private EssaiService essaiService;
+
+    @Autowired
+    private CandidatRefuseService candidatRefuseService;
+
+    @Autowired
+    private CandidatAdmisQcmService candidatAdmisQcmService;
+
     // traitement login rh
     @GetMapping("/formLogRh")
         public String formLogRh(Model model) {
         return "rh/formLogRh"; 
     }
 
-        @PostMapping("/logRh")
-        public String logRh(
-                @RequestParam("nom") String nom,
-                @RequestParam("motDePasse") String motDePasse,
-                Model model) {
-            var optRh = rhService.login(nom, motDePasse);
-            if (optRh.isPresent()) {
-                model.addAttribute("rg", optRh.get());
-                // Ajouter la liste des candidats admis au QCM
-                List<CandidatAdmisQcmDetails> candidatsAdmis = candidatAdmisQcmDetailsService.findAll();
-                model.addAttribute("candidatsAdmis", candidatsAdmis);
-                return "rh/acceuilRh"; 
-            } else {
-                model.addAttribute("error", "Nom ou mot de passe incorrect.");
-                return "rh/formLogRh";
-            }
-        }
-
-        @GetMapping("/accueilRh")
-        public String accueilRh(Model model) {
+    @PostMapping("/logRh")
+    public String logRh(
+            @RequestParam("nom") String nom,
+            @RequestParam("motDePasse") String motDePasse,
+            Model model) {
+        var optRh = rhService.login(nom, motDePasse);
+        if (optRh.isPresent()) {
+            model.addAttribute("rg", optRh.get());
             // Ajouter la liste des candidats admis au QCM
             List<CandidatAdmisQcmDetails> candidatsAdmis = candidatAdmisQcmDetailsService.findAll();
             model.addAttribute("candidatsAdmis", candidatsAdmis);
             return "rh/acceuilRh"; 
+        } else {
+            model.addAttribute("error", "Nom ou mot de passe incorrect.");
+            return "rh/formLogRh";
         }
+    }
+
+    @GetMapping("/accueilRh")
+    public String accueilRh(Model model) {
+        // Ajouter la liste des candidats admis au QCM
+        List<CandidatAdmisQcmDetails> candidatsAdmis = candidatAdmisQcmDetailsService.findAll();
+        model.addAttribute("candidatsAdmis", candidatsAdmis);
+        return "rh/acceuilRh"; 
+    }
 
     @GetMapping("/rh/candidats")
     public String listeCandidats(Model model) {
@@ -123,54 +133,57 @@ public class rh {
             return "rh/entretien";
         }
     }
+    
+    @Transactional
+    @PostMapping("/rh/entretien/valider")
+    public String validerEntretien(
+            @RequestParam("idCandidat") Integer idCandidat,
+            @RequestParam("statut") String statut,
+            @RequestParam(value = "salairePropose", required = false) Integer salairePropose,
+            @RequestParam(value = "periode", required = false) Integer periode,
+            Model model) {
 
-//     voici le formulaire pour valider un entretien:
-//     <!-- valider l'entretien  -->
-//     <div style="border: 1px solid #ccc; padding: 15px;">
-//         <h3>Notes d'entretien</h3>
-//         <form method="post" action="${pageContext.request.contextPath}/rh/entretien/valider">
-//             <input type="hidden" name="idCandidat" value="${candidat.id}" required>
-                        
-//             <div style="margin-bottom: 15px;">
-//                 <label for="statut"><strong>Statut :</strong></label><br>
-//                 <select id="statut" name="statut" required>
-//                     <option value="">selectionner</option>
-//                     <option value="essai">Validé pour periode d'essai</option>
-//                     <option value="refuse">Refusé</option>
-//                 </select>
-//             </div>
+        try {
+            candidatAdmisQcmService.deleteAdmisByCandidat(idCandidat);
+            // Traitement selon le statut
+            if ("essai".equals(statut)) {
+                // Validation pour période d'essai
+                
+                // Vérifier que les champs requis sont présents
+                if (salairePropose == null || periode == null) {
+                    model.addAttribute("error", "Salaire et période sont requis pour une période d'essai");
+                    return "rh/entretien";
+                }
 
-//             <div style="margin-bottom: 15px;">
-//                 <label for="periode"><strong>Periode accordee:</strong></label><br>
-//                 <select name="periode" id="periode">
-//                     <option value="">selectionner</option>
-//                     <option value="3">3 mois</option>
-//                     <option value="6">6 mois</option>
-//                 </select>
-//             </div>
+                // Ajouter en période d'essai
+                Essai essai = essaiService.addEssai(idCandidat, salairePropose, periode);
+                
+                
+                if (essai != null) {
+                    model.addAttribute("success", "Candidat validé pour une période d'essai de " + periode + " mois avec un salaire de " + salairePropose + " Ar");
+                } else {
+                    model.addAttribute("error", "Erreur lors de l'ajout en période d'essai");
+                }
 
-//             <div style="margin-bottom: 15px;">
-//                 <label for="salairePropose"><strong>Salaire proposé :</strong></label><br>
-//                 <input type="number" id="salairePropose" name="salairePropose" placeholder="Salaire proposé en Ariary" required>
-//             </div>
-            
-//             <button type="submit">Valider l'entretien</button>
-//         </form>
-//     </div>
+            } else if ("refuse".equals(statut)) {
+                // Refus après entretien
+                candidatRefuseService.addRefus(idCandidat, "entretien");
+                                
+                model.addAttribute("success", "Candidat refusé après entretien");
+                
+            } else {
+                model.addAttribute("error", "Statut invalide");
+                return "rh/entretien";
+            }
 
+            List<CandidatAdmisQcmDetails> candidatsAdmis = candidatAdmisQcmDetailsService.findAll();
+            model.addAttribute("candidatsAdmis", candidatsAdmis);
+            return "rh/acceuilRh"; 
 
-// on va coder ce controller:
-//     @PostMapping("/rh/entretien/valider")
-//     public String validerEntretien(
-//             @RequestParam("id_cand") Integer idCandidat,
-//             @RequestParam("statut") String statut,
-//             @RequestParam(value = "salaire", required = false) Integer salaire,
-//             @RequestParam(value = "periode", required = false) Integer periode,
-//             Model model) {
-
-//     }
-
-
-// Requester tout 
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors de la validation de l'entretien: " + e.getMessage());
+            return "rh/entretien";
+        }
+    }
     
 }

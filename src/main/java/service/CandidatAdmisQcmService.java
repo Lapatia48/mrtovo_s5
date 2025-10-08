@@ -2,6 +2,7 @@ package service;
 
 import entity.CandidatAdmisQcm;
 import entity.CandidatAdmisQcmDetails;
+import jakarta.transaction.Transactional;
 import repository.CandidatAdmisQcmRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class CandidatAdmisQcmService {
 
@@ -27,19 +29,10 @@ public class CandidatAdmisQcmService {
         return repository.findAll();
     }
 
-    // ===== Supprimer une admission par id =====
-    public void deleteAdmis(Integer id) {
-        repository.deleteById(id);
-    }
-
     // ===== Supprimer l'admission d'un candidat =====
+    @Transactional
     public void deleteAdmisByCandidat(Integer idCandidat) {
-        repository.deleteByIdCandidat(idCandidat);
-    }
-
-    // ===== Compter les admissions d'un candidat =====
-    public long countAdmisByCandidat(Integer idCandidat) {
-        return repository.countByIdCandidat(idCandidat);
+        repository.deleteAllByIdCandidat(idCandidat);
     }
 
 

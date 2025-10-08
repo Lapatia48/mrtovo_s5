@@ -113,14 +113,14 @@
                         
             <div style="margin-bottom: 15px;">
                 <label for="statut"><strong>Statut :</strong></label><br>
-                <select id="statut" name="statut" required>
+                <select id="statut" name="statut" required onchange="toggleEssaiFields()">
                     <option value="">selectionner</option>
                     <option value="essai">Validé pour periode d'essai</option>
                     <option value="refuse">Refusé</option>
                 </select>
             </div>
 
-            <div style="margin-bottom: 15px;">
+            <div id="essaiFields" style="display: none; margin-bottom: 15px;">
                 <label for="periode"><strong>Periode accordee:</strong></label><br>
                 <select name="periode" id="periode">
                     <option value="">selectionner</option>
@@ -129,14 +129,41 @@
                 </select>
             </div>
 
-            <div style="margin-bottom: 15px;">
-                <label for="salairePropose"><strong>Salaire proposé :</strong></label><br>
-                <input type="number" id="salairePropose" name="salairePropose" placeholder="Salaire proposé en Ariary" required>
+            <div id="salaireField" style="display: none; margin-bottom: 15px;">
+                <label for="salairePropose"><strong>Salaire conclu :</strong></label><br>
+                <input type="number" id="salairePropose" name="salairePropose" placeholder="Salaire proposé en Ariary">
             </div>
             
             <button type="submit">Valider l'entretien</button>
         </form>
     </div>
+
+    <script>
+        function toggleEssaiFields() {
+            const statut = document.getElementById('statut').value;
+            const essaiFields = document.getElementById('essaiFields');
+            const salaireField = document.getElementById('salaireField');
+            
+            if (statut === 'essai') {
+                essaiFields.style.display = 'block';
+                salaireField.style.display = 'block';
+                // Rendre requis seulement si statut = essai
+                document.getElementById('periode').required = true;
+                document.getElementById('salairePropose').required = true;
+            } else {
+                essaiFields.style.display = 'none';
+                salaireField.style.display = 'none';
+                // Enlever le required si statut ≠ essai
+                document.getElementById('periode').required = false;
+                document.getElementById('salairePropose').required = false;
+            }
+        }
+
+        // Initialiser au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleEssaiFields();
+        });
+    </script>
     
     <br>
     <a href="${pageContext.request.contextPath}/rh/candidats">Retour à la liste</a>
