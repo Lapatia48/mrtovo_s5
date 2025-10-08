@@ -1,6 +1,8 @@
 package repository;
 
 import entity.CandidatAdmisQcm;
+import entity.CandidatAdmisQcmDetails;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -13,11 +15,12 @@ public interface CandidatAdmisQcmRepository extends JpaRepository<CandidatAdmisQ
     // Optional<CandidatAdmisQcm> findByIdCandidat(Integer idCandidat);
 
     // Lister tous les admis d'un candidat donné
-    List<CandidatAdmisQcm> findByIdCandidat(Integer idCandidat);
+    // List<CandidatAdmisQcm> findByIdCandidat(Integer idCandidat);
 
     // Supprimer un admis par idCandidat
     void deleteByIdCandidat(Integer idCandidat);
 
     // Compter le nombre d'admis pour un candidat
     long countByIdCandidat(Integer idCandidat);
+
 }

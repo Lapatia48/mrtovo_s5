@@ -46,6 +46,16 @@
             <option value="asc">Date croissante</option>
             <option value="desc">Date décroissante</option>
         </select>
+
+        <!-- NOUVEAU : Select pour la note QCM -->
+        <select id="noteQcmFilter">
+            <option value="">Toutes les notes</option>
+            <option value="50-">Moins de 50%</option>
+            <option value="50+">50% et plus</option>
+            <option value="75+">75% et plus</option>
+            <option value="100">100%</option>
+            <option value="non-note">Non noté</option>
+        </select>
         
         <button onclick="resetFilters()">Réinitialiser</button>
     </div>
@@ -61,10 +71,11 @@
                     <th onclick="sortTable(3)">Adresse</th>
                     <th onclick="sortTable(4)">Date de naissance</th>
                     <th onclick="sortTable(5)">Âge</th>
-                    <th onclick="sortTable(6)">Poste</th>
+                    <th onclick="sortTable(6)">Departement</th>
                     <th onclick="sortTable(7)">Expérience</th>
                     <th onclick="sortTable(8)">Diplôme</th>
                     <th onclick="sortTable(9)">Date de postulation</th>
+                    <th>Note QCM</th>
                     <th>PDF</th>
                 </tr>
             </thead>
@@ -81,6 +92,16 @@
                         <td>${c.anneeExperience} ans</td>
                         <td>${c.diplome}</td>
                         <td>${c.datePostule}</td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${c.noteQcm != null}">
+                                    ${c.noteQcm}%
+                                </c:when>
+                                <c:otherwise>
+                                    Non noté
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
                         <td><a href="${pageContext.request.contextPath}/rh/candidats/pdf?id_cand=${c.id}">PDF</a></td>
                     </tr>
                 </c:forEach>
@@ -106,6 +127,7 @@
         document.getElementById('ageFilter').addEventListener('change', filterTable);
         document.getElementById('experienceFilter').addEventListener('change', filterTable);
         document.getElementById('dateSort').addEventListener('change', applySorting);
+        document.getElementById('noteQcmFilter').addEventListener('change', filterTable);
 
         function filterTable() {
             const globalSearch = document.getElementById('globalSearch').value.toLowerCase();
@@ -117,6 +139,7 @@
             const diplomeFilter = document.getElementById('diplomeFilter').value.toLowerCase();
             const ageFilter = document.getElementById('ageFilter').value;
             const experienceFilter = document.getElementById('experienceFilter').value;
+            const noteQcmFilter = document.getElementById('noteQcmFilter').value;
 
             const rows = document.querySelectorAll('#candidatsBody tr');
             let visibleCount = 0;
@@ -190,6 +213,47 @@
                         showRow = false;
                     }
                 }
+
+                // Filtre par note QCM
+                if (showRow && noteQcmFilter !== '') {
+                    const noteQcmCell = cells[10].textContent.trim();
+                    
+                    // Si on filtre "non noté"
+                    if (noteQcmFilter === "non-note") {
+                        // On garde seulement les lignes qui contiennent "Non noté"
+                        if (!noteQcmCell.includes("Non noté")) {
+                            showRow = false;
+                        }
+                    } 
+                    // Si la cellule contient une note numérique (pas "Non noté")
+                    else if (noteQcmCell !== "Non noté") {
+                        // On extrait le nombre du texte (ex: "80%" → 80)
+                        const noteMatch = noteQcmCell.match(/(\d+)%/);
+                        if (noteMatch) {
+                            const note = parseInt(noteMatch[1]);
+                            
+                            // Application des différents filtres
+                            switch(noteQcmFilter) {
+                                case "50-":
+                                    if (note >= 50) showRow = false; // Cache si note >= 50
+                                    break;
+                                case "50+":
+                                    if (note < 50) showRow = false;  // Cache si note < 50
+                                    break;
+                                case "75+":
+                                    if (note < 75) showRow = false;  // Cache si note < 75
+                                    break;
+                                case "100":
+                                    if (note !== 100) showRow = false; // Cache si note ≠ 100
+                                    break;
+                            }
+                        }
+                    } else {
+                        // Si cellule = "Non noté" mais filtre = note numérique → cache
+                        showRow = false;
+                    }
+                }
+
 
                 row.style.display = showRow ? '' : 'none';
                 if (showRow) visibleCount++;
@@ -276,6 +340,7 @@
             document.getElementById('ageFilter').value = '';
             document.getElementById('experienceFilter').value = '';
             document.getElementById('dateSort').value = '';
+            document.getElementById('noteQcmFilter').value = '';
             
             // Réinitialiser les indicateurs de tri
             const headers = document.querySelectorAll('#candidatsTable th');

@@ -27,15 +27,17 @@ public class QuestionService {
 
     // ===== Récupérer 3 questions aléatoires d'un département =====
     public List<Question> getQuestionsByDepartement(Integer idDepartement) {
-        // Récupérer toutes les questions du département
-        List<Question> allQuestions = questionRepository.findByIdDepartement(idDepartement);
+        return questionRepository.findByIdDepartement(idDepartement);
         
-        // Mélanger aléatoirement la liste
-        Collections.shuffle(allQuestions);
+        // // Récupérer toutes les questions du département
+        // List<Question> allQuestions = questionRepository.findByIdDepartement(idDepartement);
         
-        // Retourner les 3 premières questions (ou moins si moins de 3 questions disponibles)
-        int limit = Math.min(3, allQuestions.size());
-        return allQuestions.subList(0, limit);
+        // // Mélanger aléatoirement la liste
+        // Collections.shuffle(allQuestions);
+        
+        // // Retourner les 3 premières questions (ou moins si moins de 3 questions disponibles)
+        // int limit = Math.min(3, allQuestions.size());
+        // return allQuestions.subList(0, limit);
     }
 
     // ===== Ajouter ou mettre à jour une question =====

@@ -1,6 +1,7 @@
 package service;
 
 import entity.CandidatAdmisQcm;
+import entity.CandidatAdmisQcmDetails;
 import repository.CandidatAdmisQcmRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,4 +41,6 @@ public class CandidatAdmisQcmService {
     public long countAdmisByCandidat(Integer idCandidat) {
         return repository.countByIdCandidat(idCandidat);
     }
+
+
 }

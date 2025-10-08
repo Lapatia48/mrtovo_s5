@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -223,15 +224,20 @@ public class candidat {
                             @RequestParam("idDepartement") Integer idDepartement) {
 
         // 1. Récupérer toutes les questions du département
-        List<Question> questions = questionService.getQuestionsByDepartement(idDepartement);
+        List<Question> allQuestions = questionService.getQuestionsByDepartement(idDepartement);
+        
+        // 2. Mélanger aléatoirement et limiter à 3 questions
+        Collections.shuffle(allQuestions);
+        int limit = Math.min(3, allQuestions.size());
+        List<Question> questions = allQuestions.subList(0, limit);
 
-        // 2. Récupérer le Map des bonnes réponses
+        // 3. Récupérer le Map des bonnes réponses
         Map<Integer, Integer> bonneReponseMap = vraiReponseService.getBonneReponseParQuestion(questions);
 
-        // 3. Compter le nombre total de questions
+        // 4. Compter le nombre total de questions
         int totalQuestions = questions.size();
 
-        // 4. Compter les réponses correctes cochées
+        // 5. Compter les réponses correctes cochées
         int bonnesReponses = 0;
         for (Question q : questions) {
             String paramName = "q" + q.getId(); // correspond au name du radio input
@@ -243,29 +249,27 @@ public class candidat {
             }
         }
 
-        // 5. Calculer la note en pourcentage
+        // 6. Calculer la note en pourcentage
         double note = totalQuestions == 0 ? 0 : ((double) bonnesReponses / totalQuestions) * 100;
 
-        // 6. Envoyer les résultats vers la vue
+        // 7. Envoyer les résultats vers la vue
         model.addAttribute("idCandidat", idCandidat);
-        
         model.addAttribute("departement", departementService.getNomDepartementById(idDepartement.longValue()));
         model.addAttribute("nomCandidat", nomCandidat);
-
         model.addAttribute("totalQuestions", totalQuestions);
         model.addAttribute("bonnesReponses", bonnesReponses);
         model.addAttribute("note", note);
 
-        
+        // 8. Sauvegarder la note
         NoteQCM noteQCM = new NoteQCM();
         noteQCM.setIdCandidat(idCandidat);
         noteQCM.setNote((int) Math.round(note));
         noteQCMService.saveNote(noteQCM);
         
+        // 9. Déterminer le résultat
         if (note > 50) {
             model.addAttribute("resultat", "Félicitations, vous allez passer a l'entretien");
             candidatAdmisQcmService.addAdmis(idCandidat);
-
         } 
         else {
             candidatRefuseService.addRefus(idCandidat, "note_qcm");
@@ -274,6 +278,5 @@ public class candidat {
 
         return "candidat/resultatQcm"; // nom de la JSP résultat
     }
-
 
 }

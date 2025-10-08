@@ -79,8 +79,6 @@
                             <td>${candidat.departement}</td>
                             <td>${candidat.annoncePostulee}</td>
                             <td>${candidat.salaireAnnonce} Ar</td>
-                            <td><a href="${pageContext.request.contextPath}/rh/candidats/pdf?id_cand=${candidat.id}">PDF</a></td>
-                            <td><a href="${pageContext.request.contextPath}/rh/entretien?id_cand=${candidat.id}">Faire passer l'entretien</a></td>
                             <td>
                                 <c:choose>
                                     <c:when test="${candidat.noteQcm != null}">
@@ -91,6 +89,8 @@
                                     </c:otherwise>
                                 </c:choose>
                             </td>
+                            <td><a href="${pageContext.request.contextPath}/rh/candidats/pdf?id_cand=${candidat.id}">PDF</a></td>
+                            <td><a href="${pageContext.request.contextPath}/rh/entretien?id_cand=${candidat.id}">Faire passer l'entretien</a></td>
                         </tr>
                     </c:forEach>
                 </tbody>

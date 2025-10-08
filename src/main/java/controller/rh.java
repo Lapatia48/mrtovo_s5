@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class rh {
@@ -69,17 +70,8 @@ public class rh {
 
     @GetMapping("/rh/candidats")
     public String listeCandidats(Model model) {
-
-
         List<CandidatDetailsView> candidats = candidatDetailsViewService.getAllCandidats();
         model.addAttribute("candidats", candidats);
-
-        // liste des deroulantes
-        List<Diplome> diplomes = diplomeService.findAll();
-        model.addAttribute("diplomes", diplomes);
-        List<Departement> departements = departementService.findAll();
-        model.addAttribute("departements", departements);
-
         return "rh/listeCandidats";
     
     }
@@ -103,8 +95,24 @@ public class rh {
     }
 
     @GetMapping("/rh/entretien")
-    public String fairePasserEntretien(Model model) {
-        return "rh/entretien";
+    public String fairePasserEntretien(@RequestParam("id_cand") Integer idCandidat, Model model) {
+        try {
+            // Récupérer les détails du candidat depuis la vue
+            CandidatDetailsView candidat = candidatDetailsViewService.findById(idCandidat);
+            
+            // Récupérer les détails de l'annonce depuis la vue des admis QCM (ou autre source)
+            Optional<CandidatAdmisQcmDetails> candidatAdmis = candidatAdmisQcmDetailsService.findByIdCandidat(idCandidat);
+            
+            // Ajouter les données au modèle
+            model.addAttribute("candidat", candidat);
+            model.addAttribute("candidatAdmis", candidatAdmis.orElse(null));
+            
+            return "rh/entretien";
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du chargement des données");
+            return "rh/entretien";
+        }
     }
     
 }

@@ -32,6 +32,9 @@ public class CandidatDetailsView {
     @Column(name = "libelle_departement")
     private String departement;
 
+    @Column(name = "note_qcm")
+    private Integer noteQcm;
+
     // Getters & Setters
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -68,4 +71,7 @@ public class CandidatDetailsView {
 
     public String getDepartement() { return departement; }
     public void setDepartement(String departement) { this.departement = departement; }
+
+    public Integer getNoteQcm() { return noteQcm; }
+    public void setNoteQcm(Integer noteQcm) { this.noteQcm = noteQcm; }
 }
