@@ -6,11 +6,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -190,13 +192,24 @@ public class candidat {
         // Sauvegarde et récupération de l'ID généré
         Candidat savedCandidat = candidatService.addCandidat(candidat);
 
-        //  Stocker l'ID dans la session
+        // Stocker l'ID dans la session
         model.addAttribute("candidat", savedCandidat);
-
         model.addAttribute("idDepartement", idDepartement);
 
-            
-        List<Question> questions = questionService.getQuestionsByDepartement(idDepartement);
+        // GÉNÉRATION DES QUESTIONS ALÉATOIRES
+        List<Question> allQuestions = questionService.getQuestionsByDepartement(idDepartement);
+        
+        // Mélanger aléatoirement et limiter à 3 questions
+        Collections.shuffle(allQuestions);
+        int limit = Math.min(3, allQuestions.size());
+        List<Question> questions = allQuestions.subList(0, limit);
+        
+        // STOCKER LES QUESTIONS SÉLECTIONNÉES DANS LA SESSION
+        List<Integer> questionIds = questions.stream()
+                                        .map(Question::getId)
+                                        .collect(Collectors.toList());
+        session.setAttribute("selectedQuestionIds_" + savedCandidat.getId(), questionIds);
+        
         model.addAttribute("questions", questions);
 
         // Map questionId -> List<Reponse>
@@ -211,7 +224,6 @@ public class candidat {
         Map<Integer, Integer> bonneReponseMap = vraiReponseService.getBonneReponseParQuestion(questions);
         model.addAttribute("bonneReponseMap", bonneReponseMap);
 
-
         model.addAttribute("message", "Votre candidature a été envoyée avec succès !");
         return "candidat/qcm"; 
     }
@@ -221,15 +233,29 @@ public class candidat {
                             @RequestParam("idCandidat") Integer idCandidat,
                             @RequestParam("nomCandidat") String nomCandidat,
                             Model model,
-                            @RequestParam("idDepartement") Integer idDepartement) {
+                            @RequestParam("idDepartement") Integer idDepartement,
+                            HttpSession session) {
 
-        // 1. Récupérer toutes les questions du département
-        List<Question> allQuestions = questionService.getQuestionsByDepartement(idDepartement);
+        // 1. RÉCUPÉRER LES MÊMES QUESTIONS QUE CELLES AFFICHÉES
+        List<Integer> selectedQuestionIds = (List<Integer>) session.getAttribute("selectedQuestionIds_" + idCandidat);
         
-        // 2. Mélanger aléatoirement et limiter à 3 questions
-        Collections.shuffle(allQuestions);
-        int limit = Math.min(3, allQuestions.size());
-        List<Question> questions = allQuestions.subList(0, limit);
+        if (selectedQuestionIds == null || selectedQuestionIds.isEmpty()) {
+            // Fallback : récupérer 3 questions aléatoires (ancienne méthode)
+            List<Question> allQuestions = questionService.getQuestionsByDepartement(idDepartement);
+            Collections.shuffle(allQuestions);
+            int limit = Math.min(3, allQuestions.size());
+            List<Question> questions = allQuestions.subList(0, limit);
+            selectedQuestionIds = questions.stream()
+                                        .map(Question::getId)
+                                        .collect(Collectors.toList());
+        }
+        
+        // 2. CHARGER LES QUESTIONS À PARTIR DE LEURS IDs
+        List<Question> questions = new ArrayList<>();
+        for (Integer questionId : selectedQuestionIds) {
+            Optional<Question> question = questionService.getQuestionById(questionId);
+            question.ifPresent(questions::add);
+        }
 
         // 3. Récupérer le Map des bonnes réponses
         Map<Integer, Integer> bonneReponseMap = vraiReponseService.getBonneReponseParQuestion(questions);
@@ -276,7 +302,9 @@ public class candidat {
             model.addAttribute("resultat", "Votre candidature est refusée pour note QCM faible"); 
         }
 
-        return "candidat/resultatQcm"; // nom de la JSP résultat
-    }
+        // 10. NETTOYER LA SESSION
+        session.removeAttribute("selectedQuestionIds_" + idCandidat);
 
+        return "candidat/resultatQcm";
+}
 }

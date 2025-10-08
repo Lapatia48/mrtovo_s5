@@ -61,3 +61,28 @@ JOIN departement dep ON c.id_departement = dep.id
 JOIN annonce a ON c.id_annonce_postule = a.id
 LEFT JOIN note_qcm nq ON c.id = nq.id_candidat
 ORDER BY c.nom ASC, c.prenom ASC;
+
+
+CREATE OR REPLACE VIEW candidat_refuse_details AS
+SELECT 
+    c.id,
+    c.nom,
+    c.prenom,
+    c.mail,
+    c.adresse,
+    c.date_naissance,
+    EXTRACT(YEAR FROM AGE(CURRENT_DATE, c.date_naissance)) AS age,
+    c.renseignement,
+    c.annee_experience,
+    c.date_postule,
+    d.nom_diplome,
+    dep.libelle_departement,
+    nq.note AS note_qcm,
+    cr.libelle_etape,
+    cr.id_candidat
+FROM candidat c
+JOIN diplome d ON c.id_diplome = d.id
+JOIN departement dep ON c.id_departement = dep.id
+JOIN candidat_refuse cr ON c.id = cr.id_candidat
+LEFT JOIN note_qcm nq ON c.id = nq.id_candidat
+ORDER BY c.nom ASC, c.prenom ASC;

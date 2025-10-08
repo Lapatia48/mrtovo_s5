@@ -116,6 +116,7 @@ CREATE TABLE entretien (
 CREATE TABLE essai (
     id SERIAL PRIMARY KEY,
     id_candidat INT REFERENCES candidat(id) ON DELETE CASCADE,
+    salaire INT,
     periode INT
 );
 

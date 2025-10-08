@@ -105,31 +105,33 @@
         </table>
     </div>
     
-    <!-- Section pour prendre des notes pendant l'entretien -->
+    <!-- valider l'entretien  -->
     <div style="border: 1px solid #ccc; padding: 15px;">
         <h3>Notes d'entretien</h3>
         <form method="post" action="${pageContext.request.contextPath}/rh/entretien/valider">
-            <input type="hidden" name="idCandidat" value="${candidat.id}">
-            
-            <div style="margin-bottom: 15px;">
-                <label for="commentaire"><strong>Commentaires :</strong></label><br>
-                <textarea id="commentaire" name="commentaire" rows="5" cols="80" 
-                          placeholder="Notes sur l'entretien, impressions, points forts/faibles..."></textarea>
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <label for="salairePropose"><strong>Salaire proposé :</strong></label><br>
-                <input type="number" id="salairePropose" name="salairePropose" 
-                       placeholder="Salaire proposé en Ariary">
-            </div>
-            
+            <input type="hidden" name="idCandidat" value="${candidat.id}" required>
+                        
             <div style="margin-bottom: 15px;">
                 <label for="statut"><strong>Statut :</strong></label><br>
-                <select id="statut" name="statut">
-                    <option value="en_attente">En attente</option>
-                    <option value="valide">Validé</option>
+                <select id="statut" name="statut" required>
+                    <option value="">selectionner</option>
+                    <option value="essai">Validé pour periode d'essai</option>
                     <option value="refuse">Refusé</option>
                 </select>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="periode"><strong>Periode accordee:</strong></label><br>
+                <select name="periode" id="periode">
+                    <option value="">selectionner</option>
+                    <option value="3">3 mois</option>
+                    <option value="6">6 mois</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="salairePropose"><strong>Salaire proposé :</strong></label><br>
+                <input type="number" id="salairePropose" name="salairePropose" placeholder="Salaire proposé en Ariary" required>
             </div>
             
             <button type="submit">Valider l'entretien</button>

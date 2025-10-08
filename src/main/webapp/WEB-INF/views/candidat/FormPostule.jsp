@@ -74,6 +74,8 @@
             <button type="submit">Postuler</button>
         </div>
     </form>
+    <a href="${pageContext.request.contextPath}/formLogCandidat2">Annuler</a> 
+    
 
 </body>
 </html>

@@ -12,20 +12,10 @@ import entity.*;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Controller
 public class rh {
-
-    @Autowired
-    private CandidatService candidatService;
-
-    @Autowired
-    private DiplomeService diplomeService;
-
-    @Autowired
-    private DepartementService departementService;
 
     @Autowired
     private CandidatDetailsViewService candidatDetailsViewService;
@@ -35,6 +25,9 @@ public class rh {
 
     @Autowired
     private CandidatAdmisQcmDetailsService candidatAdmisQcmDetailsService;
+
+    @Autowired
+    private CandidatRefuseDetailsService candidatRefuseDetailsService;
 
     // traitement login rh
     @GetMapping("/formLogRh")
@@ -76,6 +69,22 @@ public class rh {
     
     }
 
+    @GetMapping("/rh/listCandidatRefuse")
+    public String listCandidatRefuse(Model model) {
+        try {
+            List<CandidatRefuseDetails> candidatsRefuses = candidatRefuseDetailsService.findAll();
+            List<String> etapesRefus = candidatRefuseDetailsService.getDistinctLibelleEtape();
+            
+            model.addAttribute("candidatsRefuses", candidatsRefuses);
+            model.addAttribute("etapesRefus", etapesRefus);
+            
+            return "rh/listeRefuse";
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du chargement des candidats refusés");
+            return "rh/listeRefuse";
+        }
+    }
+
     // Génération et téléchargement du PDF
     @GetMapping("/rh/candidats/pdf")
     public void generatePdf(@RequestParam("id_cand") Integer id, HttpServletResponse response) throws Exception {
@@ -114,5 +123,54 @@ public class rh {
             return "rh/entretien";
         }
     }
+
+//     voici le formulaire pour valider un entretien:
+//     <!-- valider l'entretien  -->
+//     <div style="border: 1px solid #ccc; padding: 15px;">
+//         <h3>Notes d'entretien</h3>
+//         <form method="post" action="${pageContext.request.contextPath}/rh/entretien/valider">
+//             <input type="hidden" name="idCandidat" value="${candidat.id}" required>
+                        
+//             <div style="margin-bottom: 15px;">
+//                 <label for="statut"><strong>Statut :</strong></label><br>
+//                 <select id="statut" name="statut" required>
+//                     <option value="">selectionner</option>
+//                     <option value="essai">Validé pour periode d'essai</option>
+//                     <option value="refuse">Refusé</option>
+//                 </select>
+//             </div>
+
+//             <div style="margin-bottom: 15px;">
+//                 <label for="periode"><strong>Periode accordee:</strong></label><br>
+//                 <select name="periode" id="periode">
+//                     <option value="">selectionner</option>
+//                     <option value="3">3 mois</option>
+//                     <option value="6">6 mois</option>
+//                 </select>
+//             </div>
+
+//             <div style="margin-bottom: 15px;">
+//                 <label for="salairePropose"><strong>Salaire proposé :</strong></label><br>
+//                 <input type="number" id="salairePropose" name="salairePropose" placeholder="Salaire proposé en Ariary" required>
+//             </div>
+            
+//             <button type="submit">Valider l'entretien</button>
+//         </form>
+//     </div>
+
+
+// on va coder ce controller:
+//     @PostMapping("/rh/entretien/valider")
+//     public String validerEntretien(
+//             @RequestParam("id_cand") Integer idCandidat,
+//             @RequestParam("statut") String statut,
+//             @RequestParam(value = "salaire", required = false) Integer salaire,
+//             @RequestParam(value = "periode", required = false) Integer periode,
+//             Model model) {
+
+//     }
+
+
+// Requester tout 
     
 }

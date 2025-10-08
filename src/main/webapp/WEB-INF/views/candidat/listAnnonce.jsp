@@ -8,6 +8,8 @@
     <title>Document</title>
 </head>
 <body>
+    <a href="${pageContext.request.contextPath}/logout">Quitter</a>
+    <br>
     <h2>Liste des annonces</h2>
 
     <c:if test="${empty annonces}">
