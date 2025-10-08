@@ -15,6 +15,8 @@
         <a href="${pageContext.request.contextPath}/rh/candidats">Voir la liste des candidats</a>
         <br>
         <a href="${pageContext.request.contextPath}/rh/listCandidatRefuse">Voir la liste des candidats refusés</a>
+        <br>
+        <a href="${pageContext.request.contextPath}/rh/essai">Voir la liste des candidats en période d'essai</a>
         <br><br>
         <!-- Section Filtres -->
         <div class="filter-section">

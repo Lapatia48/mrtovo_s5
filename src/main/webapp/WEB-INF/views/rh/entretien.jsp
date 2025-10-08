@@ -166,6 +166,6 @@
     </script>
     
     <br>
-    <a href="${pageContext.request.contextPath}/rh/candidats">Retour à la liste</a>
+    <a href="${pageContext.request.contextPath}/accueilRh">Retour</a>
 </body>
 </html>

@@ -39,6 +39,9 @@ public class rh {
     @Autowired
     private CandidatAdmisQcmService candidatAdmisQcmService;
 
+    @Autowired
+    private EssaiDetailService essaiDetailService;
+
     // traitement login rh
     @GetMapping("/formLogRh")
         public String formLogRh(Model model) {
@@ -176,14 +179,21 @@ public class rh {
                 return "rh/entretien";
             }
 
-            List<CandidatAdmisQcmDetails> candidatsAdmis = candidatAdmisQcmDetailsService.findAll();
-            model.addAttribute("candidatsAdmis", candidatsAdmis);
-            return "rh/acceuilRh"; 
+            List<EssaiDetail> essaiDetails = essaiDetailService.findAll();
+            model.addAttribute("essaiDetails", essaiDetails);
+            return "rh/listeEssai"; 
 
         } catch (Exception e) {
             model.addAttribute("error", "Erreur lors de la validation de l'entretien: " + e.getMessage());
             return "rh/entretien";
         }
+    }
+
+    @GetMapping("/rh/essai")
+    public String listeEssai(Model model) {
+        List<EssaiDetail> essaiDetails = essaiDetailService.findAll();
+        model.addAttribute("essaiDetails", essaiDetails);
+        return "rh/listeEssai"; 
     }
     
 }
