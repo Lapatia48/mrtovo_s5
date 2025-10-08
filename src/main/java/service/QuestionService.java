@@ -5,6 +5,7 @@ import repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,9 +25,17 @@ public class QuestionService {
         return questionRepository.findById(id);
     }
 
-    // ===== Récupérer toutes les questions d'un département =====
+    // ===== Récupérer 3 questions aléatoires d'un département =====
     public List<Question> getQuestionsByDepartement(Integer idDepartement) {
-        return questionRepository.findByIdDepartement(idDepartement);
+        // Récupérer toutes les questions du département
+        List<Question> allQuestions = questionRepository.findByIdDepartement(idDepartement);
+        
+        // Mélanger aléatoirement la liste
+        Collections.shuffle(allQuestions);
+        
+        // Retourner les 3 premières questions (ou moins si moins de 3 questions disponibles)
+        int limit = Math.min(3, allQuestions.size());
+        return allQuestions.subList(0, limit);
     }
 
     // ===== Ajouter ou mettre à jour une question =====
