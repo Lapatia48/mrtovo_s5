@@ -123,15 +123,29 @@ CREATE TABLE essai (
 CREATE TABLE renouvellement_essai (
     id SERIAL PRIMARY KEY,
     id_candidat INT REFERENCES candidat(id) ON DELETE CASCADE,
+    salaire INT,
     periode INT
 );
 
+-- =====================
+-- Côté employé
 CREATE TABLE employe (
     id SERIAL PRIMARY KEY,
     id_candidat INT REFERENCES candidat(id) ON DELETE CASCADE,
-    date_embauche DATE DEFAULT CURRENT_DATE,
+    nom VARCHAR(100),
+    prenom VARCHAR(100),
+    mail VARCHAR(150),
+    mot_de_passe VARCHAR(100),
+    adresse VARCHAR(200),
+    date_naissance DATE,
+    renseignement TEXT,
+    diplome VARCHAR(100),
+    annee_experience INT,
+    departement VARCHAR(100), 
     poste VARCHAR(100),
-    salaire INT
+    date_embauche DATE DEFAULT CURRENT_DATE,
+    salaire INT,
+    statut VARCHAR(50) DEFAULT 'actif'
 );
 
 CREATE TABLE dg_admin (

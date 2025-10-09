@@ -1,6 +1,7 @@
 package controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import entity.*;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +43,9 @@ public class rh {
 
     @Autowired
     private EssaiDetailService essaiDetailService;
+
+    @Autowired
+    private EmployeService employeService;
 
     // traitement login rh
     @GetMapping("/formLogRh")
@@ -79,7 +84,6 @@ public class rh {
         List<CandidatDetailsView> candidats = candidatDetailsViewService.getAllCandidats();
         model.addAttribute("candidats", candidats);
         return "rh/listeCandidats";
-    
     }
 
     @GetMapping("/rh/listCandidatRefuse")
@@ -97,6 +101,14 @@ public class rh {
             return "rh/listeRefuse";
         }
     }
+
+    @GetMapping("/rh/employe")
+    public String listeEmployes(Model model) {
+        List<Employe> employes = employeService.findAll();
+        model.addAttribute("employes", employes);
+        return "rh/listeEmploye";  
+    }
+
 
     // Génération et téléchargement du PDF
     @GetMapping("/rh/candidats/pdf")
@@ -195,5 +207,109 @@ public class rh {
         model.addAttribute("essaiDetails", essaiDetails);
         return "rh/listeEssai"; 
     }
+
+    @GetMapping("/essai/embauche")
+    public String formEmbauche(@RequestParam("id_cand") Integer idCandidat, Model model) {
+        try {
+            // Récupérer les détails du candidat depuis la vue essai_detail
+            EssaiDetail essaiDetail = essaiDetailService.findByIdCandidat(idCandidat);
+            // Ajouter les données au modèle
+            model.addAttribute("candidat", essaiDetail);
+            model.addAttribute("dateEmbauche", LocalDate.now()); // Date courante par défaut
+            
+            return "rh/formEmploye";
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du chargement des données du candidat");
+            return "redirect:/rh/essai";
+        }
+    }
+
+    @Transactional
+    @PostMapping("/essai/embauche/valider")
+    public String validerEmbauche(
+            @RequestParam("idCandidat") Integer idCandidat,
+            @RequestParam("nom") String nom,
+            @RequestParam("prenom") String prenom,
+            @RequestParam("mail") String mail,
+            @RequestParam("adresse") String adresse,
+            @RequestParam("dateNaissance") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateNaissance,
+            @RequestParam("diplome") String diplome,
+            @RequestParam("anneeExperience") String anneeExperience,
+            @RequestParam("departement") String departement,
+            @RequestParam("annoncePostulee") String annoncePostulee,
+            @RequestParam("motDePasse") String motDePasse,
+            @RequestParam("confirmationMotDePasse") String confirmationMotDePasse,
+            @RequestParam("dateEmbauche") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEmbauche,
+            @RequestParam("poste") String poste,
+            @RequestParam("salaire") Integer salaire,
+            @RequestParam(value = "renseignement", required = false) String renseignement,
+            Model model) {
+
+        try {
+            // Validation des mots de passe
+            if (!motDePasse.equals(confirmationMotDePasse)) {
+                model.addAttribute("error", "Les mots de passe ne correspondent pas");
+                return "rh/formEmploye";
+            }
+
+            // Extraire l'année d'expérience du texte
+            Integer anneeExp = extractAnneeExperience(anneeExperience);
+
+            // Créer l'employé
+            Employe employe = new Employe();
+            employe.setIdCandidat(idCandidat);
+            employe.setNom(nom);
+            employe.setPrenom(prenom);
+            employe.setMail(mail);
+            employe.setMotDePasse(motDePasse); // À hasher en production!
+            employe.setAdresse(adresse);
+            employe.setDateNaissance(dateNaissance);
+            employe.setRenseignement(renseignement);
+            employe.setDiplome(diplome); // Directement le texte
+            employe.setAnneeExperience(anneeExp);
+            employe.setDepartement(departement); // Directement le texte
+            employe.setPoste(poste); // Utilise le poste du formulaire
+            employe.setDateEmbauche(dateEmbauche);
+            employe.setSalaire(salaire);
+            employe.setStatut("actif");
+
+            // Sauvegarder l'employé
+            employeService.save(employe);
+
+            // Supprimer de la table essai
+            essaiService.deleteEssaiByCandidat(idCandidat);
+
+            model.addAttribute("success", "Employé embauché avec succès !");
+            List<EssaiDetail> essaiDetails = essaiDetailService.findAll();
+            model.addAttribute("essaiDetails", essaiDetails);
+            return "rh/listeEssai"; 
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors de l'embauche: " + e.getMessage());
+            return "rh/formEmploye";
+        }
+    }
+
+    // Méthode utilitaire pour extraire l'année d'expérience
+    private Integer extractAnneeExperience(String anneeExperienceText) {
+        try {
+            // Extraire le nombre du texte (ex: "5 ans" -> 5)
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("(\\d+)");
+            java.util.regex.Matcher matcher = pattern.matcher(anneeExperienceText);
+            if (matcher.find()) {
+                return Integer.parseInt(matcher.group(1));
+            }
+        } catch (Exception e) {
+            // En cas d'erreur, retourner 0
+        }
+        return 0;
+    }
+
+
+    // @GetMapping("/essai/refuse")
+    // @GetMapping("/essai/renouv")
+
+
     
 }

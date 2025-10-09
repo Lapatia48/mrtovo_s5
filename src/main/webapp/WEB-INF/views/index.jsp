@@ -13,6 +13,6 @@
     <!-- <a href="${pageContext.request.contextPath}/formLogCandidat">Login Candidat</a><br> -->
     <a href="${pageContext.request.contextPath}/formLogRh">Login Ressource humaine</a><br>
     <a href="${pageContext.request.contextPath}/formLogManager">Login Manager</a><br>
-    <a href="${pageContext.request.contextPath}/formLogAdmin">Login Admin</a><br>
+    <!-- <a href="${pageContext.request.contextPath}/formLogAdmin">Login Admin</a><br> -->
 </body>
 </html>

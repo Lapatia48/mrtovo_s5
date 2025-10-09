@@ -1,12 +1,14 @@
 package service;
 
 import entity.Essai;
+import jakarta.transaction.Transactional;
 import repository.EssaiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class EssaiService {
 
@@ -58,6 +60,7 @@ public class EssaiService {
     }
 
     // ===== Supprimer l'essai d'un candidat =====
+    @Transactional
     public void deleteEssaiByCandidat(Integer idCandidat) {
         repository.deleteByIdCandidat(idCandidat);
     }
