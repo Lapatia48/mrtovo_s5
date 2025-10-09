@@ -191,6 +191,9 @@ public class rh {
                 candidatRefuseService.addRefus(idCandidat, "entretien");
                                 
                 model.addAttribute("success", "Candidat refusé après entretien");
+                List<CandidatAdmisQcmDetails> candidatsAdmis = candidatAdmisQcmDetailsService.findAll();
+                model.addAttribute("candidatsAdmis", candidatsAdmis);
+                return "rh/acceuilRh"; 
                 
             } else {
                 model.addAttribute("error", "Statut invalide");
@@ -406,7 +409,57 @@ public class rh {
     }
 
     // @GetMapping("/essai/refuse")
+    @Transactional
+    @GetMapping("/essai/refuse")
+    public String refuserEssai(@RequestParam("id_cand") Integer idCandidat, Model model) {
+        try {
+            // Vérifier que le candidat existe
+            EssaiDetail essaiDetail = essaiDetailService.findByIdCandidat(idCandidat);
+            if (essaiDetail == null) {
+                model.addAttribute("error", "Candidat non trouvé");
+                return "redirect:/rh/essai";
+            }
+
+            // Ajouter le refus
+            candidatRefuseService.addRefus(idCandidat, "periode essai");
+            
+            // Supprimer de la table essai
+            essaiService.deleteEssaiByCandidat(idCandidat);
+            
+            model.addAttribute("success", "Candidat refusé après période d'essai");
+            return "redirect:/accueilRh";
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du refus: " + e.getMessage());
+            return "redirect:/rh/essai";
+        }
+    }
     // @GetMapping("/essai/refuseRenouv")
+    @Transactional
+    @GetMapping("/essai/refuseRenouv")
+    public String refuserRenouvellement(@RequestParam("id_cand") Integer idCandidat, Model model) {
+        try {
+            // Vérifier que le candidat existe dans les renouvellements
+            RenouvellementEssaiDetail renouvellementDetail = renouvellementEssaiDetailService.findByIdCandidat(idCandidat);
+            if (renouvellementDetail == null) {
+                model.addAttribute("error", "Candidat non trouvé dans les renouvellements");
+                return "redirect:/rh/renouvellements"; // À adapter selon votre route
+            }
+
+            // Ajouter le refus
+            candidatRefuseService.addRefus(idCandidat, "renouvellement essai");
+            
+            // Supprimer de la table renouvellement_essai
+            renouvellementEssaiService.deleteRenouvellementByCandidat(idCandidat);
+            
+            model.addAttribute("success", "Candidat refusé après renouvellement d'essai");
+            return "redirect:/accueilRh"; // À adapter selon votre route
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du refus: " + e.getMessage());
+            return "redirect:/rh/renouvellements"; // À adapter selon votre route
+        }
+    }
 
 
     

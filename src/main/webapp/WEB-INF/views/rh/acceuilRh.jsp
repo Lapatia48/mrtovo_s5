@@ -7,6 +7,7 @@
     <title>Accueil RH</title>
 </head>
 <body>
+    <p style="color: green;">${success}</p>
     <div class="container">
         <h2>Bienvenue RH</h2>
 

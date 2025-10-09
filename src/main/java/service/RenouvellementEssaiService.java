@@ -1,12 +1,14 @@
 package service;
 
 import entity.RenouvellementEssai;
+import jakarta.transaction.Transactional;
 import repository.RenouvellementEssaiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class RenouvellementEssaiService {
 
@@ -58,6 +60,7 @@ public class RenouvellementEssaiService {
     }
 
     // ===== Supprimer le renouvellement d'un candidat =====
+    @Transactional
     public void deleteRenouvellementByCandidat(Integer idCandidat) {
         repository.deleteByIdCandidat(idCandidat);
     }
