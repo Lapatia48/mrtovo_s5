@@ -47,6 +47,12 @@ public class rh {
     @Autowired
     private EmployeService employeService;
 
+    @Autowired
+    private RenouvellementEssaiService renouvellementEssaiService;
+
+    @Autowired
+    private RenouvellementEssaiDetailService renouvellementEssaiDetailService;
+
     // traitement login rh
     @GetMapping("/formLogRh")
         public String formLogRh(Model model) {
@@ -281,9 +287,9 @@ public class rh {
             essaiService.deleteEssaiByCandidat(idCandidat);
 
             model.addAttribute("success", "Employé embauché avec succès !");
-            List<EssaiDetail> essaiDetails = essaiDetailService.findAll();
-            model.addAttribute("essaiDetails", essaiDetails);
-            return "rh/listeEssai"; 
+            List<Employe> employes = employeService.findAll();
+            model.addAttribute("employes", employes);
+            return "rh/listeEmploye"; 
 
         } catch (Exception e) {
             model.addAttribute("error", "Erreur lors de l'embauche: " + e.getMessage());
@@ -306,9 +312,101 @@ public class rh {
         return 0;
     }
 
+    @GetMapping("/rh/essaiRenouv")
+    public String listeEssaiRenouv(Model model) {
+        List<RenouvellementEssaiDetail> renouvellementEssaiDetails = renouvellementEssaiDetailService.findAll();
+        model.addAttribute("essaiDetails", renouvellementEssaiDetails);
+        return "rh/listeEssaiRenouv"; 
+    }
+
+    @GetMapping("/essai/renouv")
+    public String formRenouvellement(@RequestParam("id_cand") Integer idCandidat, Model model) {
+        try {
+            // Récupérer les détails du candidat depuis la vue essai_detail
+            EssaiDetail essaiDetail = essaiDetailService.findByIdCandidat(idCandidat);
+            
+            if (essaiDetail == null) {
+                model.addAttribute("error", "Candidat non trouvé");
+                return "redirect:/rh/essai";
+            }
+            
+            // Ajouter les données au modèle
+            model.addAttribute("candidat", essaiDetail);
+            
+            return "rh/renouvellement";
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du chargement des données du candidat");
+            return "redirect:/rh/essai";
+        }
+    }
+
+    @GetMapping("/renouv/embauche")
+    public String formEmbaucheRenouv(@RequestParam("id_cand") Integer idCandidat, Model model) {
+        try {
+            // Récupérer les détails du candidat depuis la vue essai_detail
+            RenouvellementEssaiDetail essaiDetail = renouvellementEssaiDetailService.findByIdCandidat(idCandidat);
+            // Ajouter les données au modèle
+            model.addAttribute("candidat", essaiDetail);
+            model.addAttribute("dateEmbauche", LocalDate.now()); // Date courante par défaut
+            
+            return "rh/formEmploye";
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du chargement des données du candidat");
+            return "redirect:/rh/essai";
+        }
+    }
+
+    @Transactional
+    @PostMapping("/essai/renouv/valider")
+    public String validerRenouvellement(
+            @RequestParam("idCandidat") Integer idCandidat,
+            @RequestParam("statut") String statut,
+            @RequestParam("salaire") Integer salaire,
+            @RequestParam("periode") Integer periode,
+            Model model) {
+
+        try {
+            // Vérifier que le candidat existe
+            EssaiDetail essaiDetail = essaiDetailService.findByIdCandidat(idCandidat);
+            if (essaiDetail == null) {
+                model.addAttribute("error", "Candidat non trouvé");
+                return "redirect:/rh/essai";
+            }
+
+            // Traitement du renouvellement
+            if ("renouveler".equals(statut)) {
+                // Ajouter dans renouvellement_essai
+                RenouvellementEssai renouvellement = renouvellementEssaiService.addRenouvellement(idCandidat, salaire, periode);
+                
+                // Supprimer de la table essai
+                essaiService.deleteEssaiByCandidat(idCandidat);
+                
+                if (renouvellement != null) {
+                    model.addAttribute("success", "Essai renouvelé pour " + periode + " mois avec un salaire de " + salaire + " Ar");
+                } else {
+                    model.addAttribute("error", "Erreur lors du renouvellement de l'essai");
+                }
+
+            } else {
+                model.addAttribute("error", "Statut invalide");
+                return "rh/renouvellement";
+            }
+
+            // Rediriger vers la liste des essais renouvelle
+            List<RenouvellementEssaiDetail> renouvellementEssaiDetails = renouvellementEssaiDetailService.findAll();
+            model.addAttribute("essaiDetails", renouvellementEssaiDetails);
+            return "rh/listeEssaiRenouv"; 
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du renouvellement de l'essai: " + e.getMessage());
+            return "rh/renouvellement";
+        }
+    }
 
     // @GetMapping("/essai/refuse")
-    // @GetMapping("/essai/renouv")
+    // @GetMapping("/essai/refuseRenouv")
 
 
     

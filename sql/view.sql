@@ -139,3 +139,31 @@ LEFT JOIN diplome d ON e.id_diplome = d.id
 LEFT JOIN departement dep ON e.id_departement = dep.id
 LEFT JOIN annonce a ON e.id_annonce_postule = a.id
 ORDER BY e.nom ASC, e.prenom ASC;
+
+
+CREATE OR REPLACE VIEW renouvellement_essai_detail AS
+SELECT 
+    re.id,
+    re.id_candidat,
+    re.salaire,
+    re.periode,
+    c.nom,
+    c.prenom,
+    c.mail,
+    c.adresse,
+    c.date_naissance,
+    EXTRACT(YEAR FROM AGE(CURRENT_DATE, c.date_naissance)) AS age,
+    c.renseignement,
+    c.annee_experience,
+    c.date_postule,
+    d.nom_diplome,
+    dep.libelle_departement,
+    nq.note AS note_qcm,
+    a.titre AS annonce_postulee
+FROM renouvellement_essai re
+JOIN candidat c ON re.id_candidat = c.id
+JOIN diplome d ON c.id_diplome = d.id
+JOIN departement dep ON c.id_departement = dep.id
+LEFT JOIN note_qcm nq ON c.id = nq.id_candidat
+LEFT JOIN annonce a ON c.id_annonce_postule = a.id
+ORDER BY c.nom ASC, c.prenom ASC;

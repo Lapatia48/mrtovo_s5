@@ -18,7 +18,7 @@
         <br>
         <a href="${pageContext.request.contextPath}/rh/essai">Voir la liste des candidats en période d'essai</a>
         <br>
-        <a href="${pageContext.request.contextPath}/rh/revouvEssai">Voir la liste des candidats en renouvellement d'essai</a>
+        <a href="${pageContext.request.contextPath}/rh/essaiRenouv">Voir la liste des candidats en renouvellement d'essai</a>
         <br>
         <a href="${pageContext.request.contextPath}/rh/employe">Liste de nos employes</a>
         <br><br>
