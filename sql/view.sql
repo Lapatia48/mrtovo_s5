@@ -23,6 +23,7 @@ ORDER BY c.nom ASC;
 
 CREATE OR REPLACE VIEW questions_reponses_view AS
 SELECT
+    ROW_NUMBER() OVER () as id,
     q.id AS question_id,
     q.question,
     q.id_departement,

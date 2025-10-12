@@ -38,6 +38,9 @@ public class manager {
     @Autowired
     private AnnonceService annonceService;
 
+    @Autowired
+    private QuestionsReponsesViewService questionsReponsesViewService;
+
     //traitement manager
     @GetMapping("/formLogManager")
     public String formLogManager(Model model) {
@@ -140,6 +143,18 @@ public class manager {
     public String updateAnnonce(Annonce annonce) {
         annonceService.updateAnnonce(annonce); // Sauvegarde les modifications
         return "redirect:/listAnnonceManager"; // Redirige vers la liste des annonces
+    }
+
+
+    @GetMapping("/manager/listQcm")
+    public String listQcm(Model model) {
+        List<QuestionsReponsesView> questionsReponses = questionsReponsesViewService.findAll();
+        List<Departement> departements = departementService.findAll();
+        
+        model.addAttribute("questionsReponses", questionsReponses);
+        model.addAttribute("departements", departements);
+        
+        return "manager/listeQcm";
     }
 
 }
