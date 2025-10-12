@@ -115,31 +115,6 @@ LEFT JOIN note_qcm nq ON c.id = nq.id_candidat
 LEFT JOIN annonce a ON c.id_annonce_postule = a.id
 ORDER BY c.nom ASC, c.prenom ASC;
 
-CREATE OR REPLACE VIEW employe_detail AS
-SELECT 
-    e.id,
-    e.id_candidat,
-    e.nom,
-    e.prenom,
-    e.mail,
-    e.adresse,
-    e.date_naissance,
-    EXTRACT(YEAR FROM AGE(CURRENT_DATE, e.date_naissance)) AS age,
-    e.renseignement,
-    e.annee_experience,
-    e.date_embauche,
-    e.poste,
-    e.salaire,
-    e.statut,
-    d.nom_diplome,
-    dep.libelle_departement,
-    a.titre AS annonce_postulee
-FROM employe e
-LEFT JOIN diplome d ON e.id_diplome = d.id
-LEFT JOIN departement dep ON e.id_departement = dep.id
-LEFT JOIN annonce a ON e.id_annonce_postule = a.id
-ORDER BY e.nom ASC, e.prenom ASC;
-
 
 CREATE OR REPLACE VIEW renouvellement_essai_detail AS
 SELECT 
@@ -167,3 +142,24 @@ JOIN departement dep ON c.id_departement = dep.id
 LEFT JOIN note_qcm nq ON c.id = nq.id_candidat
 LEFT JOIN annonce a ON c.id_annonce_postule = a.id
 ORDER BY c.nom ASC, c.prenom ASC;
+
+
+CREATE OR REPLACE VIEW annonce_detail_candidat AS
+SELECT 
+    c.id AS candidat_id,
+    c.id_annonce_postule,
+    a.id AS annonce_id,
+    a.titre,
+    a.description,
+    a.date_publication,
+    a.age_min,
+    a.age_max,
+    a.nb_personne_utile,
+    a.salaire,
+    d.nom_diplome AS diplome_requis,
+    dep.libelle_departement AS departement_annonce
+FROM 
+    candidat c
+    JOIN annonce a ON c.id_annonce_postule = a.id
+    LEFT JOIN diplome d ON a.id_diplome_requis = d.id
+    LEFT JOIN departement dep ON a.id_departement = dep.id;

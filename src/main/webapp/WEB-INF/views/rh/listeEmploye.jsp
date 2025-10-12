@@ -4,166 +4,756 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Liste des employés</title>
+    <title>Employés - BusinessSuite RH</title>
     <style>
+        /* Variables CSS - Palette Navy Blue + Cream + White */
+        :root {
+            --navy-blue: #1A365D;
+            --navy-light: #2D4A7C;
+            --navy-dark: #0F1F3D;
+            --cream: #F8F9FA;
+            --cream-dark: #E9ECEF;
+            --white: #FFFFFF;
+            --gray: #6C757D;
+            --gray-light: #DEE2E6;
+            --gray-lighter: #F8F9FA;
+            --accent: #2563EB;
+            --success: #198754;
+            --warning: #FFC107;
+            --danger: #DC3545;
+            --info: #0DCAF0;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 10px rgba(26, 54, 93, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset et styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            line-height: 1.5;
+            color: var(--navy-blue);
+            background: var(--cream);
+            min-height: 100vh;
+        }
+
+        /* Layout Principal */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: var(--navy-blue);
+            color: var(--white);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid var(--navy-light);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-header p {
+            font-size: 0.875rem;
+            color: var(--gray-light);
+            opacity: 0.8;
+        }
+
+        .nav-menu {
+            padding: 1.5rem 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1.5rem;
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--navy-light);
+            border-left-color: var(--accent);
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Contenu Principal */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .page-title h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--navy-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        .page-title p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            background: var(--navy-blue);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background: var(--navy-light);
+        }
+
+        /* Section Filtres */
         .filter-section {
-            background-color: #f5f5f5;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
         }
-        .filter-section input, .filter-section select {
-            margin: 5px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+
+        .filter-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--navy-blue);
+            margin-bottom: 1rem;
         }
-        table {
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--navy-blue);
+        }
+
+        .filter-input, .filter-select {
+            padding: 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-size: 0.875rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--navy-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .global-search {
+            grid-column: 1 / -1;
+        }
+
+        .global-search input {
+            width: 100%;
+            padding: 0.875rem;
+            font-size: 0.9rem;
+        }
+
+        .filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--navy-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--navy-light);
+        }
+
+        .btn-secondary {
+            background: var(--gray-light);
+            color: var(--navy-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background: #157347;
+        }
+
+        /* Tableau des employés */
+        .table-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--navy-blue);
+        }
+
+        .table-count {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            font-size: 0.875rem;
         }
-        th, td {
-            padding: 10px;
+
+        .data-table th {
+            background: var(--gray-lighter);
+            color: var(--navy-blue);
+            padding: 1rem;
             text-align: left;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
+            font-weight: 600;
+            border-bottom: 1px solid var(--gray-light);
             cursor: pointer;
+            user-select: none;
+            transition: var(--transition);
         }
-        th:hover {
-            background-color: #e6e6e6;
+
+        .data-table th:hover {
+            background: var(--gray-light);
         }
-        button {
-            padding: 8px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+
+        .data-table th i {
+            margin-left: 0.5rem;
+            opacity: 0.5;
         }
-        button:hover {
-            background-color: #45a049;
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-light);
         }
-        #noResults {
-            display: none;
+
+        .data-table tbody tr:hover {
+            background: var(--gray-lighter);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .badge-warning {
+            background: var(--warning);
+            color: var(--navy-blue);
+        }
+
+        .badge-danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .badge-info {
+            background: var(--info);
+            color: var(--white);
+        }
+
+        /* Actions */
+        .action-link {
+            color: var(--navy-blue);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .action-link:hover {
+            background: var(--navy-blue);
+            color: var(--white);
+            border-color: var(--navy-blue);
+        }
+
+        .action-link.success {
+            background: var(--success);
+            color: var(--white);
+            border-color: var(--success);
+        }
+
+        .action-link.success:hover {
+            background: #157347;
+            border-color: #157347;
+        }
+
+        /* Message aucun résultat */
+        .no-results {
             text-align: center;
-            padding: 20px;
-            font-size: 16px;
-            color: #666;
+            padding: 3rem;
+            color: var(--gray);
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 250px;
+            }
+            .main-content {
+                margin-left: 250px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            .table-container {
+                overflow-x: auto;
+            }
+            .data-table {
+                min-width: 1200px;
+            }
+            .filter-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .table-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <h2>Liste des employés</h2>
-    <a href="${pageContext.request.contextPath}/accueilRh">Retour</a>
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>BusinessSuite RH</h1>
+                <p>Gestion des ressources humaines</p>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/accueilRh" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Tableau de Bord
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/rh/candidats" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        Tout les candidats
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/rh/listCandidatRefuse" class="nav-link">
+                        <i class="fas fa-user-times"></i>
+                        Candidats Refusés
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/rh/essai" class="nav-link">
+                        <i class="fas fa-clock"></i>
+                        Période d'Essai
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/rh/essaiRenouv" class="nav-link">
+                        <i class="fas fa-sync-alt"></i>
+                        Renouvellement Essai
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/rh/employe" class="nav-link active">
+                        <i class="fas fa-user-tie"></i>
+                        Employés
+                    </a>
+                </div>
+            </div>
+        </nav>
 
-    <!-- Section Filtres -->
-    <div class="filter-section">
-        <h3>Filtres des employés</h3>
-        <input type="text" id="globalSearch" placeholder="Rechercher dans tous les champs..." style="width: 300px;">
-        
-        <br>
-        <input type="text" id="nomFilter" placeholder="Filtrer par nom...">
-        <input type="text" id="prenomFilter" placeholder="Filtrer par prénom...">
-        <input type="text" id="emailFilter" placeholder="Filtrer par email...">
-        <input type="text" id="adresseFilter" placeholder="Filtrer par adresse...">
-        <input type="text" id="departementFilter" placeholder="Filtrer par département...">
-        <input type="text" id="posteFilter" placeholder="Filtrer par poste...">
-        <input type="text" id="diplomeFilter" placeholder="Filtrer par diplôme...">
-        
-        <br>
-        <select id="ageFilter">
-            <option value="">Tous les âges</option>
-            <option value="18">18+ ans</option>
-            <option value="18-35">18 à 35 ans</option>
-            <option value="35">35+ ans</option>
-        </select>
+        <!-- Contenu Principal -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="page-title">
+                    <h2>Gestion des Employés</h2>
+                    <p>Liste et gestion de tous les employés de l'entreprise</p>
+                </div>
+                <div class="user-menu">
+                    <a href="${pageContext.request.contextPath}/accueilRh" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Retour au Dashboard
+                    </a>
+                    <a href="${pageContext.request.contextPath}/logout" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Déconnexion
+                    </a>
+                </div>
+            </div>
 
-        <select id="experienceFilter">
-            <option value="">Toutes les expériences</option>
-            <option value="0">0 an</option>
-            <option value="1">1+ an</option>
-            <option value="2">2+ ans</option>
-            <option value="3">3+ ans</option>
-            <option value="4">4+ ans</option>
-            <option value="5">5+ ans</option>
-        </select>
+            <!-- Section Filtres -->
+            <div class="filter-section">
+                <h3><i class="fas fa-filter"></i> Filtres des employés</h3>
+                
+                <div class="filter-grid">
+                    <div class="filter-group global-search">
+                        <label for="globalSearch">Recherche globale</label>
+                        <input type="text" id="globalSearch" class="filter-input" placeholder="Rechercher dans tous les champs...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="nomFilter">Nom</label>
+                        <input type="text" id="nomFilter" class="filter-input" placeholder="Filtrer par nom...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="prenomFilter">Prénom</label>
+                        <input type="text" id="prenomFilter" class="filter-input" placeholder="Filtrer par prénom...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="emailFilter">Email</label>
+                        <input type="text" id="emailFilter" class="filter-input" placeholder="Filtrer par email...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="adresseFilter">Adresse</label>
+                        <input type="text" id="adresseFilter" class="filter-input" placeholder="Filtrer par adresse...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="departementFilter">Département</label>
+                        <input type="text" id="departementFilter" class="filter-input" placeholder="Filtrer par département...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="posteFilter">Poste</label>
+                        <input type="text" id="posteFilter" class="filter-input" placeholder="Filtrer par poste...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="diplomeFilter">Diplôme</label>
+                        <input type="text" id="diplomeFilter" class="filter-input" placeholder="Filtrer par diplôme...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="ageFilter">Âge</label>
+                        <select id="ageFilter" class="filter-select">
+                            <option value="">Tous les âges</option>
+                            <option value="18">18+ ans</option>
+                            <option value="18-35">18 à 35 ans</option>
+                            <option value="35">35+ ans</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="experienceFilter">Expérience</label>
+                        <select id="experienceFilter" class="filter-select">
+                            <option value="">Toutes les expériences</option>
+                            <option value="0">0 an</option>
+                            <option value="1">1+ an</option>
+                            <option value="2">2+ ans</option>
+                            <option value="3">3+ ans</option>
+                            <option value="4">4+ ans</option>
+                            <option value="5">5+ ans</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="salaireFilter">Salaire minimum</label>
+                        <select id="salaireFilter" class="filter-select">
+                            <option value="">Tous les salaires</option>
+                            <option value="500000">500 000 Ar+</option>
+                            <option value="800000">800 000 Ar+</option>
+                            <option value="1000000">1 000 000 Ar+</option>
+                            <option value="1500000">1 500 000 Ar+</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="statutFilter">Statut</label>
+                        <select id="statutFilter" class="filter-select">
+                            <option value="">Tous les statuts</option>
+                            <option value="actif">Actif</option>
+                            <option value="inactif">Inactif</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateEmbaucheSort">Tri par date d'embauche</label>
+                        <select id="dateEmbaucheSort" class="filter-select">
+                            <option value="">Ordre par défaut</option>
+                            <option value="asc">Date croissante</option>
+                            <option value="desc">Date décroissante</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-actions">
+                    <button onclick="resetFilters()" class="btn btn-secondary">
+                        <i class="fas fa-undo"></i>
+                        Réinitialiser
+                    </button>
+                </div>
+            </div>
 
-        <select id="salaireFilter">
-            <option value="">Tous les salaires</option>
-            <option value="500000">500 000 Ar+</option>
-            <option value="800000">800 000 Ar+</option>
-            <option value="1000000">1 000 000 Ar+</option>
-            <option value="1500000">1 500 000 Ar+</option>
-        </select>
-        
-        <select id="statutFilter">
-            <option value="">Tous les statuts</option>
-            <option value="actif">Actif</option>
-            <option value="inactif">Inactif</option>
-        </select>
+            <!-- Tableau des employés -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Liste des employés</h3>
+                    <div class="table-count" id="resultCount">
+                        ${employes.size()} employé(s) trouvé(s)
+                    </div>
+                </div>
+                
+                <table class="data-table" id="employesTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Nom <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(1)">Prénom <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(2)">Email <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(3)">Adresse <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(4)">Date de naissance <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(5)">Âge <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(6)">Département <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(7)">Poste <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(8)">Expérience <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(9)">Diplôme <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(10)">Date d'embauche <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(11)">Salaire <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(12)">Statut <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employesBody">
+                        <c:forEach var="e" items="${employes}">
+                            <tr>
+                                <td><strong>${e.nom}</strong></td>
+                                <td>${e.prenom}</td>
+                                <td>${e.mail}</td>
+                                <td>${e.adresse}</td>
+                                <td>${e.dateNaissance}</td>
+                                <!-- <td>
+                                    <span class="badge badge-info">${e.age} ans</span>
+                                </td>
+                                <td>${e.departement}</td>
+                                <td>
+                                    <span class="badge badge-success">${e.poste}</span>
+                                </td>
+                                <td>
+                                    <span class="badge ${e.anneeExperience >= 3 ? 'badge-success' : e.anneeExperience >= 1 ? 'badge-warning' : 'badge-info'}">
+                                        ${e.anneeExperience} ans
+                                    </span>
+                                </td> -->
 
-        <select id="dateEmbaucheSort">
-            <option value="">Trier par date d'embauche</option>
-            <option value="asc">Date croissante</option>
-            <option value="desc">Date décroissante</option>
-        </select>
-        
-        <button onclick="resetFilters()">Réinitialiser</button>
-    </div>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not empty e.age}">
+                                            <span class="badge badge-info">${e.age} ans</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge badge-info">Non spécifié</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>${e.departement}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not empty e.poste}">
+                                            <span class="badge badge-success">${e.poste}</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge badge-info">Non spécifié</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not empty e.anneeExperience}">
+                                            <span class="badge ${e.anneeExperience >= 3 ? 'badge-success' : e.anneeExperience >= 1 ? 'badge-warning' : 'badge-info'}">
+                                                ${e.anneeExperience} ans
+                                            </span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge badge-info">0 an</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
 
-    <!-- Tableau des employés -->
-    <div id="tableContainer">
-        <table border="1" cellpadding="5" id="employesTable">
-            <thead>
-                <tr>
-                    <th onclick="sortTable(0)">Nom</th>
-                    <th onclick="sortTable(1)">Prénom</th>
-                    <th onclick="sortTable(2)">Email</th>
-                    <th onclick="sortTable(3)">Adresse</th>
-                    <th onclick="sortTable(4)">Date de naissance</th>
-                    <th onclick="sortTable(5)">Âge</th>
-                    <th onclick="sortTable(6)">Département</th>
-                    <th onclick="sortTable(7)">Poste</th>
-                    <th onclick="sortTable(8)">Expérience</th>
-                    <th onclick="sortTable(9)">Diplôme</th>
-                    <th onclick="sortTable(10)">Date d'embauche</th>
-                    <th onclick="sortTable(11)">Salaire</th>
-                    <th onclick="sortTable(12)">Statut</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="employesBody">
-                <c:forEach var="e" items="${employes}">
-                    <tr>
-                        <td>${e.nom}</td>
-                        <td>${e.prenom}</td>
-                        <td>${e.mail}</td>
-                        <td>${e.adresse}</td>
-                        <td>${e.dateNaissance}</td>
-                        <td>${e.age} ans</td>
-                        <td>${e.departement}</td>
-                        <td>${e.poste}</td>
-                        <td>${e.anneeExperience} ans</td>
-                        <td>${e.diplome}</td>
-                        <td>${e.dateEmbauche}</td>
-                        <td>${e.salaire} Ar</td>
-                        <td>${e.statut}</td>
-                        <td>
-                            <a href="${pageContext.request.contextPath}/rh/candidats/pdf?id_cand=${e.idCandidat}">exporter en pdf</a>
-                        </td>
-                    </tr>
-                </c:forEach>
-            </tbody>
-        </table>
-        <div id="noResults" style="display: none; text-align: center; padding: 20px;">
-            Aucun employé ne correspond aux critères de recherche.
-        </div>
+
+                                <td>${e.diplome}</td>
+                                <td>${e.dateEmbauche}</td>
+                                <td>
+                                    <strong>${e.salaire} Ar</strong>
+                                </td>
+                                <td>
+                                    <span class="badge ${e.statut == 'actif' ? 'badge-success' : 'badge-danger'}">
+                                        ${e.statut}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="${pageContext.request.contextPath}/rh/candidats/pdf?id_cand=${e.idCandidat}" class="action-link success" title="Exporter en PDF">
+                                        <i class="fas fa-file-pdf"></i>
+                                        PDF
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+                
+                <div id="noResults" class="no-results" style="display: none;">
+                    <i class="fas fa-search"></i>
+                    <h3>Aucun employé trouvé</h3>
+                    <p>Aucun employé ne correspond aux critères de recherche sélectionnés.</p>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script>
+        // Le script JavaScript adapté pour les employés
         let currentSortColumn = -1;
         let sortDirection = 1;
 
@@ -302,6 +892,9 @@
                 if (showRow) visibleCount++;
             });
 
+            // Mettre à jour le compteur
+            document.getElementById('resultCount').textContent = visibleCount + ' employé(s) trouvé(s)';
+            
             // Afficher/masquer le message "Aucun résultat"
             document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
         }
@@ -368,9 +961,10 @@
         function updateSortIndicators(columnIndex, order) {
             const headers = document.querySelectorAll('#employesTable th');
             headers.forEach((header, index) => {
-                header.textContent = header.textContent.replace(' ▲', '').replace(' ▼', '');
+                header.innerHTML = header.innerHTML.replace(/<i class="fas fa-sort-(up|down)"><\/i>/, '') + '<i class="fas fa-sort"></i>';
                 if (index === columnIndex) {
-                    header.textContent += order === 'asc' ? ' ▲' : ' ▼';
+                    header.innerHTML = header.innerHTML.replace('<i class="fas fa-sort"></i>', 
+                        order === 'asc' ? '<i class="fas fa-sort-up"></i>' : '<i class="fas fa-sort-down"></i>');
                 }
             });
         }
@@ -390,18 +984,47 @@
             document.getElementById('statutFilter').value = '';
             document.getElementById('dateEmbaucheSort').value = '';
             
-            // Réinitialiser les indicateurs de tri
-            const headers = document.querySelectorAll('#employesTable th');
-            headers.forEach(header => {
-                header.textContent = header.textContent.replace(' ▲', '').replace(' ▼', '');
-            });
-            
             filterTable();
         }
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
             filterTable();
+            
+            // Menu responsive
+            const menuToggle = document.createElement('button');
+            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            menuToggle.style.cssText = `
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                background: var(--navy-blue);
+                color: white;
+                border: none;
+                padding: 0.5rem;
+                border-radius: var(--border-radius);
+                cursor: pointer;
+                z-index: 1001;
+                display: none;
+            `;
+            
+            document.body.appendChild(menuToggle);
+            
+            menuToggle.addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('active');
+            });
+
+            function handleResize() {
+                if (window.innerWidth <= 992) {
+                    menuToggle.style.display = 'block';
+                } else {
+                    menuToggle.style.display = 'none';
+                    document.querySelector('.sidebar').classList.remove('active');
+                }
+            }
+
+            window.addEventListener('resize', handleResize);
+            handleResize();
         });
     </script>
 </body>

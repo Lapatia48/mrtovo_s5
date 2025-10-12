@@ -53,6 +53,9 @@ public class rh {
     @Autowired
     private RenouvellementEssaiDetailService renouvellementEssaiDetailService;
 
+    @Autowired
+    private AnnonceDetailCandidatService annonceDetailCandidatService;
+
     // traitement login rh
     @GetMapping("/formLogRh")
         public String formLogRh(Model model) {
@@ -143,9 +146,13 @@ public class rh {
             // Récupérer les détails de l'annonce depuis la vue des admis QCM (ou autre source)
             Optional<CandidatAdmisQcmDetails> candidatAdmis = candidatAdmisQcmDetailsService.findByIdCandidat(idCandidat);
             
+            // Récupérer les détails de l'annonce depuis la nouvelle vue
+            Optional<AnnonceDetailCandidat> annonceDetail = annonceDetailCandidatService.findByIdCandidat(idCandidat);
+            
             // Ajouter les données au modèle
             model.addAttribute("candidat", candidat);
             model.addAttribute("candidatAdmis", candidatAdmis.orElse(null));
+            model.addAttribute("annonce", annonceDetail.orElse(null));
             
             return "rh/entretien";
             

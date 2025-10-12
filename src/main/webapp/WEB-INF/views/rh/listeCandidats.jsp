@@ -4,119 +4,699 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Liste des candidats</title>
+    <title>Liste des Candidats - BusinessSuite</title>
+    <style>
+        /* Variables CSS - Palette Navy Blue + Cream + White */
+        :root {
+            --navy-blue: #1A365D;
+            --navy-light: #2D4A7C;
+            --navy-dark: #0F1F3D;
+            --cream: #F8F9FA;
+            --cream-dark: #E9ECEF;
+            --white: #FFFFFF;
+            --gray: #6C757D;
+            --gray-light: #DEE2E6;
+            --gray-lighter: #F8F9FA;
+            --accent: #2563EB;
+            --success: #198754;
+            --border-radius: 6px;
+            --box-shadow: 0 2px 10px rgba(26, 54, 93, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset et styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            line-height: 1.5;
+            color: var(--navy-blue);
+            background: var(--cream);
+            min-height: 100vh;
+        }
+
+        /* Layout Principal */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: var(--navy-blue);
+            color: var(--white);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid var(--navy-light);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-header p {
+            font-size: 0.875rem;
+            color: var(--gray-light);
+            opacity: 0.8;
+        }
+
+        .nav-menu {
+            padding: 1.5rem 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1.5rem;
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--navy-light);
+            border-left-color: var(--accent);
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Contenu Principal */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .page-title h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--navy-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        .page-title p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: var(--navy-blue);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: var(--navy-light);
+        }
+
+        .logout-btn {
+            background: var(--navy-blue);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background: var(--navy-light);
+        }
+
+        /* Cartes de Statistiques */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border-left: 4px solid var(--navy-blue);
+        }
+
+        .stat-card h3 {
+            font-size: 0.875rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--navy-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-trend {
+            font-size: 0.875rem;
+            color: var(--success);
+        }
+
+        /* Section Filtres */
+        .filter-section {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--navy-blue);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-input, .filter-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-size: 0.875rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--navy-blue);
+            box-shadow: 0 0 0 2px rgba(26, 54, 93, 0.1);
+        }
+
+        .filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--navy-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--navy-light);
+        }
+
+        .btn-secondary {
+            background: var(--gray-light);
+            color: var(--navy-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray);
+            color: var(--white);
+        }
+
+        /* Tableau */
+        .table-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--navy-blue);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .candidats-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .candidats-table th {
+            background: var(--gray-lighter);
+            color: var(--navy-blue);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--gray-light);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .candidats-table th:hover {
+            background: var(--cream-dark);
+        }
+
+        .candidats-table th::after {
+            content: '↕';
+            position: absolute;
+            right: 15px;
+            opacity: 0.7;
+            font-size: 0.8rem;
+        }
+
+        .candidats-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .candidats-table tbody tr:nth-child(even) {
+            background: var(--gray-lighter);
+        }
+
+        .candidats-table tbody tr:hover {
+            background: var(--cream);
+        }
+
+        .candidats-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badges et Actions */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-noted {
+            background: var(--navy-blue);
+            color: var(--white);
+        }
+
+        .status-not-rated {
+            background: var(--gray-light);
+            color: var(--gray);
+        }
+
+        .action-link {
+            color: var(--navy-blue);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .action-link:hover {
+            background: var(--navy-blue);
+            color: var(--white);
+            border-color: var(--navy-blue);
+        }
+
+        /* Indicateurs de tri */
+        .sort-asc::after {
+            content: ' ↑' !important;
+            opacity: 1 !important;
+        }
+
+        .sort-desc::after {
+            content: ' ↓' !important;
+            opacity: 1 !important;
+        }
+
+        /* Message aucun résultat */
+        .no-results {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--gray);
+            font-size: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 250px;
+            }
+            .main-content {
+                margin-left: 250px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            .table-container {
+                overflow-x: auto;
+            }
+            .candidats-table {
+                min-width: 1000px;
+            }
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .filter-actions {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+            .table-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <h2>Liste des candidats</h2>
-    <a href="${pageContext.request.contextPath}/accueilRh">Retour</a>
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>BusinessSuite RH</h1>
+                <p>Gestion des ressources humaines</p>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/accueilRh" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Tableau de Bord
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/rh/candidats" class="nav-link active">
+                        <i class="fas fa-users"></i>
+                        Tout les candidats
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/rh/listCandidatRefuse" class="nav-link">
+                        <i class="fas fa-user-times"></i>
+                        Candidats Refusés
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/rh/essai" class="nav-link">
+                        <i class="fas fa-clock"></i>
+                        Période d'Essai
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/rh/essaiRenouv" class="nav-link">
+                        <i class="fas fa-sync-alt"></i>
+                        Renouvellement Essai
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="${pageContext.request.contextPath}/rh/employe" class="nav-link">
+                        <i class="fas fa-user-tie"></i>
+                        Employés
+                    </a>
+                </div>
+                <!-- <div class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-list"></i>
+                        Tous les candidats
+                    </a>
+                </div> -->
+            </div>
+        </nav>
 
-    <!-- Section Filtres -->
-    <div class="filter-section">
-        <h3>Filtres des candidats</h3>
-        <input type="text" id="globalSearch" placeholder="Rechercher dans tous les champs..." style="width: 300px;">
-        
-        <br>
-        <input type="text" id="nomFilter" placeholder="Filtrer par nom...">
-        <input type="text" id="prenomFilter" placeholder="Filtrer par prénom...">
-        <input type="text" id="emailFilter" placeholder="Filtrer par email...">
-        <input type="text" id="adresseFilter" placeholder="Filtrer par adresse...">
-        <input type="text" id="departementFilter" placeholder="Filtrer par poste...">
-        <input type="text" id="diplomeFilter" placeholder="Filtrer par diplôme...">
-        
-        <br>
-        <select id="ageFilter">
-            <option value="">Tous les âges</option>
-            <option value="18">18+ ans</option>
-            <option value="18-35">18 à 35 ans</option>
-            <option value="35">35+ ans</option>
-        </select>
+        <!-- Contenu Principal -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="page-title">
+                    <h2>Liste des Candidats</h2>
+                    <p>Gestion complète des profils candidats</p>
+                </div>
+                <div class="user-menu">
+                    <a href="${pageContext.request.contextPath}/accueilRh" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Retour au Dashboard
+                    </a>
+                    <a href="${pageContext.request.contextPath}/logout" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Déconnexion
+                    </a>
+                </div>
+            </div>
 
-        <select id="experienceFilter">
-            <option value="">Toutes les expériences</option>
-            <option value="0">0 an</option>
-            <option value="1">1+ an</option>
-            <option value="2">2+ ans</option>
-            <option value="3">3+ ans</option>
-            <option value="4">4+ ans</option>
-            <option value="5">5+ ans</option>
-        </select>
-        
-        <select id="dateSort">
-            <option value="">Trier par date</option>
-            <option value="asc">Date croissante</option>
-            <option value="desc">Date décroissante</option>
-        </select>
+            <!-- Cartes de Statistiques -->
+            <!-- <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Candidats</h3>
+                    <div class="stat-number">${candidats.size()}</div>
+                    <div class="stat-trend">+8% ce mois</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Notes Moyennes</h3>
+                    <div class="stat-number">72%</div>
+                    <div class="stat-trend">+3% vs dernier mois</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Nouveaux Candidats</h3>
+                    <div class="stat-number">15</div>
+                    <div class="stat-trend">Cette semaine</div>
+                </div>
+            </div> -->
 
-        <!-- NOUVEAU : Select pour la note QCM -->
-        <select id="noteQcmFilter">
-            <option value="">Toutes les notes</option>
-            <option value="50-">Moins de 50%</option>
-            <option value="50+">50% et plus</option>
-            <option value="75+">75% et plus</option>
-            <option value="100">100%</option>
-            <option value="non-note">Non noté</option>
-        </select>
-        
-        <button onclick="resetFilters()">Réinitialiser</button>
-    </div>
+            <!-- Section Filtres -->
+            <div class="filter-section">
+                <div class="filter-header">
+                    <h3>Filtres des candidats</h3>
+                </div>
+                
+                <input type="text" id="globalSearch" class="filter-input" placeholder="Rechercher dans tous les champs..." style="margin-bottom: 1rem;">
+                
+                <div class="filter-grid">
+                    <input type="text" id="nomFilter" class="filter-input" placeholder="Filtrer par nom">
+                    <input type="text" id="prenomFilter" class="filter-input" placeholder="Filtrer par prénom">
+                    <input type="text" id="emailFilter" class="filter-input" placeholder="Filtrer par email">
+                    <input type="text" id="adresseFilter" class="filter-input" placeholder="Filtrer par adresse">
+                    <input type="text" id="departementFilter" class="filter-input" placeholder="Filtrer par poste">
+                    <input type="text" id="diplomeFilter" class="filter-input" placeholder="Filtrer par diplôme">
+                    
+                    <select id="ageFilter" class="filter-select">
+                        <option value="">Tous les âges</option>
+                        <option value="18">18+ ans</option>
+                        <option value="18-35">18 à 35 ans</option>
+                        <option value="35">35+ ans</option>
+                    </select>
 
-    <!-- Tableau des candidats -->
-    <div id="tableContainer">
-        <table border="1" cellpadding="5" id="candidatsTable">
-            <thead>
-                <tr>
-                    <th onclick="sortTable(0)">Nom</th>
-                    <th onclick="sortTable(1)">Prénom</th>
-                    <th onclick="sortTable(2)">Email</th>
-                    <th onclick="sortTable(3)">Adresse</th>
-                    <th onclick="sortTable(4)">Date de naissance</th>
-                    <th onclick="sortTable(5)">Âge</th>
-                    <th onclick="sortTable(6)">Departement</th>
-                    <th onclick="sortTable(7)">Expérience</th>
-                    <th onclick="sortTable(8)">Diplôme</th>
-                    <th onclick="sortTable(9)">Date de postulation</th>
-                    <th>Note QCM</th>
-                    <th>PDF</th>
-                </tr>
-            </thead>
-            <tbody id="candidatsBody">
-                <c:forEach var="c" items="${candidats}">
-                    <tr>
-                        <td>${c.nom}</td>
-                        <td>${c.prenom}</td>
-                        <td>${c.mail}</td>
-                        <td>${c.adresse}</td>
-                        <td>${c.dateNaissance}</td>
-                        <td>${c.age} ans</td>
-                        <td>${c.departement}</td>
-                        <td>${c.anneeExperience} ans</td>
-                        <td>${c.diplome}</td>
-                        <td>${c.datePostule}</td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${c.noteQcm != null}">
-                                    ${c.noteQcm}%
-                                </c:when>
-                                <c:otherwise>
-                                    Non noté
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td><a href="${pageContext.request.contextPath}/rh/candidats/pdf?id_cand=${c.id}">PDF</a></td>
-                    </tr>
-                </c:forEach>
-            </tbody>
-        </table>
-        <div id="noResults" style="display: none; text-align: center; padding: 20px;">
-            Aucun candidat ne correspond aux critères de recherche.
-        </div>
+                    <select id="experienceFilter" class="filter-select">
+                        <option value="">Toutes les expériences</option>
+                        <option value="0">0 an</option>
+                        <option value="1">1+ an</option>
+                        <option value="2">2+ ans</option>
+                        <option value="3">3+ ans</option>
+                        <option value="4">4+ ans</option>
+                        <option value="5">5+ ans</option>
+                    </select>
+                    
+                    <select id="dateSort" class="filter-select">
+                        <option value="">Trier par date</option>
+                        <option value="asc">Date croissante</option>
+                        <option value="desc">Date décroissante</option>
+                    </select>
+
+                    <select id="noteQcmFilter" class="filter-select">
+                        <option value="">Toutes les notes</option>
+                        <option value="50-">Moins de 50%</option>
+                        <option value="50+">50% et plus</option>
+                        <option value="75+">75% et plus</option>
+                        <option value="100">100%</option>
+                        <option value="non-note">Non noté</option>
+                    </select>
+                </div>
+                
+                <div class="filter-actions">
+                    <button onclick="resetFilters()" class="btn btn-secondary">Réinitialiser</button>
+                </div>
+            </div>
+
+            <!-- Tableau des candidats -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Tous les Candidats</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i>
+                            Exporter
+                        </button>
+                    </div>
+                </div>
+                
+                <table class="candidats-table" id="candidatsTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Nom</th>
+                            <th onclick="sortTable(1)">Prénom</th>
+                            <th onclick="sortTable(2)">Email</th>
+                            <th onclick="sortTable(3)">Adresse</th>
+                            <th onclick="sortTable(4)">Date de naissance</th>
+                            <th onclick="sortTable(5)">Âge</th>
+                            <th onclick="sortTable(6)">Departement</th>
+                            <th onclick="sortTable(7)">Expérience</th>
+                            <th onclick="sortTable(8)">Diplôme</th>
+                            <th onclick="sortTable(9)">Date de postulation</th>
+                            <th>Note QCM</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="candidatsBody">
+                        <c:forEach var="c" items="${candidats}">
+                            <tr>
+                                <td><strong>${c.nom}</strong></td>
+                                <td>${c.prenom}</td>
+                                <td>${c.mail}</td>
+                                <td>${c.adresse}</td>
+                                <td>${c.dateNaissance}</td>
+                                <td>${c.age} ans</td>
+                                <td>${c.departement}</td>
+                                <td>${c.anneeExperience} ans</td>
+                                <td>${c.diplome}</td>
+                                <td>${c.datePostule}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${c.noteQcm != null}">
+                                            <span class="status-badge status-noted">${c.noteQcm}%</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="status-badge status-not-rated">Non noté</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>
+                                    <a href="${pageContext.request.contextPath}/rh/candidats/pdf?id_cand=${c.id}" class="action-link" title="Télécharger PDF">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+                <div id="noResults" class="no-results" style="display: none;">
+                    <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p>Aucun candidat ne correspond aux critères de recherche.</p>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script>
+        // Script JavaScript identique à la version précédente
         let currentSortColumn = -1;
         let sortDirection = 1;
 
-        // Écouteurs d'événements pour les filtres
         document.getElementById('globalSearch').addEventListener('input', filterTable);
         document.getElementById('nomFilter').addEventListener('input', filterTable);
         document.getElementById('prenomFilter').addEventListener('input', filterTable);
@@ -148,10 +728,9 @@
                 const cells = row.getElementsByTagName('td');
                 let showRow = true;
 
-                // Filtre global
                 if (globalSearch) {
                     let rowText = '';
-                    for (let i = 0; i < cells.length - 1; i++) { // -1 pour exclure la colonne PDF
+                    for (let i = 0; i < cells.length - 1; i++) {
                         rowText += cells[i].textContent.toLowerCase() + ' ';
                     }
                     if (!rowText.includes(globalSearch)) {
@@ -159,7 +738,6 @@
                     }
                 }
 
-                // Filtres individuels
                 if (showRow && nomFilter && !cells[0].textContent.toLowerCase().includes(nomFilter)) {
                     showRow = false;
                 }
@@ -179,7 +757,6 @@
                     showRow = false;
                 }
 
-                // Filtre par âge
                 if (showRow && ageFilter !== '') {
                     const ageCell = cells[5].textContent;
                     const ageMatch = ageCell.match(/(\d+)/);
@@ -198,7 +775,6 @@
                     }
                 }
 
-                // Filtre par expérience
                 if (showRow && experienceFilter !== '') {
                     const expCell = cells[7].textContent;
                     const expMatch = expCell.match(/(\d+)/);
@@ -214,52 +790,43 @@
                     }
                 }
 
-                // Filtre par note QCM
                 if (showRow && noteQcmFilter !== '') {
                     const noteQcmCell = cells[10].textContent.trim();
                     
-                    // Si on filtre "non noté"
                     if (noteQcmFilter === "non-note") {
-                        // On garde seulement les lignes qui contiennent "Non noté"
                         if (!noteQcmCell.includes("Non noté")) {
                             showRow = false;
                         }
                     } 
-                    // Si la cellule contient une note numérique (pas "Non noté")
                     else if (noteQcmCell !== "Non noté") {
-                        // On extrait le nombre du texte (ex: "80%" → 80)
                         const noteMatch = noteQcmCell.match(/(\d+)%/);
                         if (noteMatch) {
                             const note = parseInt(noteMatch[1]);
                             
-                            // Application des différents filtres
                             switch(noteQcmFilter) {
                                 case "50-":
-                                    if (note >= 50) showRow = false; // Cache si note >= 50
+                                    if (note >= 50) showRow = false;
                                     break;
                                 case "50+":
-                                    if (note < 50) showRow = false;  // Cache si note < 50
+                                    if (note < 50) showRow = false;
                                     break;
                                 case "75+":
-                                    if (note < 75) showRow = false;  // Cache si note < 75
+                                    if (note < 75) showRow = false;
                                     break;
                                 case "100":
-                                    if (note !== 100) showRow = false; // Cache si note ≠ 100
+                                    if (note !== 100) showRow = false;
                                     break;
                             }
                         }
                     } else {
-                        // Si cellule = "Non noté" mais filtre = note numérique → cache
                         showRow = false;
                     }
                 }
-
 
                 row.style.display = showRow ? '' : 'none';
                 if (showRow) visibleCount++;
             });
 
-            // Afficher/masquer le message "Aucun résultat"
             document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
         }
 
@@ -273,8 +840,6 @@
         function sortTable(columnIndex) {
             const sortOrder = sortDirection === 1 ? 'asc' : 'desc';
             sortTableByColumn(columnIndex, sortOrder);
-            
-            // Inverser la direction pour le prochain clic
             sortDirection = -sortDirection;
         }
 
@@ -288,11 +853,10 @@
 
                 let aValue, bValue;
 
-                // Gestion spéciale pour les colonnes numériques
-                if (columnIndex === 5 || columnIndex === 7) { // Âge et Expérience
+                if (columnIndex === 5 || columnIndex === 7) {
                     aValue = extractNumber(aCell);
                     bValue = extractNumber(bCell);
-                } else if (columnIndex === 9) { // Date
+                } else if (columnIndex === 9) {
                     aValue = new Date(aCell);
                     bValue = new Date(bCell);
                 } else {
@@ -307,10 +871,7 @@
                 return order === 'desc' ? -result : result;
             });
 
-            // Réinsérer les lignes triées
             rows.forEach(row => tbody.appendChild(row));
-
-            // Mettre à jour les indicateurs de tri
             updateSortIndicators(columnIndex, order);
         }
 
@@ -322,9 +883,9 @@
         function updateSortIndicators(columnIndex, order) {
             const headers = document.querySelectorAll('#candidatsTable th');
             headers.forEach((header, index) => {
-                header.textContent = header.textContent.replace(' ▲', '').replace(' ▼', '');
+                header.className = '';
                 if (index === columnIndex) {
-                    header.textContent += order === 'asc' ? ' ▲' : ' ▼';
+                    header.className = order === 'asc' ? 'sort-asc' : 'sort-desc';
                 }
             });
         }
@@ -342,16 +903,14 @@
             document.getElementById('dateSort').value = '';
             document.getElementById('noteQcmFilter').value = '';
             
-            // Réinitialiser les indicateurs de tri
             const headers = document.querySelectorAll('#candidatsTable th');
             headers.forEach(header => {
-                header.textContent = header.textContent.replace(' ▲', '').replace(' ▼', '');
+                header.className = '';
             });
             
             filterTable();
         }
 
-        // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
             filterTable();
         });
