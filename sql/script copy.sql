@@ -80,8 +80,8 @@ CREATE TABLE reponse (
 
 CREATE TABLE vrai_reponse (
     id SERIAL PRIMARY KEY,
-    id_question INT REFERENCES questions(id),
-    id_reponse INT REFERENCES reponse(id)
+    id_question INT REFERENCES questions(id) ON DELETE CASCADE,
+    id_reponse INT REFERENCES reponse(id) ON DELETE CASCADE
 );
 
 CREATE TABLE note_qcm (

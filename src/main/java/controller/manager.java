@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import entity.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import service.*;
 import repository.*;
 
@@ -40,6 +41,9 @@ public class manager {
 
     @Autowired
     private QuestionsReponsesViewService questionsReponsesViewService;
+
+    @Autowired
+    private QuestionService questionService;
 
     //traitement manager
     @GetMapping("/formLogManager")
@@ -156,5 +160,26 @@ public class manager {
         
         return "manager/listeQcm";
     }
+
+    @Transactional
+    @GetMapping("/manager/supprimerQcm")
+    public String supprimerQcm(@RequestParam("id_question") Integer id, Model model) {
+
+        questionService.deleteQuestion(id);
+
+        List<QuestionsReponsesView> questionsReponses = questionsReponsesViewService.findAll();
+        List<Departement> departements = departementService.findAll();
+        model.addAttribute("questionsReponses", questionsReponses);
+        model.addAttribute("departements", departements);
+
+        return "manager/listeQcm";
+    }
+
+    // @GetMapping("/manager/modifierQcm")
+    // public String modifierQcm(@RequestParam("id_question") Integer id, Model model) {
+        
+    //     return "manager/modifierQcm";
+    // }  
+    
 
 }

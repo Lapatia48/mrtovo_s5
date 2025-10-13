@@ -1,6 +1,7 @@
 package service;
 
 import entity.Question;
+import jakarta.transaction.Transactional;
 import repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class QuestionService {
 
@@ -45,6 +47,7 @@ public class QuestionService {
         return questionRepository.save(question);
     }
 
+    @Transactional
     // ===== Supprimer une question =====
     public void deleteQuestion(Integer id) {
         questionRepository.deleteById(id);
