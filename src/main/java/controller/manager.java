@@ -5,24 +5,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.stereotype.Controller;
 
-import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import entity.*;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import service.*;
-import repository.*;
 
 @Controller
 public class manager {
@@ -44,6 +37,12 @@ public class manager {
 
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private ReponseService reponseService;
+
+    @Autowired
+    private VraiReponseService vraiReponseService;
 
     //traitement manager
     @GetMapping("/formLogManager")
@@ -172,6 +171,50 @@ public class manager {
         model.addAttribute("questionsReponses", questionsReponses);
         model.addAttribute("departements", departements);
 
+        return "manager/listeQcm";
+    }
+
+
+    @GetMapping("/manager/createQcm")
+    public String showCreateQcmForm(Model model) {
+        List<Departement> departements = departementService.findAll();
+        model.addAttribute("departements", departements);
+        return "manager/formCreateQcm";
+    }
+
+    @PostMapping("/manager/insertQcm")
+    public String insertQcm(@RequestParam("id_departement") Integer idDepartement,
+                        @RequestParam("question") String question,
+                        @RequestParam("reponses") List<String> reponses,
+                        @RequestParam("reponse_correcte") Integer indexReponseCorrecte,
+                        Model model) {
+        
+        // 1. Insérer la question
+        Question nouvelleQuestion = new Question();
+        nouvelleQuestion.setQuestion(question);
+        nouvelleQuestion.setIdDepartement(idDepartement);
+        Question questionSauvee = questionService.saveQuestion(nouvelleQuestion);
+        
+        // 2. Insérer les réponses
+        List<Reponse> reponsesSauvees = new ArrayList<>();
+        for (int i = 0; i < reponses.size(); i++) {
+            Reponse reponse = new Reponse();
+            reponse.setIdQuestion(questionSauvee.getId());
+            reponse.setReponse(reponses.get(i));
+            Reponse reponseSauvee = reponseService.saveReponse(reponse);
+            reponsesSauvees.add(reponseSauvee);
+        }
+        
+        // 3. Insérer la vraie réponse
+        VraiReponse vraiReponse = new VraiReponse();
+        vraiReponse.setIdQuestion(questionSauvee.getId());
+        vraiReponse.setIdReponse(reponsesSauvees.get(indexReponseCorrecte).getId());
+        vraiReponseService.saveVraiReponse(vraiReponse);
+
+        List<QuestionsReponsesView> questionsReponses = questionsReponsesViewService.findAll();
+        List<Departement> departements = departementService.findAll();
+        model.addAttribute("questionsReponses", questionsReponses);
+        model.addAttribute("departements", departements);
         return "manager/listeQcm";
     }
 

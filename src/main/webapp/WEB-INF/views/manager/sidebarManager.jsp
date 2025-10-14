@@ -28,7 +28,7 @@
                 <i class="fas fa-list-ol"></i>
                 <span>Gestion des QCM</span>
             </a>            
-            <a href="${pageContext.request.contextPath}/manager/ajoutQcm" class="nav-link active">
+            <a href="${pageContext.request.contextPath}/manager/createQcm" class="nav-link active">
                 <i class="fas fa-plus-circle"></i>
                 <span>Ajouter QCM</span>
             </a>
