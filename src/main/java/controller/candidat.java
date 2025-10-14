@@ -277,6 +277,7 @@ public class candidat {
 
         // 6. Calculer la note en pourcentage
         double note = totalQuestions == 0 ? 0 : ((double) bonnesReponses / totalQuestions) * 100;
+        int notee=(int) Math.round(note);
 
         // 7. Envoyer les résultats vers la vue
         model.addAttribute("idCandidat", idCandidat);
@@ -284,7 +285,7 @@ public class candidat {
         model.addAttribute("nomCandidat", nomCandidat);
         model.addAttribute("totalQuestions", totalQuestions);
         model.addAttribute("bonnesReponses", bonnesReponses);
-        model.addAttribute("note", note);
+        model.addAttribute("note", notee);
 
         // 8. Sauvegarder la note
         NoteQCM noteQCM = new NoteQCM();

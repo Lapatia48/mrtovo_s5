@@ -38,7 +38,7 @@
     <div class="nav-section" style="margin-top: auto; padding-bottom: 30px;">
         <div class="nav-title">Compte</div>
         <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/entrer" class="nav-link">
+            <a href="${pageContext.request.contextPath}/logout" class="nav-link">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Déconnexion</span>
             </a>

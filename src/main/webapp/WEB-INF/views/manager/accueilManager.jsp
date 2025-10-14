@@ -374,20 +374,20 @@
                                 <label for="titre">Titre de l'annonce *</label>
                                 <div class="input-container">
                                     <i class="fas fa-heading input-icon"></i>
-                                    <input type="text" id="titre" name="titre" placeholder="Ex: Développeur Full Stack Senior" required>
+                                    <input type="text" id="titre" name="titre" required>
                                 </div>
                             </div>
 
                             <div class="form-group full-width">
                                 <label for="description">Description du Poste</label>
-                                <textarea id="description" name="description" placeholder="Décrivez les responsabilités, missions et compétences requises pour ce poste..."></textarea>
+                                <textarea id="description" name="description" ></textarea>
                             </div>
 
                             <div class="form-group">
                                 <label for="ageMin">Âge Minimum</label>
                                 <div class="input-container">
                                     <i class="fas fa-user input-icon"></i>
-                                    <input type="number" id="ageMin" name="ageMin" min="0" placeholder="18">
+                                    <input type="number" id="ageMin" name="ageMin" min="0">
                                 </div>
                             </div>
 
@@ -395,7 +395,7 @@
                                 <label for="ageMax">Âge Maximum</label>
                                 <div class="input-container">
                                     <i class="fas fa-user input-icon"></i>
-                                    <input type="number" id="ageMax" name="ageMax" min="0" placeholder="65">
+                                    <input type="number" id="ageMax" name="ageMax" min="0" >
                                 </div>
                             </div>
 
@@ -427,15 +427,15 @@
                                 <label for="nbPersonneUtile">Nombre de Postes</label>
                                 <div class="input-container">
                                     <i class="fas fa-users input-icon"></i>
-                                    <input type="number" id="nbPersonneUtile" name="nbPersonneUtile" min="1" placeholder="1">
+                                    <input type="number" id="nbPersonneUtile" name="nbPersonneUtile" min="1">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="salaire">Salaire Annuel (€)</label>
+                                <label for="salaire">Salaire (Ariary)</label>
                                 <div class="input-container">
-                                    <i class="fas fa-euro-sign input-icon"></i>
-                                    <input type="number" id="salaire" name="salaire" min="0" placeholder="45000">
+                                    <i class="fas fa-ariary-sign input-icon"></i>
+                                    <input type="number" id="salaire" name="salaire" min="0">
                                 </div>
                             </div>
                         </div>

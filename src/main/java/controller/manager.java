@@ -124,6 +124,8 @@ public class manager {
 
     @GetMapping("/accueilManager")
     public String accueilManager(Model model){
+        model.addAttribute("departements", departementService.findAll());
+        model.addAttribute("diplomes", diplomeService.findAll());
        return "manager/accueilManager";
     }
 
@@ -134,6 +136,8 @@ public class manager {
 
         if (annonceOptional.isPresent()) {
             model.addAttribute("annonce", annonceOptional.get());
+            model.addAttribute("departements", departementService.findAll());
+            model.addAttribute("diplomes", diplomeService.findAll());
             return "manager/updateAnnonceForm"; // Vue du formulaire
         } else {
             // ID non trouvé → redirection ou message d'erreur

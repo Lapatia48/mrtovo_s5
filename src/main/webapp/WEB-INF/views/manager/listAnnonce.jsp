@@ -508,7 +508,7 @@
                                     </div>
                                     <div class="detail-item">
                                         <span class="detail-label">Salaire annuel</span>
-                                        <span class="detail-value">${annonce.salaire} €</span>
+                                        <span class="detail-value">${annonce.salaire} Ariary</span>
                                     </div>
                                 </div>
                             </div>
