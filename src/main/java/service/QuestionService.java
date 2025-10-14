@@ -25,6 +25,10 @@ public class QuestionService {
         return questionRepository.findById(id);
     }
 
+    public Question findById(Integer id) {
+        return questionRepository.findById(id).orElse(null);
+}
+
     public List<Question> getQuestionsByDepartement(Integer idDepartement) {
         return questionRepository.findByIdDepartement(idDepartement);
         

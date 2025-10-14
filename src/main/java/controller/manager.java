@@ -218,11 +218,66 @@ public class manager {
         return "manager/listeQcm";
     }
 
-    // @GetMapping("/manager/modifierQcm")
-    // public String modifierQcm(@RequestParam("id_question") Integer id, Model model) {
+    @GetMapping("/manager/modifierQcm")
+    public String modifierQcm(@RequestParam("id_question") Integer id, Model model) {
+        // Récupérer les détails de la question depuis la vue
+        List<QuestionsReponsesView> qcmDetails = questionsReponsesViewService.findByQuestionId(id);
         
-    //     return "manager/modifierQcm";
-    // }  
+        if (qcmDetails.isEmpty()) {
+            return "redirect:/manager/listQcm";
+        }
+        
+        // Récupérer la première entrée pour les infos de base
+        QuestionsReponsesView firstEntry = qcmDetails.get(0);
+        
+        // Récupérer tous les départements
+        List<Departement> departements = departementService.findAll();
+        
+        model.addAttribute("qcmDetails", qcmDetails);
+        model.addAttribute("questionId", id);
+        model.addAttribute("questionText", firstEntry.getQuestion());
+        model.addAttribute("idDepartement", firstEntry.getIdDepartement());
+        model.addAttribute("departements", departements);
+        
+        return "manager/formModifierQcm";
+    }
+
+    @PostMapping("/manager/updateQcm")
+    public String updateQcm(@RequestParam("id_question") Integer idQuestion,
+                        @RequestParam("id_departement") Integer idDepartement,
+                        @RequestParam("question") String question,
+                        @RequestParam("reponses") List<String> reponses,
+                        @RequestParam("reponse_correcte") Integer indexReponseCorrecte) {
+        
+        // 1. Mettre à jour la question
+        Question questionToUpdate = questionService.findById(idQuestion);
+        if (questionToUpdate != null) {
+            questionToUpdate.setQuestion(question);
+            questionToUpdate.setIdDepartement(idDepartement);
+            questionService.saveQuestion(questionToUpdate);
+        }
+        
+        // 2. Supprimer les anciennes réponses et vraies réponses
+        reponseService.deleteByQuestionId(idQuestion);
+        
+        // 3. Insérer les nouvelles réponses
+        List<Reponse> reponsesSauvees = new ArrayList<>();
+        for (int i = 0; i < reponses.size(); i++) {
+            Reponse reponse = new Reponse();
+            reponse.setIdQuestion(idQuestion);
+            reponse.setReponse(reponses.get(i));
+            Reponse reponseSauvee = reponseService.saveReponse(reponse);
+            reponsesSauvees.add(reponseSauvee);
+        }
+        
+        // 4. Insérer la nouvelle vraie réponse
+        VraiReponse vraiReponse = new VraiReponse();
+        vraiReponse.setIdQuestion(idQuestion);
+        vraiReponse.setIdReponse(reponsesSauvees.get(indexReponseCorrecte).getId());
+        vraiReponseService.saveVraiReponse(vraiReponse);
+        
+        return "redirect:/manager/listQcm";
+    }
     
 
 }
