@@ -154,3 +154,22 @@ CREATE TABLE dg_admin (
     mdp VARCHAR(100)
 );
 
+-- =====================congee================
+CREATE TABLE congee (
+    id SERIAL PRIMARY KEY,
+    id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
+    quota INT DEFAULT 30,
+    annee INT DEFAULT EXTRACT(YEAR FROM CURRENT_DATE)
+);
+
+CREATE TABLE conge_etat (
+    id SERIAL PRIMARY KEY,
+    id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
+    statut VARCHAR(50) DEFAULT 'en_attente',
+    date_demande DATE DEFAULT CURRENT_DATE,
+    date_validation DATE,
+    duree INT,
+    date_debut DATE,
+    date_fin DATE
+);
+

@@ -4,7 +4,10 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Employés - BusinessSuite RH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des Congés - BusinessSuite RH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Variables CSS - Palette Navy Blue + Cream + White */
         :root {
@@ -267,7 +270,7 @@
             background: #157347;
         }
 
-        /* Tableau des employés */
+        /* Tableau des congés */
         .table-container {
             background: var(--white);
             border-radius: var(--border-radius);
@@ -363,37 +366,34 @@
             color: var(--white);
         }
 
-        /* Actions */
-        .action-link {
-            color: var(--navy-blue);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 0.75rem;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-            border: 1px solid transparent;
+        .badge-primary {
+            background: var(--navy-blue);
+            color: var(--white);
+        }
+
+        .badge-secondary {
+            background: var(--gray);
+            color: var(--white);
+        }
+
+        /* Indicateur de statut */
+        .status-indicator {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.8rem;
+            font-weight: 500;
         }
 
-        .action-link:hover {
-            background: var(--navy-blue);
-            color: var(--white);
-            border-color: var(--navy-blue);
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
         }
 
-        .action-link.success {
-            background: var(--success);
-            color: var(--white);
-            border-color: var(--success);
-        }
-
-        .action-link.success:hover {
-            background: #157347;
-            border-color: #157347;
-        }
+        .status-approuve { background: var(--success); }
+        .status-refuse { background: var(--danger); }
+        .status-en_attente { background: var(--warning); }
 
         /* Message aucun résultat */
         .no-results {
@@ -446,7 +446,7 @@
                 overflow-x: auto;
             }
             .data-table {
-                min-width: 1200px;
+                min-width: 1000px;
             }
             .filter-actions {
                 flex-direction: column;
@@ -461,22 +461,19 @@
             }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="admin-container">
         <!-- Sidebar Navigation -->
         <jsp:include page="sidebarRh.jsp" />
 
-
         <!-- Contenu Principal -->
         <main class="main-content">
             <!-- Top Bar -->
             <div class="top-bar">
                 <div class="page-title">
-                    <h2>Gestion des Employés</h2>
-                    <p>Liste et gestion de tous les employés de l'entreprise</p>
+                    <h2>Historique des Congés</h2>
+                    <p>Consultation de l'historique complet des demandes de congé</p>
                 </div>
                 <div class="user-menu">
                     <a href="${pageContext.request.contextPath}/accueilRh" class="btn btn-secondary">
@@ -492,7 +489,7 @@
 
             <!-- Section Filtres -->
             <div class="filter-section">
-                <h3><i class="fas fa-filter"></i> Filtres des employés</h3>
+                <h3><i class="fas fa-filter"></i> Filtres de l'historique</h3>
                 
                 <div class="filter-grid">
                     <div class="filter-group global-search">
@@ -511,16 +508,6 @@
                     </div>
                     
                     <div class="filter-group">
-                        <label for="emailFilter">Email</label>
-                        <input type="text" id="emailFilter" class="filter-input" placeholder="Filtrer par email...">
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="adresseFilter">Adresse</label>
-                        <input type="text" id="adresseFilter" class="filter-input" placeholder="Filtrer par adresse...">
-                    </div>
-                    
-                    <div class="filter-group">
                         <label for="departementFilter">Département</label>
                         <input type="text" id="departementFilter" class="filter-input" placeholder="Filtrer par département...">
                     </div>
@@ -531,59 +518,42 @@
                     </div>
                     
                     <div class="filter-group">
-                        <label for="diplomeFilter">Diplôme</label>
-                        <input type="text" id="diplomeFilter" class="filter-input" placeholder="Filtrer par diplôme...">
+                        <label for="dateDebutFilter">Date de début</label>
+                        <input type="date" id="dateDebutFilter" class="filter-input">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="ageFilter">Âge</label>
-                        <select id="ageFilter" class="filter-select">
-                            <option value="">Tous les âges</option>
-                            <option value="18">18+ ans</option>
-                            <option value="18-35">18 à 35 ans</option>
-                            <option value="35">35+ ans</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="experienceFilter">Expérience</label>
-                        <select id="experienceFilter" class="filter-select">
-                            <option value="">Toutes les expériences</option>
-                            <option value="0">0 an</option>
-                            <option value="1">1+ an</option>
-                            <option value="2">2+ ans</option>
-                            <option value="3">3+ ans</option>
-                            <option value="4">4+ ans</option>
-                            <option value="5">5+ ans</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="salaireFilter">Salaire minimum</label>
-                        <select id="salaireFilter" class="filter-select">
-                            <option value="">Tous les salaires</option>
-                            <option value="500000">500 000 Ar+</option>
-                            <option value="800000">800 000 Ar+</option>
-                            <option value="1000000">1 000 000 Ar+</option>
-                            <option value="1500000">1 500 000 Ar+</option>
-                        </select>
+                        <label for="dateFinFilter">Date de fin</label>
+                        <input type="date" id="dateFinFilter" class="filter-input">
                     </div>
                     
                     <div class="filter-group">
                         <label for="statutFilter">Statut</label>
                         <select id="statutFilter" class="filter-select">
                             <option value="">Tous les statuts</option>
-                            <option value="actif">Actif</option>
-                            <option value="inactif">Inactif</option>
+                            <option value="validé">Validé</option>
+                            <option value="refusé">Refusé</option>
+                            <option value="en attente">En attente</option>
                         </select>
                     </div>
                     
                     <div class="filter-group">
-                        <label for="dateEmbaucheSort">Tri par date d'embauche</label>
-                        <select id="dateEmbaucheSort" class="filter-select">
+                        <label for="dureeFilter">Durée</label>
+                        <select id="dureeFilter" class="filter-select">
+                            <option value="">Toutes les durées</option>
+                            <option value="1-3">1-3 jours</option>
+                            <option value="4-7">4-7 jours</option>
+                            <option value="8-14">8-14 jours</option>
+                            <option value="15">15+ jours</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateDemandeSort">Tri par date de demande</label>
+                        <select id="dateDemandeSort" class="filter-select">
                             <option value="">Ordre par défaut</option>
-                            <option value="asc">Date croissante</option>
-                            <option value="desc">Date décroissante</option>
+                            <option value="asc">Plus anciennes</option>
+                            <option value="desc">Plus récentes</option>
                         </select>
                     </div>
                 </div>
@@ -593,112 +563,70 @@
                         <i class="fas fa-undo"></i>
                         Réinitialiser
                     </button>
+                    <button onclick="exportToExcel()" class="btn btn-success">
+                        <i class="fas fa-file-excel"></i>
+                        Exporter Excel
+                    </button>
                 </div>
             </div>
 
-            <!-- Tableau des employés -->
+            <!-- Tableau de l'historique -->
             <div class="table-container">
                 <div class="table-header">
-                    <h3>Liste des employés</h3>
+                    <h3>Historique complet des congés</h3>
                     <div class="table-count" id="resultCount">
-                        ${employes.size()} employé(s) trouvé(s)
+                        ${historiqueConges.size()} historiques
                     </div>
                 </div>
                 
-                <table class="data-table" id="employesTable">
+                <table class="data-table" id="congesTable">
                     <thead>
                         <tr>
-                            <th onclick="sortTable(0)">Nom <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(1)">Prénom <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(2)">Email <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(3)">Adresse <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(4)">Date de naissance <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(5)">Âge <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(6)">Département <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(7)">Poste <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(8)">Expérience <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(9)">Diplôme <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(10)">Date d'embauche <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(11)">Salaire <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(12)">Statut <i class="fas fa-sort"></i></th>
-                            <th>Actions</th>
+                            <th onclick="sortTable(0)">ID <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(1)">Nom <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(2)">Prénom <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(3)">Département <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(4)">Poste <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(5)">Date Début <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(6)">Date Fin <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(7)">Durée <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(8)">Statut <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(9)">Date Demande <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(10)">Date Validation <i class="fas fa-sort"></i></th>
                         </tr>
                     </thead>
-                    <tbody id="employesBody">
-                        <c:forEach var="e" items="${employes}">
+                    <tbody id="congesBody">
+                        <c:forEach var="conge" items="${historiqueConges}">
                             <tr>
-                                <td><strong>${e.nom}</strong></td>
-                                <td>${e.prenom}</td>
-                                <td>${e.mail}</td>
-                                <td>${e.adresse}</td>
-                                <td>${e.dateNaissance}</td>
-                                <!-- <td>
-                                    <span class="badge badge-info">${e.age} ans</span>
-                                </td>
-                                <td>${e.departement}</td>
+                                <td><strong>#${conge.id}</strong></td>
+                                <td><strong>${conge.nom}</strong></td>
+                                <td>${conge.prenom}</td>
                                 <td>
-                                    <span class="badge badge-success">${e.poste}</span>
+                                    <span class="badge badge-primary">${conge.departement}</span>
                                 </td>
                                 <td>
-                                    <span class="badge ${e.anneeExperience >= 3 ? 'badge-success' : e.anneeExperience >= 1 ? 'badge-warning' : 'badge-info'}">
-                                        ${e.anneeExperience} ans
-                                    </span>
-                                </td> -->
-
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${not empty e.age}">
-                                            <span class="badge badge-info">${e.age} ans</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge badge-info">Non spécifié</span>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <span class="badge badge-info">${conge.poste}</span>
                                 </td>
-                                <td>${e.departement}</td>
+                                <td>${conge.dateDebut}</td>
+                                <td>${conge.dateFin}</td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${not empty e.poste}">
-                                            <span class="badge badge-success">${e.poste}</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge badge-info">Non spécifié</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${not empty e.anneeExperience}">
-                                            <span class="badge ${e.anneeExperience >= 3 ? 'badge-success' : e.anneeExperience >= 1 ? 'badge-warning' : 'badge-info'}">
-                                                ${e.anneeExperience} ans
-                                            </span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge badge-info">0 an</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-
-
-                                <td>${e.diplome}</td>
-                                <td>${e.dateEmbauche}</td>
-                                <td>
-                                    <strong>${e.salaire} Ar</strong>
-                                </td>
-                                <td>
-                                    <span class="badge ${e.statut == 'actif' ? 'badge-success' : 'badge-danger'}">
-                                        ${e.statut}
+                                    <span class="badge badge-secondary">
+                                        ${conge.duree} jour(s)
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="${pageContext.request.contextPath}/rh/candidats/pdf?id_cand=${e.idCandidat}" class="action-link success" title="Exporter en PDF">
-                                        <i class="fas fa-file-pdf"></i>
-                                        PDF
-                                    </a><br>
-                                    <a href="${pageContext.request.contextPath}/rh/employe/demandeConge?id_emp=${e.id}" class="action-link success">
-                                        <i class="fas fa-plane-departure"></i>
-                                        Demande de congé
-                                    </a>
+                                    <span class="status-dot status-${conge.statut}">${conge.statut}</span>
+                                </td>
+                                <td>${conge.dateDemande}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not empty conge.dateValidation}">
+                                            ${conge.dateValidation}
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge badge-warning">En attente</span>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -706,49 +634,67 @@
                 </table>
                 
                 <div id="noResults" class="no-results" style="display: none;">
-                    <i class="fas fa-search"></i>
-                    <h3>Aucun employé trouvé</h3>
-                    <p>Aucun employé ne correspond aux critères de recherche sélectionnés.</p>
+                    <i class="fas fa-history"></i>
+                    <h3>Aucun historique trouvé</h3>
+                    <p>Aucune demande de congé ne correspond aux critères de recherche sélectionnés.</p>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        // Le script JavaScript adapté pour les employés
+        // Variables globales pour le tri
         let currentSortColumn = -1;
         let sortDirection = 1;
+
+        // Fonction utilitaire pour déterminer la classe CSS du statut
+        function getStatusClass(statut) {
+            const statutLower = statut.toLowerCase();
+            if (statutLower.includes('approuve')) {
+                return 'status-approved';
+            } else if (statutLower.includes('refuse')) {
+                return 'status-refused';
+            } else {
+                return 'status-pending';
+            }
+        }
+
+        // Appliquer les classes de statut au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusCells = document.querySelectorAll('.status-indicator');
+            statusCells.forEach(cell => {
+                const statut = cell.textContent.trim();
+                const dot = cell.querySelector('.status-dot');
+                if (dot) {
+                    dot.className = 'status-dot ' + getStatusClass(statut);
+                }
+            });
+        });
 
         // Écouteurs d'événements pour les filtres
         document.getElementById('globalSearch').addEventListener('input', filterTable);
         document.getElementById('nomFilter').addEventListener('input', filterTable);
         document.getElementById('prenomFilter').addEventListener('input', filterTable);
-        document.getElementById('emailFilter').addEventListener('input', filterTable);
-        document.getElementById('adresseFilter').addEventListener('input', filterTable);
         document.getElementById('departementFilter').addEventListener('input', filterTable);
         document.getElementById('posteFilter').addEventListener('input', filterTable);
-        document.getElementById('diplomeFilter').addEventListener('input', filterTable);
-        document.getElementById('ageFilter').addEventListener('change', filterTable);
-        document.getElementById('experienceFilter').addEventListener('change', filterTable);
-        document.getElementById('salaireFilter').addEventListener('change', filterTable);
+        document.getElementById('dateDebutFilter').addEventListener('change', filterTable);
+        document.getElementById('dateFinFilter').addEventListener('change', filterTable);
         document.getElementById('statutFilter').addEventListener('change', filterTable);
-        document.getElementById('dateEmbaucheSort').addEventListener('change', applySorting);
+        document.getElementById('dureeFilter').addEventListener('change', filterTable);
+        document.getElementById('dateDemandeSort').addEventListener('change', applySorting);
 
         function filterTable() {
             const globalSearch = document.getElementById('globalSearch').value.toLowerCase();
             const nomFilter = document.getElementById('nomFilter').value.toLowerCase();
             const prenomFilter = document.getElementById('prenomFilter').value.toLowerCase();
-            const emailFilter = document.getElementById('emailFilter').value.toLowerCase();
-            const adresseFilter = document.getElementById('adresseFilter').value.toLowerCase();
             const departementFilter = document.getElementById('departementFilter').value.toLowerCase();
             const posteFilter = document.getElementById('posteFilter').value.toLowerCase();
-            const diplomeFilter = document.getElementById('diplomeFilter').value.toLowerCase();
-            const ageFilter = document.getElementById('ageFilter').value;
-            const experienceFilter = document.getElementById('experienceFilter').value;
-            const salaireFilter = document.getElementById('salaireFilter').value;
+            const dateDebutFilter = document.getElementById('dateDebutFilter').value;
+            const dateFinFilter = document.getElementById('dateFinFilter').value;
             const statutFilter = document.getElementById('statutFilter').value;
+            const dureeFilter = document.getElementById('dureeFilter').value;
 
-            const rows = document.querySelectorAll('#employesBody tr');
+            const rows = document.querySelectorAll('#congesBody tr');
             let visibleCount = 0;
 
             rows.forEach(row => {
@@ -758,7 +704,7 @@
                 // Filtre global
                 if (globalSearch) {
                     let rowText = '';
-                    for (let i = 0; i < cells.length - 1; i++) { // -1 pour exclure la colonne Actions
+                    for (let i = 0; i < cells.length; i++) {
                         rowText += cells[i].textContent.toLowerCase() + ' ';
                     }
                     if (!rowText.includes(globalSearch)) {
@@ -767,85 +713,60 @@
                 }
 
                 // Filtres individuels
-                if (showRow && nomFilter && !cells[0].textContent.toLowerCase().includes(nomFilter)) {
+                if (showRow && nomFilter && !cells[1].textContent.toLowerCase().includes(nomFilter)) {
                     showRow = false;
                 }
-                if (showRow && prenomFilter && !cells[1].textContent.toLowerCase().includes(prenomFilter)) {
+                if (showRow && prenomFilter && !cells[2].textContent.toLowerCase().includes(prenomFilter)) {
                     showRow = false;
                 }
-                if (showRow && emailFilter && !cells[2].textContent.toLowerCase().includes(emailFilter)) {
+                if (showRow && departementFilter && !cells[3].textContent.toLowerCase().includes(departementFilter)) {
                     showRow = false;
                 }
-                if (showRow && adresseFilter && !cells[3].textContent.toLowerCase().includes(adresseFilter)) {
-                    showRow = false;
-                }
-                if (showRow && departementFilter && !cells[6].textContent.toLowerCase().includes(departementFilter)) {
-                    showRow = false;
-                }
-                if (showRow && posteFilter && !cells[7].textContent.toLowerCase().includes(posteFilter)) {
-                    showRow = false;
-                }
-                if (showRow && diplomeFilter && !cells[9].textContent.toLowerCase().includes(diplomeFilter)) {
+                if (showRow && posteFilter && !cells[4].textContent.toLowerCase().includes(posteFilter)) {
                     showRow = false;
                 }
 
-                // Filtre par âge
-                if (showRow && ageFilter !== '') {
-                    const ageCell = cells[5].textContent;
-                    const ageMatch = ageCell.match(/(\d+)/);
-                    if (ageMatch) {
-                        const age = parseInt(ageMatch[1]);
-                        
-                        if (ageFilter === '18') {
-                            if (age < 18) showRow = false;
-                        } else if (ageFilter === '18-35') {
-                            if (age < 18 || age > 35) showRow = false;
-                        } else if (ageFilter === '35') {
-                            if (age < 35) showRow = false;
-                        }
-                    } else {
+                // Filtre par date de début
+                if (showRow && dateDebutFilter) {
+                    const dateDebutCell = cells[5].textContent.trim();
+                    if (dateDebutCell < dateDebutFilter) {
                         showRow = false;
                     }
                 }
 
-                // Filtre par expérience
-                if (showRow && experienceFilter !== '') {
-                    const expCell = cells[8].textContent;
-                    const expMatch = expCell.match(/(\d+)/);
-                    if (expMatch) {
-                        const experience = parseInt(expMatch[1]);
-                        const minExperience = parseInt(experienceFilter);
-                        
-                        if (experience < minExperience) {
-                            showRow = false;
-                        }
-                    } else {
-                        showRow = false;
-                    }
-                }
-
-                // Filtre par salaire
-                if (showRow && salaireFilter !== '') {
-                    const salaireCell = cells[11].textContent;
-                    // Extraire les chiffres du salaire (supprimer les espaces et "Ar")
-                    const salaireText = salaireCell.replace(/\s/g, '').replace('Ar', '');
-                    const salaireMatch = salaireText.match(/(\d+)/);
-                    if (salaireMatch) {
-                        const salaire = parseInt(salaireMatch[1]);
-                        const minSalaire = parseInt(salaireFilter);
-                        
-                        if (salaire < minSalaire) {
-                            showRow = false;
-                        }
-                    } else {
+                // Filtre par date de fin
+                if (showRow && dateFinFilter) {
+                    const dateFinCell = cells[6].textContent.trim();
+                    if (dateFinCell > dateFinFilter) {
                         showRow = false;
                     }
                 }
 
                 // Filtre par statut
                 if (showRow && statutFilter !== '') {
-                    const statutCell = cells[12].textContent.toLowerCase();
-                    if (statutCell !== statutFilter.toLowerCase()) {
+                    const statutCell = cells[8].textContent.toLowerCase();
+                    if (!statutCell.includes(statutFilter.toLowerCase())) {
+                        showRow = false;
+                    }
+                }
+
+                // Filtre par durée
+                if (showRow && dureeFilter !== '') {
+                    const dureeCell = cells[7].textContent;
+                    const dureeMatch = dureeCell.match(/(\d+)/);
+                    if (dureeMatch) {
+                        const duree = parseInt(dureeMatch[1]);
+                        
+                        if (dureeFilter === '1-3') {
+                            if (duree < 1 || duree > 3) showRow = false;
+                        } else if (dureeFilter === '4-7') {
+                            if (duree < 4 || duree > 7) showRow = false;
+                        } else if (dureeFilter === '8-14') {
+                            if (duree < 8 || duree > 14) showRow = false;
+                        } else if (dureeFilter === '15') {
+                            if (duree < 15) showRow = false;
+                        }
+                    } else {
                         showRow = false;
                     }
                 }
@@ -855,16 +776,16 @@
             });
 
             // Mettre à jour le compteur
-            document.getElementById('resultCount').textContent = visibleCount + ' employé(s) trouvé(s)';
+            document.getElementById('resultCount').textContent = visibleCount + ' demande(s) de congé';
             
             // Afficher/masquer le message "Aucun résultat"
             document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
         }
 
         function applySorting() {
-            const dateSort = document.getElementById('dateEmbaucheSort').value;
+            const dateSort = document.getElementById('dateDemandeSort').value;
             if (dateSort) {
-                sortTableByColumn(10, dateSort);
+                sortTableByColumn(9, dateSort);
             }
         }
 
@@ -877,7 +798,7 @@
         }
 
         function sortTableByColumn(columnIndex, order) {
-            const tbody = document.getElementById('employesBody');
+            const tbody = document.getElementById('congesBody');
             const rows = Array.from(tbody.getElementsByTagName('tr'));
 
             rows.sort((a, b) => {
@@ -887,15 +808,12 @@
                 let aValue, bValue;
 
                 // Gestion spéciale pour les colonnes numériques
-                if (columnIndex === 5 || columnIndex === 8) { // Âge et Expérience
+                if (columnIndex === 0 || columnIndex === 7) { // ID et Durée
                     aValue = extractNumber(aCell);
                     bValue = extractNumber(bCell);
-                } else if (columnIndex === 10 || columnIndex === 4) { // Dates (embauche et naissance)
+                } else if (columnIndex === 5 || columnIndex === 6 || columnIndex === 9 || columnIndex === 10) { // Dates
                     aValue = new Date(aCell);
                     bValue = new Date(bCell);
-                } else if (columnIndex === 11) { // Salaire
-                    aValue = extractNumber(aCell.replace(/\s/g, '').replace('Ar', ''));
-                    bValue = extractNumber(bCell.replace(/\s/g, '').replace('Ar', ''));
                 } else {
                     aValue = aCell.toLowerCase();
                     bValue = bCell.toLowerCase();
@@ -921,7 +839,7 @@
         }
 
         function updateSortIndicators(columnIndex, order) {
-            const headers = document.querySelectorAll('#employesTable th');
+            const headers = document.querySelectorAll('#congesTable th');
             headers.forEach((header, index) => {
                 header.innerHTML = header.innerHTML.replace(/<i class="fas fa-sort-(up|down)"><\/i>/, '') + '<i class="fas fa-sort"></i>';
                 if (index === columnIndex) {
@@ -935,18 +853,19 @@
             document.getElementById('globalSearch').value = '';
             document.getElementById('nomFilter').value = '';
             document.getElementById('prenomFilter').value = '';
-            document.getElementById('emailFilter').value = '';
-            document.getElementById('adresseFilter').value = '';
             document.getElementById('departementFilter').value = '';
             document.getElementById('posteFilter').value = '';
-            document.getElementById('diplomeFilter').value = '';
-            document.getElementById('ageFilter').value = '';
-            document.getElementById('experienceFilter').value = '';
-            document.getElementById('salaireFilter').value = '';
+            document.getElementById('dateDebutFilter').value = '';
+            document.getElementById('dateFinFilter').value = '';
             document.getElementById('statutFilter').value = '';
-            document.getElementById('dateEmbaucheSort').value = '';
+            document.getElementById('dureeFilter').value = '';
+            document.getElementById('dateDemandeSort').value = '';
             
             filterTable();
+        }
+
+        function exportToExcel() {
+            alert('Fonctionnalité d\'export Excel en cours de développement');
         }
 
         // Initialisation

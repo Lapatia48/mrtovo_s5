@@ -164,3 +164,48 @@ FROM
     JOIN annonce a ON c.id_annonce_postule = a.id
     LEFT JOIN diplome d ON a.id_diplome_requis = d.id
     LEFT JOIN departement dep ON a.id_departement = dep.id;
+
+CREATE OR REPLACE VIEW conge_etat_details AS
+SELECT 
+    ce.id,
+    ce.id_employe,
+    ce.statut,
+    ce.date_demande,
+    ce.date_validation,
+    ce.duree,
+    ce.date_debut,
+    ce.date_fin,
+    e.nom,
+    e.prenom,
+    e.mail,
+    e.departement,
+    e.poste,
+    e.date_embauche,
+    c.quota,
+    c.annee
+FROM conge_etat ce
+JOIN employe e ON ce.id_employe = e.id
+LEFT JOIN congee c ON ce.id_employe = c.id_employe AND c.annee = EXTRACT(YEAR FROM CURRENT_DATE)
+ORDER BY ce.date_demande DESC;
+
+CREATE OR REPLACE VIEW congee_employe_details AS
+SELECT 
+    c.id,
+    c.id_employe,
+    c.quota,
+    c.annee,
+    e.nom,
+    e.prenom,
+    e.mail,
+    e.departement,
+    e.poste,
+    e.date_embauche,
+    e.statut AS statut_employe,
+    COUNT(ce.id) FILTER (WHERE ce.statut = 'approuve' AND EXTRACT(YEAR FROM ce.date_demande) = c.annee) AS conges_pris,
+    COALESCE(SUM(ce.duree) FILTER (WHERE ce.statut = 'approuve' AND EXTRACT(YEAR FROM ce.date_demande) = c.annee), 0) AS jours_pris,
+    c.quota - COALESCE(SUM(ce.duree) FILTER (WHERE ce.statut = 'approuve' AND EXTRACT(YEAR FROM ce.date_demande) = c.annee), 0) AS solde_restant
+FROM congee c
+JOIN employe e ON c.id_employe = e.id
+LEFT JOIN conge_etat ce ON c.id_employe = ce.id_employe
+GROUP BY c.id, c.id_employe, c.quota, c.annee, e.id
+ORDER BY e.nom, e.prenom, c.annee DESC;

@@ -73,3 +73,10 @@ INSERT INTO candidat_refuse (id_candidat, libelle_etape) VALUES
 insert into dg_admin(nom,mdp) values('Directeur Administrateur', 'mdp123');
 insert into rh(nom,mdp) values('ressource humaine', 'mdprh123');
 insert into manager(nom,mdp) values('Manager', 'mdp123');
+
+
+-- Initialisation des quotas de congés pour les employés existants
+INSERT INTO congee (id_employe, quota, annee)
+SELECT id, 30, EXTRACT(YEAR FROM CURRENT_DATE)
+FROM employe
+WHERE statut = 'actif';
