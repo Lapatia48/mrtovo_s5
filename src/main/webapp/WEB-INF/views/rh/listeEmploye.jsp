@@ -699,6 +699,10 @@
                                         <i class="fas fa-plane-departure"></i>
                                         Demande de congé
                                     </a>
+                                    <a href="${pageContext.request.contextPath}/rh/employe/payer?id_emp=${e.id}" class="action-link success">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        Payer
+                                    </a>
                                 </td>
                             </tr>
                         </c:forEach>

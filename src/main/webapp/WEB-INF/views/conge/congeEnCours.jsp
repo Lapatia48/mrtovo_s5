@@ -664,10 +664,7 @@
                         <i class="fas fa-undo"></i>
                         Réinitialiser
                     </button>
-                    <button onclick="exportToExcel()" class="btn btn-success">
-                        <i class="fas fa-file-excel"></i>
-                        Exporter Excel
-                    </button>
+
                     <button onclick="generateReport()" class="btn btn-info">
                         <i class="fas fa-chart-bar"></i>
                         Rapport
