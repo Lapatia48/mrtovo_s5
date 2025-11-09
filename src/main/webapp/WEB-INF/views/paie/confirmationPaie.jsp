@@ -249,5 +249,36 @@
         <button type="submit">Confirmer et Enregistrer</button>
         <a href="${pageContext.request.contextPath}/rh/employe/payer?id_emp=${idEmp}">Modifier</a>
     </form>
+
+    <br>
+
+    <form action="${pageContext.request.contextPath}/rh/employe/exporterExcel" method="post" style="display: inline;">
+        <input type="hidden" name="id_emp" value="${idEmp}">
+        <input type="hidden" name="periode_debut" value="${periodeDebut}">
+        <input type="hidden" name="periode_fin" value="${periodeFin}">
+        <input type="hidden" name="salaire_base" value="${salaireBase}">
+        <input type="hidden" name="taux_journalier" value="${tauxJournalier}">
+        <input type="hidden" name="taux_horaire" value="${tauxHoraire}">
+        <input type="hidden" name="heures_sup_normales" value="${heuresSupNormales}">
+        <input type="hidden" name="heures_sup_weekend" value="${heuresSupWeekend}">
+        <input type="hidden" name="prime_anciennete" value="${primeAnciennete}">
+        <input type="hidden" name="absences" value="${absences}">
+        <input type="hidden" name="autres_primes" value="${autresPrimes}">
+        <input type="hidden" name="salaire_brut" value="${salaireBrut}">
+        <input type="hidden" name="retenue_cnaps" value="${retenueCnaps}">
+        <input type="hidden" name="retenue_ostie" value="${retenueOstie}">
+        <input type="hidden" name="retenue_irsa" value="${retenueIrsa}">
+        <input type="hidden" name="total_retenues" value="${totalRetenues}">
+        <input type="hidden" name="net_a_payer" value="${netAPayer}">
+        <input type="hidden" name="mode_paiement" value="${modePaiement}">
+        <input type="hidden" name="nom_employe" value="${employe.nom}">
+        <input type="hidden" name="prenom_employe" value="${employe.prenom}">
+        <input type="hidden" name="poste_employe" value="${employe.poste}">
+        <input type="hidden" name="date_embauche" value="${employe.dateEmbauche}">
+        
+        <button type="submit" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; cursor: pointer;">
+            📊 Exporter Excel
+        </button>
+    </form>
 </body>
 </html>
