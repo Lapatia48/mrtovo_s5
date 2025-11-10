@@ -623,7 +623,7 @@
                             <th onclick="sortTable(12)">Statut <i class="fas fa-sort"></i></th>
                             <th>Actions</th>
                             <!-- <th>Contrat</th>   -->
-                            <th>Creer contrat</th>
+                            <!-- <th>Creer contrat</th> -->
                         </tr>
                     </thead>
                     <tbody id="employesBody">
@@ -711,8 +711,8 @@
                                             Fiche
                                     </a><br>
                                 </td>
-                                <td>
-                                <!-- COLONNE CONTRAT -->
+                                <!-- Contrats -->
+                                <!-- <td>
                                     <c:set var="contratsActifs" value="${contratService.findContratsActifsByEmploye(e.id)}" />
                                     <c:choose>
                                         <c:when test="${ empty contratsActifs}">
@@ -728,13 +728,12 @@
                                     </c:choose>
                                 </td>
                                  <td>
-                                <!-- Actions avec création de contrat si besoin -->
                                     <c:if test="${empty contratsActifs}">
                                         <a href="${pageContext.request.contextPath}/rh/contrat/creer?id_employe=${e.id}" class="btn btn-sm btn-info">
                                             Créer contrat
                                         </a>
                                     </c:if>
-                                </td>
+                                </td> -->
                             </tr>
                         </c:forEach>
                     </tbody>

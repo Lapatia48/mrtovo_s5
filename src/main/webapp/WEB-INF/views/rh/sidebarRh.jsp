@@ -92,7 +92,7 @@
             </a>
         </div>
         <!-- ito MODIFIER -->
-        <div class="nav-item">
+        <!-- <div class="nav-item">
             <a href="${pageContext.request.contextPath}/rh/contrats" class="nav-link">
                 <i class="fas fa-file-contract"></i>
                 Contrats
@@ -103,6 +103,6 @@
                 <i class="fas fa-exclamation-triangle"></i>
                 Sans Contrat
             </a>
-        </div>
+        </div> -->
     </div>
 </nav>

@@ -376,11 +376,11 @@
                     <div class="form-group">
                         <label class="form-label required">Numéro de contrat</label>
                         <input type="text" name="numeroContrat" class="form-input" 
-                               placeholder="CTR-2025-001" required>
+                               value="CTR-2025-001" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label required">Date de début</label>
-                        <input type="date" name="dateDebut" class="form-input" required>
+                        <input type="date" name="dateDebut" value="2025-12-01" class="form-input" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Date de fin</label>
