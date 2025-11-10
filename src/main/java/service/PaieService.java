@@ -23,4 +23,8 @@ public class PaieService {
     public Paie findById(Integer id) {
         return paieRepository.findById(id).orElse(null);
     }
+
+    public List<Paie> findAll() {
+        return paieRepository.findAll();
+    }
 }

@@ -6,6 +6,13 @@
         <p>Gestion des ressources humaines</p>
     </div>
     <div class="nav-menu">
+
+        <div class="nav-item">
+            <a href="${pageContext.request.contextPath}/chatbot" class="nav-link active">
+                <i class="fas fa-tachometer-alt"></i>
+                ChatBot
+            </a>
+        </div>
         <div class="nav-item">
             <a href="${pageContext.request.contextPath}/accueilRh" class="nav-link active">
                 <i class="fas fa-tachometer-alt"></i>
@@ -72,6 +79,17 @@
                 Historique des congees
             </a>
         </div>
-        
+        <div class="nav-item">
+            <a href="#" class="nav-link active">
+                <i class="fas fa-user-tie"></i>
+                --Paie--
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="${pageContext.request.contextPath}/rh/paie/list" class="nav-link">
+                <i class="fas fa-user-tie"></i>
+                Historique des paiements
+            </a>
+        </div>
     </div>
 </nav>

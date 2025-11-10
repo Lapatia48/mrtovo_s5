@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,6 +32,13 @@ public class PaieController {
 
     @Autowired
     private EmployeService employeService;
+
+    @GetMapping("/rh/paie/list")
+    public String listePaies(Model model) {
+        List<Paie> listePaies = paieService.findAll();
+        model.addAttribute("listePaies", listePaies);
+        return "paie/historiquePaie";
+    }
 
     @GetMapping("/rh/employe/payer")
     public String formulairePaie(@RequestParam("id_emp") Integer idEmp, Model model) {

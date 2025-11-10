@@ -10,8 +10,9 @@
            http://www.springframework.org/schema/tx https://www.springframework.org/schema/tx/spring-tx.xsd
            http://www.springframework.org/schema/data/jpa https://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-    <!-- Scan des beans -->
-    <context:component-scan base-package="controller,service,repository" />
+    <!-- Enable component scanning and auto-configuration -->
+    <context:component-scan base-package="config,controller,service,repository" />
+    <context:annotation-config/>
 
     <!-- Définition de la source de données PostgreSQL -->
     <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
@@ -47,5 +48,5 @@
     <tx:annotation-driven transaction-manager="transactionManager" />
 
     <!-- Activer Spring Data JPA si tu veux utiliser des interfaces extends JpaRepository -->
-    <jpa:repositories base-package="controller,service,repository" />
+    <jpa:repositories base-package="config,controller,service,repository" />
 </beans>

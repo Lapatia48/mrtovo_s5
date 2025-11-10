@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historique des Congés - BusinessSuite RH</title>
+    <title>Historique des Paiements - BusinessSuite RH</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -270,7 +270,7 @@
             background: #157347;
         }
 
-        /* Tableau des congés */
+        /* Tableau des paiements */
         .table-container {
             background: var(--white);
             border-radius: var(--border-radius);
@@ -351,13 +351,8 @@
             color: var(--white);
         }
 
-        .badge-warning {
-            background: var(--warning);
-            color: var(--navy-blue);
-        }
-
-        .badge-danger {
-            background: var(--danger);
+        .badge-primary {
+            background: var(--navy-blue);
             color: var(--white);
         }
 
@@ -365,35 +360,6 @@
             background: var(--info);
             color: var(--white);
         }
-
-        .badge-primary {
-            background: var(--navy-blue);
-            color: var(--white);
-        }
-
-        .badge-secondary {
-            background: var(--gray);
-            color: var(--white);
-        }
-
-        /* Indicateur de statut */
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .status-approuve { background: var(--success); }
-        .status-refuse { background: var(--danger); }
-        .status-en_attente { background: var(--warning); }
 
         /* Message aucun résultat */
         .no-results {
@@ -446,7 +412,7 @@
                 overflow-x: auto;
             }
             .data-table {
-                min-width: 1000px;
+                min-width: 800px;
             }
             .filter-actions {
                 flex-direction: column;
@@ -472,8 +438,8 @@
             <!-- Top Bar -->
             <div class="top-bar">
                 <div class="page-title">
-                    <h2>Historique des Congés</h2>
-                    <p>Consultation de l'historique complet des demandes de congé</p>
+                    <h2>Historique des Paiements</h2>
+                    <p>Consultation de l'historique complet des paiements des employés</p>
                 </div>
                 <div class="user-menu">
                     <a href="${pageContext.request.contextPath}/accueilRh" class="btn btn-secondary">
@@ -489,7 +455,7 @@
 
             <!-- Section Filtres -->
             <div class="filter-section">
-                <h3><i class="fas fa-filter"></i> Filtres de l'historique</h3>
+                <h3><i class="fas fa-filter"></i> Filtres des paiements</h3>
                 
                 <div class="filter-grid">
                     <div class="filter-group global-search">
@@ -498,62 +464,51 @@
                     </div>
                     
                     <div class="filter-group">
-                        <label for="nomFilter">Nom</label>
-                        <input type="text" id="nomFilter" class="filter-input" placeholder="Filtrer par nom...">
+                        <label for="idEmployeFilter">ID Employé</label>
+                        <input type="text" id="idEmployeFilter" class="filter-input" placeholder="Filtrer par ID employé...">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="prenomFilter">Prénom</label>
-                        <input type="text" id="prenomFilter" class="filter-input" placeholder="Filtrer par prénom...">
+                        <label for="periodeDebutFilter">Période début</label>
+                        <input type="date" id="periodeDebutFilter" class="filter-input">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="departementFilter">Département</label>
-                        <input type="text" id="departementFilter" class="filter-input" placeholder="Filtrer par département...">
+                        <label for="periodeFinFilter">Période fin</label>
+                        <input type="date" id="periodeFinFilter" class="filter-input">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="posteFilter">Poste</label>
-                        <input type="text" id="posteFilter" class="filter-input" placeholder="Filtrer par poste...">
+                        <label for="datePaiementFilter">Date de paiement</label>
+                        <input type="date" id="datePaiementFilter" class="filter-input">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="dateDebutFilter">Date de début</label>
-                        <input type="date" id="dateDebutFilter" class="filter-input">
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="dateFinFilter">Date de fin</label>
-                        <input type="date" id="dateFinFilter" class="filter-input">
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="statutFilter">Statut</label>
-                        <select id="statutFilter" class="filter-select">
-                            <option value="">Tous les statuts</option>
-                            <option value="approuve">Validé</option>
-                            <option value="refuse">Refusé</option>
-                            <option value="en_attente">En attente</option>
+                        <label for="modePaiementFilter">Mode de paiement</label>
+                        <select id="modePaiementFilter" class="filter-select">
+                            <option value="">Tous les modes</option>
+                            <option value="virement">Virement</option>
+                            <option value="cheque">Chèque</option>
+                            <option value="especes">Espèces</option>
                         </select>
                     </div>
                     
                     <div class="filter-group">
-                        <label for="dureeFilter">Durée</label>
-                        <select id="dureeFilter" class="filter-select">
-                            <option value="">Toutes les durées</option>
-                            <option value="1-3">1-3 jours</option>
-                            <option value="4-7">4-7 jours</option>
-                            <option value="8-14">8-14 jours</option>
-                            <option value="15">15+ jours</option>
-                        </select>
+                        <label for="salaireMinFilter">Salaire minimum</label>
+                        <input type="number" id="salaireMinFilter" class="filter-input" placeholder="Salaire min...">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="dateDemandeSort">Tri par date de demande</label>
-                        <select id="dateDemandeSort" class="filter-select">
+                        <label for="salaireMaxFilter">Salaire maximum</label>
+                        <input type="number" id="salaireMaxFilter" class="filter-input" placeholder="Salaire max...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="datePaiementSort">Tri par date de paiement</label>
+                        <select id="datePaiementSort" class="filter-select">
                             <option value="">Ordre par défaut</option>
-                            <option value="asc">Plus anciennes</option>
-                            <option value="desc">Plus récentes</option>
+                            <option value="asc">Plus anciens</option>
+                            <option value="desc">Plus récents</option>
                         </select>
                     </div>
                 </div>
@@ -563,70 +518,47 @@
                         <i class="fas fa-undo"></i>
                         Réinitialiser
                     </button>
-
                 </div>
             </div>
 
-            <!-- Tableau de l'historique -->
+            <!-- Tableau des paiements -->
             <div class="table-container">
                 <div class="table-header">
-                    <h3>Historique complet des congés</h3>
+                    <h3>Liste des paiements</h3>
                     <div class="table-count" id="resultCount">
-                        ${historiqueConges.size()} historiques
+                        ${listePaies.size()} paiement(s) trouvé(s)
                     </div>
                 </div>
                 
-                <table class="data-table" id="congesTable">
+                <table class="data-table" id="paiementsTable">
                     <thead>
                         <tr>
                             <th onclick="sortTable(0)">ID <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(1)">Nom <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(2)">Prénom <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(3)">Département <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(4)">Poste <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(5)">Date Début <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(6)">Date Fin <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(7)">Durée <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(8)">Statut <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(9)">Date Demande <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(10)">Date Validation <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(1)">ID Employé <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(2)">Période <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(3)">Salaire Base <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(4)">Salaire Brut <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(5)">Net à Payer <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(6)">Date Paiement <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(7)">Mode Paiement <i class="fas fa-sort"></i></th>
                         </tr>
                     </thead>
-                    <tbody id="congesBody">
-                        <c:forEach var="conge" items="${historiqueConges}">
+                    <tbody id="paiementsBody">
+                        <c:forEach var="paie" items="${listePaies}">
                             <tr>
-                                <td><strong>#${conge.id}</strong></td>
-                                <td><strong>${conge.nom}</strong></td>
-                                <td>${conge.prenom}</td>
+                                <td><strong>#${paie.id}</strong></td>
                                 <td>
-                                    <span class="badge badge-primary">${conge.departement}</span>
+                                    <span class="badge badge-primary">${paie.idEmploye}</span>
                                 </td>
-                                <td>
-                                    <span class="badge badge-info">${conge.poste}</span>
+                                <td>${paie.periodeDebut} à ${paie.periodeFin}</td>
+                                <td class="currency">${paie.salaireBase} Ar</td>
+                                <td class="currency">${paie.salaireBrut} Ar</td>
+                                <td class="currency">
+                                    <span class="badge badge-success">${paie.netAPayer} Ar</span>
                                 </td>
-                                <td>${conge.dateDebut}</td>
-                                <td>${conge.dateFin}</td>
+                                <td>${paie.datePaie}</td>
                                 <td>
-                                    <span class="badge badge-secondary">
-                                        ${conge.duree} jour(s)
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="status-indicator">
-                                        <span class="status-dot status-${conge.statut}"></span>
-                                        ${conge.statut}
-                                    </span>                               
-                                 </td>
-                                <td>${conge.dateDemande}</td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${not empty conge.dateValidation}">
-                                            ${conge.dateValidation}
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge badge-warning">En attente</span>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <span class="badge badge-info">${paie.modePaiement}</span>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -634,9 +566,9 @@
                 </table>
                 
                 <div id="noResults" class="no-results" style="display: none;">
-                    <i class="fas fa-history"></i>
-                    <h3>Aucun historique trouvé</h3>
-                    <p>Aucune demande de congé ne correspond aux critères de recherche sélectionnés.</p>
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <h3>Aucun paiement trouvé</h3>
+                    <p>Aucun paiement ne correspond aux critères de recherche sélectionnés.</p>
                 </div>
             </div>
         </main>
@@ -647,54 +579,28 @@
         let currentSortColumn = -1;
         let sortDirection = 1;
 
-        // Fonction utilitaire pour déterminer la classe CSS du statut
-        function getStatusClass(statut) {
-            const statutLower = statut.toLowerCase();
-            if (statutLower.includes('approuve')) {
-                return 'status-approved';
-            } else if (statutLower.includes('refuse')) {
-                return 'status-refused';
-            } else {
-                return 'status-pending';
-            }
-        }
-
-        // Appliquer les classes de statut au chargement
-        document.addEventListener('DOMContentLoaded', function() {
-            const statusCells = document.querySelectorAll('.status-indicator');
-            statusCells.forEach(cell => {
-                const statut = cell.textContent.trim();
-                const dot = cell.querySelector('.status-dot');
-                if (dot) {
-                    dot.className = 'status-dot ' + getStatusClass(statut);
-                }
-            });
-        });
-
         // Écouteurs d'événements pour les filtres
         document.getElementById('globalSearch').addEventListener('input', filterTable);
-        document.getElementById('nomFilter').addEventListener('input', filterTable);
-        document.getElementById('prenomFilter').addEventListener('input', filterTable);
-        document.getElementById('departementFilter').addEventListener('input', filterTable);
-        document.getElementById('posteFilter').addEventListener('input', filterTable);
-        document.getElementById('dateDebutFilter').addEventListener('change', filterTable);
-        document.getElementById('dateFinFilter').addEventListener('change', filterTable);
-        document.getElementById('statutFilter').addEventListener('change', filterTable);
-        document.getElementById('dureeFilter').addEventListener('change', filterTable);
-        document.getElementById('dateDemandeSort').addEventListener('change', applySorting);
+        document.getElementById('idEmployeFilter').addEventListener('input', filterTable);
+        document.getElementById('periodeDebutFilter').addEventListener('change', filterTable);
+        document.getElementById('periodeFinFilter').addEventListener('change', filterTable);
+        document.getElementById('datePaiementFilter').addEventListener('change', filterTable);
+        document.getElementById('modePaiementFilter').addEventListener('change', filterTable);
+        document.getElementById('salaireMinFilter').addEventListener('input', filterTable);
+        document.getElementById('salaireMaxFilter').addEventListener('input', filterTable);
+        document.getElementById('datePaiementSort').addEventListener('change', applySorting);
 
         function filterTable() {
             const globalSearch = document.getElementById('globalSearch').value.toLowerCase();
-            const nomFilter = document.getElementById('nomFilter').value.toLowerCase();
-            const prenomFilter = document.getElementById('prenomFilter').value.toLowerCase();
-            const departementFilter = document.getElementById('departementFilter').value.toLowerCase();
-            const posteFilter = document.getElementById('posteFilter').value.toLowerCase();
-            const dateDebutFilter = document.getElementById('dateDebutFilter').value;
-            const dateFinFilter = document.getElementById('dateFinFilter').value;
-            const statutFilter = document.getElementById('statutFilter').value;
-            const dureeFilter = document.getElementById('dureeFilter').value;
+            const idEmployeFilter = document.getElementById('idEmployeFilter').value.toLowerCase();
+            const periodeDebutFilter = document.getElementById('periodeDebutFilter').value;
+            const periodeFinFilter = document.getElementById('periodeFinFilter').value;
+            const datePaiementFilter = document.getElementById('datePaiementFilter').value;
+            const modePaiementFilter = document.getElementById('modePaiementFilter').value;
+            const salaireMinFilter = document.getElementById('salaireMinFilter').value;
+            const salaireMaxFilter = document.getElementById('salaireMaxFilter').value;
 
-            const rows = document.querySelectorAll('#congesBody tr');
+            const rows = document.querySelectorAll('#paiementsBody tr');
             let visibleCount = 0;
 
             rows.forEach(row => {
@@ -712,59 +618,69 @@
                     }
                 }
 
-                // Filtres individuels
-                if (showRow && nomFilter && !cells[1].textContent.toLowerCase().includes(nomFilter)) {
-                    showRow = false;
-                }
-                if (showRow && prenomFilter && !cells[2].textContent.toLowerCase().includes(prenomFilter)) {
-                    showRow = false;
-                }
-                if (showRow && departementFilter && !cells[3].textContent.toLowerCase().includes(departementFilter)) {
-                    showRow = false;
-                }
-                if (showRow && posteFilter && !cells[4].textContent.toLowerCase().includes(posteFilter)) {
+                // Filtre par ID employé
+                if (showRow && idEmployeFilter && !cells[1].textContent.toLowerCase().includes(idEmployeFilter)) {
                     showRow = false;
                 }
 
-                // Filtre par date de début
-                if (showRow && dateDebutFilter) {
-                    const dateDebutCell = cells[5].textContent.trim();
-                    if (dateDebutCell < dateDebutFilter) {
+                // Filtre par période début
+                if (showRow && periodeDebutFilter) {
+                    const periodeCell = cells[2].textContent;
+                    if (periodeCell < periodeDebutFilter) {
                         showRow = false;
                     }
                 }
 
-                // Filtre par date de fin
-                if (showRow && dateFinFilter) {
-                    const dateFinCell = cells[6].textContent.trim();
-                    if (dateFinCell > dateFinFilter) {
+                // Filtre par période fin
+                if (showRow && periodeFinFilter) {
+                    const periodeCell = cells[2].textContent;
+                    if (periodeCell > periodeFinFilter) {
                         showRow = false;
                     }
                 }
 
-                // Filtre par statut
-                if (showRow && statutFilter !== '') {
-                    const statutCell = cells[8].textContent.toLowerCase();
-                    if (!statutCell.includes(statutFilter.toLowerCase())) {
+                // Filtre par date de paiement
+                if (showRow && datePaiementFilter) {
+                    const datePaiementCell = cells[6].textContent.trim();
+                    if (datePaiementCell !== datePaiementFilter) {
                         showRow = false;
                     }
                 }
 
-                // Filtre par durée
-                if (showRow && dureeFilter !== '') {
-                    const dureeCell = cells[7].textContent;
-                    const dureeMatch = dureeCell.match(/(\d+)/);
-                    if (dureeMatch) {
-                        const duree = parseInt(dureeMatch[1]);
+                // Filtre par mode de paiement
+                if (showRow && modePaiementFilter !== '') {
+                    const modePaiementCell = cells[7].textContent.toLowerCase();
+                    if (!modePaiementCell.includes(modePaiementFilter.toLowerCase())) {
+                        showRow = false;
+                    }
+                }
+
+                // Filtre par salaire minimum
+                if (showRow && salaireMinFilter !== '') {
+                    const salaireCell = cells[5].textContent;
+                    const salaireMatch = salaireCell.match(/(\d+)/);
+                    if (salaireMatch) {
+                        const salaire = parseInt(salaireMatch[1]);
+                        const minSalaire = parseInt(salaireMinFilter);
                         
-                        if (dureeFilter === '1-3') {
-                            if (duree < 1 || duree > 3) showRow = false;
-                        } else if (dureeFilter === '4-7') {
-                            if (duree < 4 || duree > 7) showRow = false;
-                        } else if (dureeFilter === '8-14') {
-                            if (duree < 8 || duree > 14) showRow = false;
-                        } else if (dureeFilter === '15') {
-                            if (duree < 15) showRow = false;
+                        if (salaire < minSalaire) {
+                            showRow = false;
+                        }
+                    } else {
+                        showRow = false;
+                    }
+                }
+
+                // Filtre par salaire maximum
+                if (showRow && salaireMaxFilter !== '') {
+                    const salaireCell = cells[5].textContent;
+                    const salaireMatch = salaireCell.match(/(\d+)/);
+                    if (salaireMatch) {
+                        const salaire = parseInt(salaireMatch[1]);
+                        const maxSalaire = parseInt(salaireMaxFilter);
+                        
+                        if (salaire > maxSalaire) {
+                            showRow = false;
                         }
                     } else {
                         showRow = false;
@@ -776,16 +692,16 @@
             });
 
             // Mettre à jour le compteur
-            document.getElementById('resultCount').textContent = visibleCount + ' demande(s) de congé';
+            document.getElementById('resultCount').textContent = visibleCount + ' paiement(s) trouvé(s)';
             
             // Afficher/masquer le message "Aucun résultat"
             document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
         }
 
         function applySorting() {
-            const dateSort = document.getElementById('dateDemandeSort').value;
+            const dateSort = document.getElementById('datePaiementSort').value;
             if (dateSort) {
-                sortTableByColumn(9, dateSort);
+                sortTableByColumn(6, dateSort);
             }
         }
 
@@ -798,7 +714,7 @@
         }
 
         function sortTableByColumn(columnIndex, order) {
-            const tbody = document.getElementById('congesBody');
+            const tbody = document.getElementById('paiementsBody');
             const rows = Array.from(tbody.getElementsByTagName('tr'));
 
             rows.sort((a, b) => {
@@ -808,10 +724,13 @@
                 let aValue, bValue;
 
                 // Gestion spéciale pour les colonnes numériques
-                if (columnIndex === 0 || columnIndex === 7) { // ID et Durée
+                if (columnIndex === 0 || columnIndex === 1) { // ID et ID Employé
                     aValue = extractNumber(aCell);
                     bValue = extractNumber(bCell);
-                } else if (columnIndex === 5 || columnIndex === 6 || columnIndex === 9 || columnIndex === 10) { // Dates
+                } else if (columnIndex === 3 || columnIndex === 4 || columnIndex === 5) { // Salaires
+                    aValue = extractNumber(aCell);
+                    bValue = extractNumber(bCell);
+                } else if (columnIndex === 2 || columnIndex === 6) { // Dates
                     aValue = new Date(aCell);
                     bValue = new Date(bCell);
                 } else {
@@ -839,7 +758,7 @@
         }
 
         function updateSortIndicators(columnIndex, order) {
-            const headers = document.querySelectorAll('#congesTable th');
+            const headers = document.querySelectorAll('#paiementsTable th');
             headers.forEach((header, index) => {
                 header.innerHTML = header.innerHTML.replace(/<i class="fas fa-sort-(up|down)"><\/i>/, '') + '<i class="fas fa-sort"></i>';
                 if (index === columnIndex) {
@@ -851,15 +770,14 @@
 
         function resetFilters() {
             document.getElementById('globalSearch').value = '';
-            document.getElementById('nomFilter').value = '';
-            document.getElementById('prenomFilter').value = '';
-            document.getElementById('departementFilter').value = '';
-            document.getElementById('posteFilter').value = '';
-            document.getElementById('dateDebutFilter').value = '';
-            document.getElementById('dateFinFilter').value = '';
-            document.getElementById('statutFilter').value = '';
-            document.getElementById('dureeFilter').value = '';
-            document.getElementById('dateDemandeSort').value = '';
+            document.getElementById('idEmployeFilter').value = '';
+            document.getElementById('periodeDebutFilter').value = '';
+            document.getElementById('periodeFinFilter').value = '';
+            document.getElementById('datePaiementFilter').value = '';
+            document.getElementById('modePaiementFilter').value = '';
+            document.getElementById('salaireMinFilter').value = '';
+            document.getElementById('salaireMaxFilter').value = '';
+            document.getElementById('datePaiementSort').value = '';
             
             filterTable();
         }
