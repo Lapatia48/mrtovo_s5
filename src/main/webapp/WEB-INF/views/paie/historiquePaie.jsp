@@ -4,7 +4,10 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Employés - BusinessSuite RH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des Paiements - BusinessSuite RH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Variables CSS - Palette Navy Blue + Cream + White */
         :root {
@@ -267,7 +270,7 @@
             background: #157347;
         }
 
-        /* Tableau des employés */
+        /* Tableau des paiements */
         .table-container {
             background: var(--white);
             border-radius: var(--border-radius);
@@ -348,51 +351,14 @@
             color: var(--white);
         }
 
-        .badge-warning {
-            background: var(--warning);
-            color: var(--navy-blue);
-        }
-
-        .badge-danger {
-            background: var(--danger);
+        .badge-primary {
+            background: var(--navy-blue);
             color: var(--white);
         }
 
         .badge-info {
             background: var(--info);
             color: var(--white);
-        }
-
-        /* Actions */
-        .action-link {
-            color: var(--navy-blue);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.5rem 0.75rem;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-            border: 1px solid transparent;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-        }
-
-        .action-link:hover {
-            background: var(--navy-blue);
-            color: var(--white);
-            border-color: var(--navy-blue);
-        }
-
-        .action-link.success {
-            background: var(--success);
-            color: var(--white);
-            border-color: var(--success);
-        }
-
-        .action-link.success:hover {
-            background: #157347;
-            border-color: #157347;
         }
 
         /* Message aucun résultat */
@@ -446,7 +412,7 @@
                 overflow-x: auto;
             }
             .data-table {
-                min-width: 1200px;
+                min-width: 800px;
             }
             .filter-actions {
                 flex-direction: column;
@@ -461,22 +427,19 @@
             }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="admin-container">
         <!-- Sidebar Navigation -->
         <jsp:include page="sidebarRh.jsp" />
 
-
         <!-- Contenu Principal -->
         <main class="main-content">
             <!-- Top Bar -->
             <div class="top-bar">
                 <div class="page-title">
-                    <h2>Gestion des Employés</h2>
-                    <p>Liste et gestion de tous les employés de l'entreprise</p>
+                    <h2>Historique des Paiements</h2>
+                    <p>Consultation de l'historique complet des paiements des employés</p>
                 </div>
                 <div class="user-menu">
                     <a href="${pageContext.request.contextPath}/accueilRh" class="btn btn-secondary">
@@ -492,7 +455,7 @@
 
             <!-- Section Filtres -->
             <div class="filter-section">
-                <h3><i class="fas fa-filter"></i> Filtres des employés</h3>
+                <h3><i class="fas fa-filter"></i> Filtres des paiements</h3>
                 
                 <div class="filter-grid">
                     <div class="filter-group global-search">
@@ -501,89 +464,51 @@
                     </div>
                     
                     <div class="filter-group">
-                        <label for="nomFilter">Nom</label>
-                        <input type="text" id="nomFilter" class="filter-input" placeholder="Filtrer par nom...">
+                        <label for="idEmployeFilter">ID Employé</label>
+                        <input type="text" id="idEmployeFilter" class="filter-input" placeholder="Filtrer par ID employé...">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="prenomFilter">Prénom</label>
-                        <input type="text" id="prenomFilter" class="filter-input" placeholder="Filtrer par prénom...">
+                        <label for="periodeDebutFilter">Période début</label>
+                        <input type="date" id="periodeDebutFilter" class="filter-input">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="emailFilter">Email</label>
-                        <input type="text" id="emailFilter" class="filter-input" placeholder="Filtrer par email...">
+                        <label for="periodeFinFilter">Période fin</label>
+                        <input type="date" id="periodeFinFilter" class="filter-input">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="adresseFilter">Adresse</label>
-                        <input type="text" id="adresseFilter" class="filter-input" placeholder="Filtrer par adresse...">
+                        <label for="datePaiementFilter">Date de paiement</label>
+                        <input type="date" id="datePaiementFilter" class="filter-input">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="departementFilter">Département</label>
-                        <input type="text" id="departementFilter" class="filter-input" placeholder="Filtrer par département...">
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="posteFilter">Poste</label>
-                        <input type="text" id="posteFilter" class="filter-input" placeholder="Filtrer par poste...">
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="diplomeFilter">Diplôme</label>
-                        <input type="text" id="diplomeFilter" class="filter-input" placeholder="Filtrer par diplôme...">
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="ageFilter">Âge</label>
-                        <select id="ageFilter" class="filter-select">
-                            <option value="">Tous les âges</option>
-                            <option value="18">18+ ans</option>
-                            <option value="18-35">18 à 35 ans</option>
-                            <option value="35">35+ ans</option>
+                        <label for="modePaiementFilter">Mode de paiement</label>
+                        <select id="modePaiementFilter" class="filter-select">
+                            <option value="">Tous les modes</option>
+                            <option value="virement">Virement</option>
+                            <option value="cheque">Chèque</option>
+                            <option value="especes">Espèces</option>
                         </select>
                     </div>
                     
                     <div class="filter-group">
-                        <label for="experienceFilter">Expérience</label>
-                        <select id="experienceFilter" class="filter-select">
-                            <option value="">Toutes les expériences</option>
-                            <option value="0">0 an</option>
-                            <option value="1">1+ an</option>
-                            <option value="2">2+ ans</option>
-                            <option value="3">3+ ans</option>
-                            <option value="4">4+ ans</option>
-                            <option value="5">5+ ans</option>
-                        </select>
+                        <label for="salaireMinFilter">Salaire minimum</label>
+                        <input type="number" id="salaireMinFilter" class="filter-input" placeholder="Salaire min...">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="salaireFilter">Salaire minimum</label>
-                        <select id="salaireFilter" class="filter-select">
-                            <option value="">Tous les salaires</option>
-                            <option value="500000">500 000 Ar+</option>
-                            <option value="800000">800 000 Ar+</option>
-                            <option value="1000000">1 000 000 Ar+</option>
-                            <option value="1500000">1 500 000 Ar+</option>
-                        </select>
+                        <label for="salaireMaxFilter">Salaire maximum</label>
+                        <input type="number" id="salaireMaxFilter" class="filter-input" placeholder="Salaire max...">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="statutFilter">Statut</label>
-                        <select id="statutFilter" class="filter-select">
-                            <option value="">Tous les statuts</option>
-                            <option value="actif">Actif</option>
-                            <option value="inactif">Inactif</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label for="dateEmbaucheSort">Tri par date d'embauche</label>
-                        <select id="dateEmbaucheSort" class="filter-select">
+                        <label for="datePaiementSort">Tri par date de paiement</label>
+                        <select id="datePaiementSort" class="filter-select">
                             <option value="">Ordre par défaut</option>
-                            <option value="asc">Date croissante</option>
-                            <option value="desc">Date décroissante</option>
+                            <option value="asc">Plus anciens</option>
+                            <option value="desc">Plus récents</option>
                         </select>
                     </div>
                 </div>
@@ -596,113 +521,44 @@
                 </div>
             </div>
 
-            <!-- Tableau des employés -->
+            <!-- Tableau des paiements -->
             <div class="table-container">
                 <div class="table-header">
-                    <h3>Liste des employés</h3>
+                    <h3>Liste des paiements</h3>
                     <div class="table-count" id="resultCount">
-                        ${employes.size()} employé(s) trouvé(s)
+                        ${listePaies.size()} paiement(s) trouvé(s)
                     </div>
                 </div>
                 
-                <table class="data-table" id="employesTable">
+                <table class="data-table" id="paiementsTable">
                     <thead>
                         <tr>
-                            <th onclick="sortTable(0)">Nom <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(1)">Prénom <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(2)">Email <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(3)">Adresse <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(4)">Date de naissance <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(5)">Âge <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(6)">Département <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(7)">Poste <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(8)">Expérience <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(9)">Diplôme <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(10)">Date d'embauche <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(11)">Salaire <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(12)">Statut <i class="fas fa-sort"></i></th>
-                            <th>Actions</th>
+                            <th onclick="sortTable(0)">ID <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(1)">ID Employé <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(2)">Période <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(3)">Salaire Base <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(4)">Salaire Brut <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(5)">Net à Payer <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(6)">Date Paiement <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(7)">Mode Paiement <i class="fas fa-sort"></i></th>
                         </tr>
                     </thead>
-                    <tbody id="employesBody">
-                        <c:forEach var="e" items="${employes}">
+                    <tbody id="paiementsBody">
+                        <c:forEach var="paie" items="${listePaies}">
                             <tr>
-                                <td><strong>${e.nom}</strong></td>
-                                <td>${e.prenom}</td>
-                                <td>${e.mail}</td>
-                                <td>${e.adresse}</td>
-                                <td>${e.dateNaissance}</td>
-                                <!-- <td>
-                                    <span class="badge badge-info">${e.age} ans</span>
+                                <td><strong>#${paie.id}</strong></td>
+                                <td>
+                                    <span class="badge badge-primary">${paie.idEmploye}</span>
                                 </td>
-                                <td>${e.departement}</td>
-                                <td>
-                                    <span class="badge badge-success">${e.poste}</span>
+                                <td>${paie.periodeDebut} à ${paie.periodeFin}</td>
+                                <td class="currency">${paie.salaireBase} Ar</td>
+                                <td class="currency">${paie.salaireBrut} Ar</td>
+                                <td class="currency">
+                                    <span class="badge badge-success">${paie.netAPayer} Ar</span>
                                 </td>
+                                <td>${paie.datePaie}</td>
                                 <td>
-                                    <span class="badge ${e.anneeExperience >= 3 ? 'badge-success' : e.anneeExperience >= 1 ? 'badge-warning' : 'badge-info'}">
-                                        ${e.anneeExperience} ans
-                                    </span>
-                                </td> -->
-
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${not empty e.age}">
-                                            <span class="badge badge-info">${e.age} ans</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge badge-info">Non spécifié</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>${e.departement}</td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${not empty e.poste}">
-                                            <span class="badge badge-success">${e.poste}</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge badge-info">Non spécifié</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${not empty e.anneeExperience}">
-                                            <span class="badge ${e.anneeExperience >= 3 ? 'badge-success' : e.anneeExperience >= 1 ? 'badge-warning' : 'badge-info'}">
-                                                ${e.anneeExperience} ans
-                                            </span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge badge-info">0 an</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-
-
-                                <td>${e.diplome}</td>
-                                <td>${e.dateEmbauche}</td>
-                                <td>
-                                    <strong>${e.salaire} Ar</strong>
-                                </td>
-                                <td>
-                                    <span class="badge ${e.statut == 'actif' ? 'badge-success' : 'badge-danger'}">
-                                        ${e.statut}
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="${pageContext.request.contextPath}/rh/candidats/pdf?id_cand=${e.idCandidat}" class="action-link success" title="Exporter en PDF">
-                                        <i class="fas fa-file-pdf"></i>
-                                        PDF
-                                    </a><br>
-                                    <a href="${pageContext.request.contextPath}/rh/employe/demandeConge?id_emp=${e.id}" class="action-link success">
-                                        <i class="fas fa-plane-departure"></i>
-                                        Demande de congé
-                                    </a>
-                                    <a href="${pageContext.request.contextPath}/rh/employe/payer?id_emp=${e.id}" class="action-link success">
-                                        <i class="fas fa-sign-out-alt"></i>
-                                        Payer
-                                    </a>
+                                    <span class="badge badge-info">${paie.modePaiement}</span>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -710,49 +566,41 @@
                 </table>
                 
                 <div id="noResults" class="no-results" style="display: none;">
-                    <i class="fas fa-search"></i>
-                    <h3>Aucun employé trouvé</h3>
-                    <p>Aucun employé ne correspond aux critères de recherche sélectionnés.</p>
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <h3>Aucun paiement trouvé</h3>
+                    <p>Aucun paiement ne correspond aux critères de recherche sélectionnés.</p>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        // Le script JavaScript adapté pour les employés
+        // Variables globales pour le tri
         let currentSortColumn = -1;
         let sortDirection = 1;
 
         // Écouteurs d'événements pour les filtres
         document.getElementById('globalSearch').addEventListener('input', filterTable);
-        document.getElementById('nomFilter').addEventListener('input', filterTable);
-        document.getElementById('prenomFilter').addEventListener('input', filterTable);
-        document.getElementById('emailFilter').addEventListener('input', filterTable);
-        document.getElementById('adresseFilter').addEventListener('input', filterTable);
-        document.getElementById('departementFilter').addEventListener('input', filterTable);
-        document.getElementById('posteFilter').addEventListener('input', filterTable);
-        document.getElementById('diplomeFilter').addEventListener('input', filterTable);
-        document.getElementById('ageFilter').addEventListener('change', filterTable);
-        document.getElementById('experienceFilter').addEventListener('change', filterTable);
-        document.getElementById('salaireFilter').addEventListener('change', filterTable);
-        document.getElementById('statutFilter').addEventListener('change', filterTable);
-        document.getElementById('dateEmbaucheSort').addEventListener('change', applySorting);
+        document.getElementById('idEmployeFilter').addEventListener('input', filterTable);
+        document.getElementById('periodeDebutFilter').addEventListener('change', filterTable);
+        document.getElementById('periodeFinFilter').addEventListener('change', filterTable);
+        document.getElementById('datePaiementFilter').addEventListener('change', filterTable);
+        document.getElementById('modePaiementFilter').addEventListener('change', filterTable);
+        document.getElementById('salaireMinFilter').addEventListener('input', filterTable);
+        document.getElementById('salaireMaxFilter').addEventListener('input', filterTable);
+        document.getElementById('datePaiementSort').addEventListener('change', applySorting);
 
         function filterTable() {
             const globalSearch = document.getElementById('globalSearch').value.toLowerCase();
-            const nomFilter = document.getElementById('nomFilter').value.toLowerCase();
-            const prenomFilter = document.getElementById('prenomFilter').value.toLowerCase();
-            const emailFilter = document.getElementById('emailFilter').value.toLowerCase();
-            const adresseFilter = document.getElementById('adresseFilter').value.toLowerCase();
-            const departementFilter = document.getElementById('departementFilter').value.toLowerCase();
-            const posteFilter = document.getElementById('posteFilter').value.toLowerCase();
-            const diplomeFilter = document.getElementById('diplomeFilter').value.toLowerCase();
-            const ageFilter = document.getElementById('ageFilter').value;
-            const experienceFilter = document.getElementById('experienceFilter').value;
-            const salaireFilter = document.getElementById('salaireFilter').value;
-            const statutFilter = document.getElementById('statutFilter').value;
+            const idEmployeFilter = document.getElementById('idEmployeFilter').value.toLowerCase();
+            const periodeDebutFilter = document.getElementById('periodeDebutFilter').value;
+            const periodeFinFilter = document.getElementById('periodeFinFilter').value;
+            const datePaiementFilter = document.getElementById('datePaiementFilter').value;
+            const modePaiementFilter = document.getElementById('modePaiementFilter').value;
+            const salaireMinFilter = document.getElementById('salaireMinFilter').value;
+            const salaireMaxFilter = document.getElementById('salaireMaxFilter').value;
 
-            const rows = document.querySelectorAll('#employesBody tr');
+            const rows = document.querySelectorAll('#paiementsBody tr');
             let visibleCount = 0;
 
             rows.forEach(row => {
@@ -762,7 +610,7 @@
                 // Filtre global
                 if (globalSearch) {
                     let rowText = '';
-                    for (let i = 0; i < cells.length - 1; i++) { // -1 pour exclure la colonne Actions
+                    for (let i = 0; i < cells.length; i++) {
                         rowText += cells[i].textContent.toLowerCase() + ' ';
                     }
                     if (!rowText.includes(globalSearch)) {
@@ -770,73 +618,50 @@
                     }
                 }
 
-                // Filtres individuels
-                if (showRow && nomFilter && !cells[0].textContent.toLowerCase().includes(nomFilter)) {
-                    showRow = false;
-                }
-                if (showRow && prenomFilter && !cells[1].textContent.toLowerCase().includes(prenomFilter)) {
-                    showRow = false;
-                }
-                if (showRow && emailFilter && !cells[2].textContent.toLowerCase().includes(emailFilter)) {
-                    showRow = false;
-                }
-                if (showRow && adresseFilter && !cells[3].textContent.toLowerCase().includes(adresseFilter)) {
-                    showRow = false;
-                }
-                if (showRow && departementFilter && !cells[6].textContent.toLowerCase().includes(departementFilter)) {
-                    showRow = false;
-                }
-                if (showRow && posteFilter && !cells[7].textContent.toLowerCase().includes(posteFilter)) {
-                    showRow = false;
-                }
-                if (showRow && diplomeFilter && !cells[9].textContent.toLowerCase().includes(diplomeFilter)) {
+                // Filtre par ID employé
+                if (showRow && idEmployeFilter && !cells[1].textContent.toLowerCase().includes(idEmployeFilter)) {
                     showRow = false;
                 }
 
-                // Filtre par âge
-                if (showRow && ageFilter !== '') {
-                    const ageCell = cells[5].textContent;
-                    const ageMatch = ageCell.match(/(\d+)/);
-                    if (ageMatch) {
-                        const age = parseInt(ageMatch[1]);
-                        
-                        if (ageFilter === '18') {
-                            if (age < 18) showRow = false;
-                        } else if (ageFilter === '18-35') {
-                            if (age < 18 || age > 35) showRow = false;
-                        } else if (ageFilter === '35') {
-                            if (age < 35) showRow = false;
-                        }
-                    } else {
+                // Filtre par période début
+                if (showRow && periodeDebutFilter) {
+                    const periodeCell = cells[2].textContent;
+                    if (periodeCell < periodeDebutFilter) {
                         showRow = false;
                     }
                 }
 
-                // Filtre par expérience
-                if (showRow && experienceFilter !== '') {
-                    const expCell = cells[8].textContent;
-                    const expMatch = expCell.match(/(\d+)/);
-                    if (expMatch) {
-                        const experience = parseInt(expMatch[1]);
-                        const minExperience = parseInt(experienceFilter);
-                        
-                        if (experience < minExperience) {
-                            showRow = false;
-                        }
-                    } else {
+                // Filtre par période fin
+                if (showRow && periodeFinFilter) {
+                    const periodeCell = cells[2].textContent;
+                    if (periodeCell > periodeFinFilter) {
                         showRow = false;
                     }
                 }
 
-                // Filtre par salaire
-                if (showRow && salaireFilter !== '') {
-                    const salaireCell = cells[11].textContent;
-                    // Extraire les chiffres du salaire (supprimer les espaces et "Ar")
-                    const salaireText = salaireCell.replace(/\s/g, '').replace('Ar', '');
-                    const salaireMatch = salaireText.match(/(\d+)/);
+                // Filtre par date de paiement
+                if (showRow && datePaiementFilter) {
+                    const datePaiementCell = cells[6].textContent.trim();
+                    if (datePaiementCell !== datePaiementFilter) {
+                        showRow = false;
+                    }
+                }
+
+                // Filtre par mode de paiement
+                if (showRow && modePaiementFilter !== '') {
+                    const modePaiementCell = cells[7].textContent.toLowerCase();
+                    if (!modePaiementCell.includes(modePaiementFilter.toLowerCase())) {
+                        showRow = false;
+                    }
+                }
+
+                // Filtre par salaire minimum
+                if (showRow && salaireMinFilter !== '') {
+                    const salaireCell = cells[5].textContent;
+                    const salaireMatch = salaireCell.match(/(\d+)/);
                     if (salaireMatch) {
                         const salaire = parseInt(salaireMatch[1]);
-                        const minSalaire = parseInt(salaireFilter);
+                        const minSalaire = parseInt(salaireMinFilter);
                         
                         if (salaire < minSalaire) {
                             showRow = false;
@@ -846,10 +671,18 @@
                     }
                 }
 
-                // Filtre par statut
-                if (showRow && statutFilter !== '') {
-                    const statutCell = cells[12].textContent.toLowerCase();
-                    if (statutCell !== statutFilter.toLowerCase()) {
+                // Filtre par salaire maximum
+                if (showRow && salaireMaxFilter !== '') {
+                    const salaireCell = cells[5].textContent;
+                    const salaireMatch = salaireCell.match(/(\d+)/);
+                    if (salaireMatch) {
+                        const salaire = parseInt(salaireMatch[1]);
+                        const maxSalaire = parseInt(salaireMaxFilter);
+                        
+                        if (salaire > maxSalaire) {
+                            showRow = false;
+                        }
+                    } else {
                         showRow = false;
                     }
                 }
@@ -859,16 +692,16 @@
             });
 
             // Mettre à jour le compteur
-            document.getElementById('resultCount').textContent = visibleCount + ' employé(s) trouvé(s)';
+            document.getElementById('resultCount').textContent = visibleCount + ' paiement(s) trouvé(s)';
             
             // Afficher/masquer le message "Aucun résultat"
             document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
         }
 
         function applySorting() {
-            const dateSort = document.getElementById('dateEmbaucheSort').value;
+            const dateSort = document.getElementById('datePaiementSort').value;
             if (dateSort) {
-                sortTableByColumn(10, dateSort);
+                sortTableByColumn(6, dateSort);
             }
         }
 
@@ -881,7 +714,7 @@
         }
 
         function sortTableByColumn(columnIndex, order) {
-            const tbody = document.getElementById('employesBody');
+            const tbody = document.getElementById('paiementsBody');
             const rows = Array.from(tbody.getElementsByTagName('tr'));
 
             rows.sort((a, b) => {
@@ -891,15 +724,15 @@
                 let aValue, bValue;
 
                 // Gestion spéciale pour les colonnes numériques
-                if (columnIndex === 5 || columnIndex === 8) { // Âge et Expérience
+                if (columnIndex === 0 || columnIndex === 1) { // ID et ID Employé
                     aValue = extractNumber(aCell);
                     bValue = extractNumber(bCell);
-                } else if (columnIndex === 10 || columnIndex === 4) { // Dates (embauche et naissance)
+                } else if (columnIndex === 3 || columnIndex === 4 || columnIndex === 5) { // Salaires
+                    aValue = extractNumber(aCell);
+                    bValue = extractNumber(bCell);
+                } else if (columnIndex === 2 || columnIndex === 6) { // Dates
                     aValue = new Date(aCell);
                     bValue = new Date(bCell);
-                } else if (columnIndex === 11) { // Salaire
-                    aValue = extractNumber(aCell.replace(/\s/g, '').replace('Ar', ''));
-                    bValue = extractNumber(bCell.replace(/\s/g, '').replace('Ar', ''));
                 } else {
                     aValue = aCell.toLowerCase();
                     bValue = bCell.toLowerCase();
@@ -925,7 +758,7 @@
         }
 
         function updateSortIndicators(columnIndex, order) {
-            const headers = document.querySelectorAll('#employesTable th');
+            const headers = document.querySelectorAll('#paiementsTable th');
             headers.forEach((header, index) => {
                 header.innerHTML = header.innerHTML.replace(/<i class="fas fa-sort-(up|down)"><\/i>/, '') + '<i class="fas fa-sort"></i>';
                 if (index === columnIndex) {
@@ -937,20 +770,20 @@
 
         function resetFilters() {
             document.getElementById('globalSearch').value = '';
-            document.getElementById('nomFilter').value = '';
-            document.getElementById('prenomFilter').value = '';
-            document.getElementById('emailFilter').value = '';
-            document.getElementById('adresseFilter').value = '';
-            document.getElementById('departementFilter').value = '';
-            document.getElementById('posteFilter').value = '';
-            document.getElementById('diplomeFilter').value = '';
-            document.getElementById('ageFilter').value = '';
-            document.getElementById('experienceFilter').value = '';
-            document.getElementById('salaireFilter').value = '';
-            document.getElementById('statutFilter').value = '';
-            document.getElementById('dateEmbaucheSort').value = '';
+            document.getElementById('idEmployeFilter').value = '';
+            document.getElementById('periodeDebutFilter').value = '';
+            document.getElementById('periodeFinFilter').value = '';
+            document.getElementById('datePaiementFilter').value = '';
+            document.getElementById('modePaiementFilter').value = '';
+            document.getElementById('salaireMinFilter').value = '';
+            document.getElementById('salaireMaxFilter').value = '';
+            document.getElementById('datePaiementSort').value = '';
             
             filterTable();
+        }
+
+        function exportToExcel() {
+            alert('Fonctionnalité d\'export Excel en cours de développement');
         }
 
         // Initialisation

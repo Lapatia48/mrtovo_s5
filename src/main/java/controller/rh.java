@@ -56,6 +56,21 @@ public class rh {
     @Autowired
     private AnnonceDetailCandidatService annonceDetailCandidatService;
 
+    @Autowired
+    private GeminiService geminiService;  
+
+    @GetMapping("/chatbot")
+    public String chatbot() {
+        return "rh/chatbot";
+    }
+
+    @PostMapping("/ask")
+    public String askQuestion(@RequestParam(name = "question") String question, Model model) {
+        String answer = geminiService.processQuestion(question);  
+        model.addAttribute("answer", answer);
+        return "rh/chatbot";
+    }
+
     // traitement login rh
     @GetMapping("/formLogRh")
         public String formLogRh(Model model) {

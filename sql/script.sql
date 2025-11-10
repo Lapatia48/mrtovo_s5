@@ -154,3 +154,45 @@ CREATE TABLE dg_admin (
     mdp VARCHAR(100)
 );
 
+-- =====================congee================
+CREATE TABLE congee (
+    id SERIAL PRIMARY KEY,
+    id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
+    quota INT DEFAULT 30,
+    annee INT DEFAULT EXTRACT(YEAR FROM CURRENT_DATE)
+);
+
+CREATE TABLE conge_etat (
+    id SERIAL PRIMARY KEY,
+    id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
+    statut VARCHAR(50) DEFAULT 'en_attente',
+    date_demande DATE DEFAULT CURRENT_DATE,
+    date_validation DATE,
+    duree INT,
+    date_debut DATE,
+    date_fin DATE
+);
+
+CREATE TABLE paie (
+    id SERIAL PRIMARY KEY,
+    id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
+    date_paie DATE DEFAULT CURRENT_DATE,
+    periode_debut DATE,
+    periode_fin DATE,
+    
+    salaire_base DECIMAL(15,2),
+    heures_sup_normales DECIMAL(15,2) DEFAULT 0,
+    heures_sup_weekend DECIMAL(15,2) DEFAULT 0,
+    prime_anciennete DECIMAL(15,2) DEFAULT 0,
+    absences DECIMAL(15,2) DEFAULT 0,
+    autres_primes DECIMAL(15,2) DEFAULT 0,
+    
+    salaire_brut DECIMAL(15,2),
+    retenue_cnaps DECIMAL(15,2) DEFAULT 0,
+    retenue_ostie DECIMAL(15,2) DEFAULT 0,
+    retenue_irsa DECIMAL(15,2) DEFAULT 0,
+    total_retenues DECIMAL(15,2),
+    net_a_payer DECIMAL(15,2),
+    
+    mode_paiement VARCHAR(50) DEFAULT 'Virement'
+);
