@@ -622,6 +622,8 @@
                             <th onclick="sortTable(11)">Salaire <i class="fas fa-sort"></i></th>
                             <th onclick="sortTable(12)">Statut <i class="fas fa-sort"></i></th>
                             <th>Actions</th>
+                            <!-- <th>Contrat</th>   -->
+                            <th>Creer contrat</th>
                         </tr>
                     </thead>
                     <tbody id="employesBody">
@@ -698,11 +700,40 @@
                                     <a href="${pageContext.request.contextPath}/rh/employe/demandeConge?id_emp=${e.id}" class="action-link success">
                                         <i class="fas fa-plane-departure"></i>
                                         Demande de congé
-                                    </a>
+                                    </a><br>
                                     <a href="${pageContext.request.contextPath}/rh/employe/payer?id_emp=${e.id}" class="action-link success">
                                         <i class="fas fa-sign-out-alt"></i>
                                         Payer
-                                    </a>
+                                    </a><br>
+                                    <a href="${pageContext.request.contextPath}/rh/fiche-employe?id_employe=${e.id}" 
+                                        class="action-link info" title="Voir fiche complète">
+                                            <i class="fas fa-id-card"></i>
+                                            Fiche
+                                    </a><br>
+                                </td>
+                                <td>
+                                <!-- COLONNE CONTRAT -->
+                                    <c:set var="contratsActifs" value="${contratService.findContratsActifsByEmploye(e.id)}" />
+                                    <c:choose>
+                                        <c:when test="${ empty contratsActifs}">
+                                            <span class="badge badge-success">
+                                                ${contratsActifs[0].typeContrat}
+                                            </span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge badge-warning">
+                                                Sans contrat
+                                            </span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                 <td>
+                                <!-- Actions avec création de contrat si besoin -->
+                                    <c:if test="${empty contratsActifs}">
+                                        <a href="${pageContext.request.contextPath}/rh/contrat/creer?id_employe=${e.id}" class="btn btn-sm btn-info">
+                                            Créer contrat
+                                        </a>
+                                    </c:if>
                                 </td>
                             </tr>
                         </c:forEach>

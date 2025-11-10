@@ -209,3 +209,96 @@ JOIN employe e ON c.id_employe = e.id
 LEFT JOIN conge_etat ce ON c.id_employe = ce.id_employe
 GROUP BY c.id, c.id_employe, c.quota, c.annee, e.id
 ORDER BY e.nom, e.prenom, c.annee DESC;
+
+
+
+CREATE OR REPLACE VIEW contrat_employe_view AS
+SELECT 
+    c.id,
+    c.id_employe,
+    c.numero_contrat,
+    c.type_contrat,
+    c.statut_contrat,
+    c.date_debut,
+    c.date_fin,
+    c.poste AS poste_contrat,
+    c.classification,
+    c.salaire_base,
+    c.duree_hebdomadaire,
+    c.temps_travail,
+    c.periode_essai_jours,
+    c.date_fin_essai,
+    c.date_creation,
+    c.date_modification,
+    e.nom,
+    e.prenom,
+    e.mail,
+    e.adresse,
+    e.date_naissance,
+    EXTRACT(YEAR FROM AGE(CURRENT_DATE, e.date_naissance)) AS age,
+    e.departement,
+    e.poste AS poste_employe,
+    e.annee_experience,
+    e.diplome,
+    e.date_embauche,
+    e.salaire AS salaire_employe,
+    e.statut AS statut_employe
+FROM contrat c
+JOIN employe e ON c.id_employe = e.id
+ORDER BY c.date_creation DESC;
+
+
+CREATE OR REPLACE VIEW fiche_employe_complete_view AS
+SELECT
+    -- Données employé (existantes) SANS le mot de passe
+    e.id,
+    e.id_candidat,
+    e.nom,
+    e.prenom,
+    e.mail,
+    e.adresse,
+    e.date_naissance,
+    EXTRACT(YEAR FROM AGE(CURRENT_DATE, e.date_naissance)) AS age,
+    e.renseignement,
+    e.diplome,
+    e.annee_experience,
+    e.departement,
+    e.poste,
+    e.date_embauche,
+    EXTRACT(YEAR FROM AGE(CURRENT_DATE, e.date_embauche)) AS anciennete_annees,
+    e.salaire,
+    e.statut,
+
+    -- Données fiche employé (nouvelles)
+    COALESCE(f.photo_url, '/uploads/employes/default_avatar.png') as photo_url,
+    f.telephone,
+    f.contact_urgence_nom,
+    f.contact_urgence_telephone,
+    f.numero_securite_sociale,
+
+    -- Données contrat (existantes)
+    c.type_contrat,
+    c.date_debut,
+    c.date_fin,
+    c.classification,
+    c.salaire_base,
+    c.periode_essai_jours,
+    c.date_fin_essai
+
+FROM employe e
+LEFT JOIN fiche_employe f ON e.id = f.id_employe
+LEFT JOIN contrat c ON e.id = c.id_employe AND c.statut_contrat = 'actif';
+
+INSERT INTO fiche_employe (id_employe, photo_url, telephone, contact_urgence_nom, contact_urgence_telephone) 
+VALUES (1, '/uploads/employes/images.png', '+261 34 12 345 67', 'Contact Urgence', '+261 33 12 345 67');
+
+UPDATE employe SET 
+    nom = 'Rakoto',
+    prenom = 'Jean',
+    mail = 'jean.rakoto@entreprise.mg',
+    adresse = 'Antananarivo',
+    date_naissance = '1990-05-15',
+    diplome = 'Licence Informatique',
+    annee_experience = 5,
+    departement = 'Informatique'
+WHERE id = 1;

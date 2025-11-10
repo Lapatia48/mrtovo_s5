@@ -91,5 +91,18 @@
                 Historique des paiements
             </a>
         </div>
+        <!-- ito MODIFIER -->
+        <div class="nav-item">
+            <a href="${pageContext.request.contextPath}/rh/contrats" class="nav-link">
+                <i class="fas fa-file-contract"></i>
+                Contrats
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="${pageContext.request.contextPath}/rh/employes/sans-contrat" class="nav-link">
+                <i class="fas fa-exclamation-triangle"></i>
+                Sans Contrat
+            </a>
+        </div>
     </div>
 </nav>

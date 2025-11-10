@@ -5,17 +5,28 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import service.*;
 import entity.*;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import repository.EmployeRepository;
 
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+
+
 
 @Controller
 public class rh {
@@ -58,6 +69,20 @@ public class rh {
 
     @Autowired
     private GeminiService geminiService;  
+
+    @Autowired
+    private ContratEmployeViewService contratEmployeViewService;
+
+    // Ajouter ces injections dans votre contrôleur
+    @Autowired
+    private ContratService contratService;
+
+    // AJOUTEZ CETTE INJECTION
+    @Autowired
+    private FicheEmployeCompleteViewService ficheEmployeCompleteViewService;
+
+    @Autowired
+    private FicheEmployeService ficheEmployeService;
 
     @GetMapping("/chatbot")
     public String chatbot() {
@@ -274,6 +299,9 @@ public class rh {
             @RequestParam("dateEmbauche") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEmbauche,
             @RequestParam("poste") String poste,
             @RequestParam("salaire") Integer salaire,
+            @RequestParam("typeContrat") String typeContrat,
+            @RequestParam("classification") String classification,
+            @RequestParam("periodeEssai") Integer periodeEssai,
             @RequestParam(value = "renseignement", required = false) String renseignement,
             Model model) {
 
@@ -293,25 +321,49 @@ public class rh {
             employe.setNom(nom);
             employe.setPrenom(prenom);
             employe.setMail(mail);
-            employe.setMotDePasse(motDePasse); // À hasher en production!
+            employe.setMotDePasse(motDePasse);
             employe.setAdresse(adresse);
             employe.setDateNaissance(dateNaissance);
             employe.setRenseignement(renseignement);
-            employe.setDiplome(diplome); // Directement le texte
+            employe.setDiplome(diplome);
             employe.setAnneeExperience(anneeExp);
-            employe.setDepartement(departement); // Directement le texte
-            employe.setPoste(poste); // Utilise le poste du formulaire
+            employe.setDepartement(departement);
+            employe.setPoste(poste);
             employe.setDateEmbauche(dateEmbauche);
             employe.setSalaire(salaire);
             employe.setStatut("actif");
 
-            // Sauvegarder l'employé
-            employeService.save(employe);
+            // CORRECTION : Sauvegarder l'employé (pas employeService)
+            Employe savedEmploye = employeService.save(employe);
+
+            // === CRÉATION AUTOMATIQUE DU CONTRAT ===
+            Contrat contrat = new Contrat();
+            contrat.setIdEmploye(savedEmploye.getId());
+            contrat.setNumeroContrat(genererNumeroContrat(typeContrat));
+            contrat.setTypeContrat(typeContrat);
+            contrat.setDateDebut(dateEmbauche); // Utilise le paramètre
+            contrat.setPoste(poste); // Utilise le paramètre
+            contrat.setClassification(classification);
+            contrat.setSalaireBase(BigDecimal.valueOf(salaire));
+            contrat.setPeriodeEssaiJours(periodeEssai);
+            
+            // Pour CDD, définir la date de fin (1 an par défaut)
+            if ("CDD".equals(typeContrat)) {
+                contrat.setDateFin(dateEmbauche.plusYears(1));
+            }
+            
+            // Définir la fin de période d'essai si applicable
+            if (periodeEssai > 0) {
+                contrat.setDateFinEssai(dateEmbauche.plusDays(periodeEssai));
+            }
+            
+            contratService.save(contrat);
+            // === FIN CRÉATION CONTRAT ===
 
             // Supprimer de la table essai
             essaiService.deleteEssaiByCandidat(idCandidat);
 
-            model.addAttribute("success", "Employé embauché avec succès !");
+            model.addAttribute("success", "Employé embauché avec succès ! Contrat " + contrat.getNumeroContrat() + " créé.");
             List<Employe> employes = employeService.findAll();
             model.addAttribute("employes", employes);
             return "rh/listeEmploye"; 
@@ -484,5 +536,308 @@ public class rh {
     }
 
 
+    // ITO MODIFIER
+    // Méthode pour générer un numéro de contrat unique
+    private String genererNumeroContrat(String typeContrat) {
+        String prefix = "";
+        switch(typeContrat) {
+            case "CDI": prefix = "CDI"; break;
+            case "CDD": prefix = "CDD"; break;
+            case "INTERIM": prefix = "INT"; break;
+            case "APPRENTISSAGE": prefix = "APP"; break;
+            default: prefix = "CT";
+        }
+        return prefix + "-" + System.currentTimeMillis();
+    }
+
     
+    @GetMapping("/rh/employes/sans-contrat")
+    public String employesSansContrat(Model model) {
+        try {
+            List<Employe> employesSansContrat = employeService.findEmployesSansContrat();
+            model.addAttribute("employes", employesSansContrat);
+            model.addAttribute("titre", "Employés sans contrat");
+            return "rh/listeEmploye";
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du chargement des employés sans contrat");
+            return "rh/listeEmploye";
+        }
+    }
+    
+    // AJOUTEZ CES MÉTHODES dans votre contrôleur Rh
+    @GetMapping("/rh/contrats")
+    public String listeContrats(Model model) {
+        try {
+            List<ContratEmployeView> contrats = contratEmployeViewService.findAll();
+            
+            model.addAttribute("contrats", contrats);
+            
+            // Statistiques
+            long totalContrats = contrats.size();
+            long contratsActifs = contratEmployeViewService.getContratsActifsCount();
+            long contratsCDI = contratEmployeViewService.getContratsCDICount();
+            
+            model.addAttribute("totalContrats", totalContrats);
+            model.addAttribute("contratsActifs", contratsActifs);
+            model.addAttribute("contratsCDI", contratsCDI);
+            
+            return "rh/listeContrats";
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du chargement des contrats: " + e.getMessage());
+            return "rh/listeContrats";
+        }
+    }
+
+    @GetMapping("/rh/contrats/employe")
+    public String contratsParEmploye(@RequestParam("id_employe") Integer idEmploye, Model model) {
+        try {
+            List<ContratEmployeView> contrats = contratEmployeViewService.findByIdEmploye(idEmploye);
+            
+            // Récupérer les infos de base de l'employé depuis le premier contrat
+            Optional<Employe> employe = employeService.findById(idEmploye);
+            
+            model.addAttribute("contrats", contrats);
+            model.addAttribute("employe", employe.orElse(null));
+            
+            return "rh/contratsEmploye";
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du chargement des contrats de l'employé");
+            return "redirect:/rh/contrats";
+        }
+    }
+
+    @GetMapping("/rh/contrats/search")
+    public String searchContrats(@RequestParam(value = "recherche", required = false) String recherche, Model model) {
+        try {
+            List<ContratEmployeView> contrats;
+            
+            if (recherche != null && !recherche.trim().isEmpty()) {
+                contrats = contratEmployeViewService.searchByNomOrPrenom(recherche.trim());
+                model.addAttribute("recherche", recherche);
+            } else {
+                contrats = contratEmployeViewService.findAll();
+            }
+            
+            model.addAttribute("contrats", contrats);
+            model.addAttribute("totalContrats", contrats.size());
+            model.addAttribute("contratsActifs", contrats.stream().filter(c -> "actif".equals(c.getStatutContrat())).count());
+            model.addAttribute("contratsCDI", contrats.stream().filter(c -> "CDI".equals(c.getTypeContrat())).count());
+            
+            return "rh/listeContrats";
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors de la recherche: " + e.getMessage());
+            return "rh/listeContrats";
+        }
+    }
+
+@GetMapping("/rh/fiche-employe")
+public String ficheEmploye(@RequestParam("id_employe") Integer idEmploye, Model model) {
+    try {
+        System.out.println("=== CHARGEMENT FICHE EMPLOYÉ ID: " + idEmploye + " ===");
+        
+        // ASSURE-TOI qu'une fiche existe pour cet employé
+        ficheEmployeService.ensureFicheExists(idEmploye);
+        
+        Optional<FicheEmployeCompleteView> fiche = ficheEmployeCompleteViewService.findById(idEmploye);
+        
+        if (fiche.isPresent()) {
+            FicheEmployeCompleteView employe = fiche.get();
+            System.out.println("=== DONNÉES EMPLOYÉ ===");
+            System.out.println("- ID: " + employe.getId());
+            System.out.println("- Nom: '" + employe.getNom() + "'");
+            System.out.println("- Prénom: '" + employe.getPrenom() + "'");
+            System.out.println("- Poste: '" + employe.getPoste() + "'");
+            System.out.println("- Email: '" + employe.getMail() + "'");
+            System.out.println("- Photo URL: '" + employe.getPhotoUrl() + "'");
+            System.out.println("=== FIN DONNÉES ===");
+            
+            model.addAttribute("employe", employe);
+            return "rh/ficheEmploye";
+        } else {
+            System.out.println("❌ Employé non trouvé ID: " + idEmploye);
+            model.addAttribute("error", "Employé non trouvé");
+            return "redirect:/rh/employe";
+        }
+    } catch (Exception e) {
+        System.out.println("❌ ERREUR CRITIQUE fiche employé: " + e.getMessage());
+        e.printStackTrace();
+        model.addAttribute("error", "Erreur: " + e.getMessage());
+        return "redirect:/rh/employe";
+    }
+}
+
+@PostMapping("/rh/fiche-employe/upload-photo")
+public String uploadPhoto(@RequestParam("file") MultipartFile file,
+                        @RequestParam("id_employe") Integer idEmploye,
+                        Model model) {
+    try {
+        System.out.println("=== UPLOAD DÉBUT ===");
+        System.out.println("ID Employé: " + idEmploye);
+        System.out.println("Fichier: " + file.getOriginalFilename());
+        System.out.println("Taille: " + file.getSize());
+        
+        if (file.isEmpty()) {
+            model.addAttribute("error", "Veuillez sélectionner un fichier");
+            return "redirect:/rh/fiche-employe?id_employe=" + idEmploye;
+        }
+
+        // Vérifiez le type MIME
+        if (!file.getContentType().startsWith("image/")) {
+            model.addAttribute("error", "Veuillez sélectionner une image valide");
+            return "redirect:/rh/fiche-employe?id_employe=" + idEmploye;
+        }
+
+         // CHEMIN CORRIGÉ - utilise le répertoire de classes
+        Path uploadDir = Paths.get("src/main/resources/static/uploads/employes");
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);
+        }
+
+        // Générer nom fichier avec extension
+        String fileName = "photo_" + idEmploye + "_" + System.currentTimeMillis() + 
+                        getFileExtension(file.getOriginalFilename());
+        
+        // Sauvegarder
+        Path filePath = uploadDir.resolve(fileName);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        // Mettre à jour BD dans la TABLE fiche_employe
+        String photoUrl = "/uploads/employes/" + fileName;
+        ficheEmployeService.updatePhoto(idEmploye, photoUrl);
+
+        model.addAttribute("success", "Photo mise à jour avec succès");
+        System.out.println("=== UPLOAD RÉUSSI: " + photoUrl);
+        
+        return "redirect:/rh/fiche-employe?id_employe=" + idEmploye;
+
+    } catch (Exception e) {
+        System.out.println("=== ERREUR UPLOAD: " + e.getMessage());
+        e.printStackTrace();
+        model.addAttribute("error", "Erreur lors de l'upload: " + e.getMessage());
+        return "redirect:/rh/fiche-employe?id_employe=" + idEmploye;
+    }
+}
+
+@GetMapping("/rh/fiches-employes")
+public String listeFichesEmployes(Model model) {
+    try {
+        List<FicheEmployeCompleteView> employes = ficheEmployeCompleteViewService.findAll();
+        model.addAttribute("employes", employes);
+        return "rh/listeFichesEmployes";
+    } catch (Exception e) {
+        model.addAttribute("error", "Erreur lors du chargement des fiches employés");
+        return "redirect:/rh/employe";
+    }
+}
+
+// AJOUTEZ CETTE MÉTHODE DANS VOTRE CLASSE
+private String getFileExtension(String fileName) {
+    if (fileName == null || fileName.isEmpty()) {
+        return ".jpg"; // Extension par défaut
+    }
+    int lastIndex = fileName.lastIndexOf(".");
+    return (lastIndex == -1) ? ".jpg" : fileName.substring(lastIndex).toLowerCase();
+}
+
+@GetMapping("/rh/contrat/creer")
+public String showCreateContratForm(@RequestParam("id_employe") Integer idEmploye, Model model) {
+    try {
+        System.out.println("=== CRÉATION CONTRAT POUR EMPLOYÉ ID: " + idEmploye + " ===");
+        
+        // Récupérer l'employé
+        Optional<Employe> employeOpt = employeService.findById(idEmploye);
+        
+        if (employeOpt.isPresent()) {
+            Employe employe = employeOpt.get();
+            model.addAttribute("employe", employe);
+            model.addAttribute("contrat", new Contrat()); // Objet vide pour le formulaire
+            
+            // Données pour les selects
+            model.addAttribute("typesContrat", Arrays.asList("CDI", "CDD", "INTERIM", "APPRENTISSAGE"));
+            model.addAttribute("classifications", Arrays.asList("Cadre", "ETAM", "Ouvrier"));
+            model.addAttribute("tempsTravail", Arrays.asList("Plein", "Partiel"));
+            
+            return "rh/creerContrat";
+        } else {
+            model.addAttribute("error", "Employé non trouvé");
+            return "redirect:/rh/employe";
+        }
+    } catch (Exception e) {
+        System.out.println("ERREUR création contrat: " + e.getMessage());
+        model.addAttribute("error", "Erreur: " + e.getMessage());
+        return "redirect:/rh/employe";
+    }
+}
+
+@PostMapping("/rh/contrat/save")
+public String saveContrat(@ModelAttribute Contrat contrat,
+                         @RequestParam("idEmploye") Integer idEmploye,  // Notez le changement de nom !
+                         Model model) {
+    try {
+        System.out.println("=== SAUVEGARDE CONTRAT MANUEL POUR EMPLOYÉ ID: " + idEmploye + " ===");
+        System.out.println("Données reçues:");
+        System.out.println("- Type: " + contrat.getTypeContrat());
+        System.out.println("- Numéro: " + contrat.getNumeroContrat());
+        System.out.println("- Date début: " + contrat.getDateDebut());
+        System.out.println("- Salaire base: " + contrat.getSalaireBase());
+        
+        // Vérifier que l'employé existe
+        Optional<Employe> employeOpt = employeService.findById(idEmploye);
+        if (!employeOpt.isPresent()) {
+            System.out.println("❌ Employé non trouvé");
+            model.addAttribute("error", "Employé non trouvé");
+            return "redirect:/rh/employe";
+        }
+
+        Employe employe = employeOpt.get();
+        System.out.println("✅ Employé trouvé: " + employe.getPrenom() + " " + employe.getNom());
+        
+        // Vérifier s'il n'y a pas déjà un contrat actif
+        boolean contratActifExiste = contratService.existsContratActifByEmploye(idEmploye);
+        if (contratActifExiste) {
+            System.out.println("❌ Contrat actif existe déjà");
+            model.addAttribute("error", "Cet employé a déjà un contrat actif");
+            return "redirect:/rh/fiche-employe?id_employe=" + idEmploye;
+        }
+
+        // Configurer le contrat (les champs sont déjà remplis par @ModelAttribute)
+        contrat.setIdEmploye(idEmploye);
+        contrat.setStatutContrat("actif");
+        
+        // Générer numéro de contrat si vide
+        if (contrat.getNumeroContrat() == null || contrat.getNumeroContrat().isEmpty()) {
+            String numeroContrat = genererNumeroContrat(contrat.getTypeContrat());
+            contrat.setNumeroContrat(numeroContrat);
+            System.out.println("📝 Numéro généré: " + numeroContrat);
+        }
+
+        // Calculer automatiquement la date de fin d'essai si période > 0
+        if (contrat.getPeriodeEssaiJours() != null && contrat.getPeriodeEssaiJours() > 0 && contrat.getDateDebut() != null) {
+            LocalDate dateFinEssai = contrat.getDateDebut().plusDays(contrat.getPeriodeEssaiJours());
+            contrat.setDateFinEssai(dateFinEssai);
+            System.out.println("📅 Date fin essai calculée: " + dateFinEssai);
+        }
+
+        System.out.println("💾 Tentative de sauvegarde...");
+        
+        // Sauvegarder
+        Contrat contratSauvegarde = contratService.save(contrat);
+        
+        System.out.println("✅ Contrat sauvegardé avec ID: " + contratSauvegarde.getId());
+        System.out.println("=== SAUVEGARDE CONTRAT RÉUSSIE ===");
+        
+        model.addAttribute("success", "Contrat créé avec succès pour " + employe.getPrenom() + " " + employe.getNom());
+        
+        return "redirect:/rh/fiche-employe?id_employe=" + idEmploye;
+        
+    } catch (Exception e) {
+        System.out.println("❌ ERREUR sauvegarde contrat: " + e.getMessage());
+        e.printStackTrace();
+        model.addAttribute("error", "Erreur création contrat: " + e.getMessage());
+        return "redirect:/rh/contrat/creer?id_employe=" + idEmploye;
+    }
+}
 }

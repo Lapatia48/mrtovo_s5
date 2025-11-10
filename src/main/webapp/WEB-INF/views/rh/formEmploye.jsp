@@ -549,6 +549,45 @@
                     </div>
                 </div>
 
+                    <!-- ITO MODIFIER -->
+                <!-- Section Contrat de travail -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-file-contract"></i> Contrat de Travail</h3>
+                    </div>
+                    <div class="section-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="typeContrat" class="required">Type de contrat *</label>
+                                <select id="typeContrat" name="typeContrat" class="form-control" required>
+                                    <option value="CDI">CDI - Contrat à Durée Indéterminée</option>
+                                    <option value="CDD">CDD - Contrat à Durée Déterminée</option>
+                                    <option value="INTERIM">Intérim</option>
+                                    <option value="APPRENTISSAGE">Apprentissage</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="classification">Classification</label>
+                                <select id="classification" name="classification" class="form-control">
+                                    <option value="Cadre">Cadre</option>
+                                    <option value="ETAM">ETAM</option>
+                                    <option value="Ouvrier">Ouvrier</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="periodeEssai">Période d'essai (jours)</label>
+                                <input type="number" id="periodeEssai" name="periodeEssai" 
+                                    class="form-control" value="0" min="0" max="90">
+                                <small style="color: var(--gray); font-size: 0.75rem;">
+                                    0 si période d'essai déjà effectuée
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Actions du formulaire -->
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="window.history.back()">
@@ -563,85 +602,128 @@
             </form>
         </main>
     </div>
+<!-- ITO MODIFIER -->
+<script>
+    function validerFormulaire() {
+    const motDePasse = document.getElementsByName('motDePasse')[0].value;
+    const confirmation = document.getElementsByName('confirmationMotDePasse')[0].value;
+    const salaire = document.getElementsByName('salaire')[0].value;
+    const dateEmbauche = document.getElementsByName('dateEmbauche')[0].value;
+    const typeContrat = document.getElementsByName('typeContrat')[0].value;
+    const periodeEssai = document.getElementsByName('periodeEssai')[0].value;
+    
+    // Validation des mots de passe
+    if (motDePasse !== confirmation) {
+        alert('❌ Les mots de passe ne correspondent pas');
+        document.getElementsByName('motDePasse')[0].focus();
+        return false;
+    }
+    
+    if (motDePasse.length < 6) {
+        alert('❌ Le mot de passe doit contenir au moins 6 caractères');
+        document.getElementsByName('motDePasse')[0].focus();
+        return false;
+    }
+    
+    // Validation du salaire
+    if (salaire <= 0) {
+        alert('❌ Le salaire doit être supérieur à 0');
+        document.getElementsByName('salaire')[0].focus();
+        return false;
+    }
+    
+    // Validation de la date
+    if (!dateEmbauche) {
+        alert('❌ Veuillez sélectionner une date d\'embauche');
+        document.getElementsByName('dateEmbauche')[0].focus();
+        return false;
+    }
+    
+    // Validation du type de contrat
+    if (!typeContrat) {
+        alert('❌ Veuillez sélectionner un type de contrat');
+        document.getElementsByName('typeContrat')[0].focus();
+        return false;
+    }
+    
+    // Validation de la période d'essai
+    if (periodeEssai < 0 || periodeEssai > 90) {
+        alert('❌ La période d\'essai doit être entre 0 et 90 jours');
+        document.getElementsByName('periodeEssai')[0].focus();
+        return false;
+    }
+    
+    const confirmationMessage = `Êtes-vous sûr de vouloir embaucher définitivement ${candidat.prenom} ${candidat.nom} ?\n\nPoste: ${document.getElementsByName('poste')[0].value}\nSalaire: ${salaire} Ar\nDate d'embauche: ${dateEmbauche}\nType de contrat: ${typeContrat}\nPériode d'essai: ${periodeEssai} jours`;
+    
+    return confirm(confirmationMessage);
+}
 
-    <script>
-        function validerFormulaire() {
-            const motDePasse = document.getElementsByName('motDePasse')[0].value;
-            const confirmation = document.getElementsByName('confirmationMotDePasse')[0].value;
-            const salaire = document.getElementsByName('salaire')[0].value;
-            const dateEmbauche = document.getElementsByName('dateEmbauche')[0].value;
-            
-            // Validation des mots de passe
-            if (motDePasse !== confirmation) {
-                alert('❌ Les mots de passe ne correspondent pas');
-                document.getElementsByName('motDePasse')[0].focus();
-                return false;
-            }
-            
-            if (motDePasse.length < 6) {
-                alert('❌ Le mot de passe doit contenir au moins 6 caractères');
-                document.getElementsByName('motDePasse')[0].focus();
-                return false;
-            }
-            
-            // Validation du salaire
-            if (salaire <= 0) {
-                alert('❌ Le salaire doit être supérieur à 0');
-                document.getElementsByName('salaire')[0].focus();
-                return false;
-            }
-            
-            // Validation de la date
-            if (!dateEmbauche) {
-                alert('❌ Veuillez sélectionner une date d\'embauche');
-                document.getElementsByName('dateEmbauche')[0].focus();
-                return false;
-            }
-            
-            const confirmationMessage = `Êtes-vous sûr de vouloir embaucher définitivement ${candidat.prenom} ${candidat.nom} ?\n\nPoste: ${document.getElementsByName('poste')[0].value}\nSalaire: ${salaire} Ar\nDate d'embauche: ${dateEmbauche}`;
-            
-            return confirm(confirmationMessage);
+// UN SEUL addEventListener pour DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    // === PARTIE 1 : Gestion du menu responsive ===
+    const menuToggle = document.createElement('button');
+    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    menuToggle.style.cssText = `
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        background: var(--navy-blue);
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        z-index: 1001;
+        display: none;
+    `;
+    
+    document.body.appendChild(menuToggle);
+    
+    menuToggle.addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.toggle('active');
+    });
+
+    function handleResize() {
+        if (window.innerWidth <= 992) {
+            menuToggle.style.display = 'block';
+        } else {
+            menuToggle.style.display = 'none';
+            document.querySelector('.sidebar').classList.remove('active');
         }
+    }
 
-        // Focus sur le premier champ modifiable
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementsByName('motDePasse')[0].focus();
-            
-            // Menu responsive
-            const menuToggle = document.createElement('button');
-            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            menuToggle.style.cssText = `
-                position: fixed;
-                top: 1rem;
-                left: 1rem;
-                background: var(--navy-blue);
-                color: white;
-                border: none;
-                padding: 0.5rem;
-                border-radius: var(--border-radius);
-                cursor: pointer;
-                z-index: 1001;
-                display: none;
-            `;
-            
-            document.body.appendChild(menuToggle);
-            
-            menuToggle.addEventListener('click', function() {
-                document.querySelector('.sidebar').classList.toggle('active');
-            });
+    window.addEventListener('resize', handleResize);
+    handleResize();
 
-            function handleResize() {
-                if (window.innerWidth <= 992) {
-                    menuToggle.style.display = 'block';
-                } else {
-                    menuToggle.style.display = 'none';
-                    document.querySelector('.sidebar').classList.remove('active');
-                }
+    // === PARTIE 2 : Gestion dynamique du contrat ===
+    const typeContratSelect = document.getElementById('typeContrat');
+    const periodeEssaiInput = document.getElementById('periodeEssai');
+    
+    if (typeContratSelect && periodeEssaiInput) {
+        typeContratSelect.addEventListener('change', function() {
+            const selectedType = this.value;
+            
+            // Si c'est un CDI, on peut mettre une période d'essai par défaut
+            if (selectedType === 'CDI' && periodeEssaiInput.value === '0') {
+                periodeEssaiInput.value = '30'; // 1 mois par défaut pour CDI
             }
-
-            window.addEventListener('resize', handleResize);
-            handleResize();
+            
+            // Si c'est un apprentissage, période d'essai à 0
+            if (selectedType === 'APPRENTISSAGE') {
+                periodeEssaiInput.value = '0';
+                periodeEssaiInput.readOnly = true;
+            } else {
+                periodeEssaiInput.readOnly = false;
+            }
         });
+        
+        // Déclencher l'événement change au chargement pour initialiser l'état
+        typeContratSelect.dispatchEvent(new Event('change'));
+    }
+    
+    // === Focus sur le premier champ modifiable ===
+    document.getElementsByName('motDePasse')[0].focus();
+});
     </script>
 </body>
 </html>
