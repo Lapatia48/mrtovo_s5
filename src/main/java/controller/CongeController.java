@@ -12,12 +12,16 @@ import service.*;
 import entity.CongeEtat;
 import entity.CongeEtatDetails;
 import entity.Employe;
+import entity.EmployePointage;
+import entity.PointageEmploye;
 import entity.VueSoldeConges;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class CongeController {
@@ -36,6 +40,12 @@ public class CongeController {
 
     @Autowired
     private VueSoldeCongesService vueSoldeCongesService;
+
+    @Autowired
+    private EmployePointageService employePointageService;
+
+    @Autowired
+    private PointageEmployeService pointageEmployeService;
 
     // traitement demande de congee
     @GetMapping("/rh/employe/demandeConge") 
@@ -272,5 +282,112 @@ public class CongeController {
             model.addAttribute("error", "Erreur lors de la récupération de votre solde: " + e.getMessage());
         }
         return "conge/monSoldeConge";
+    }
+
+    @GetMapping("/rh/conge/pointage")
+    public String listeEmployesPointage(
+            @RequestParam(value = "departement", required = false) String departement,
+            @RequestParam(value = "recherche", required = false) String recherche,
+            Model model) {
+        
+        try {
+            List<EmployePointage> employes;
+            String filtreActif = "Tous les employés";
+            
+            if (recherche != null && !recherche.trim().isEmpty()) {
+                employes = employePointageService.searchByNomOrPrenom(recherche);
+                filtreActif = "Recherche: " + recherche;
+                model.addAttribute("recherche", recherche);
+            } else if (departement != null && !departement.isEmpty()) {
+                employes = employePointageService.findByDepartement(departement);
+                filtreActif = "Département: " + departement;
+                model.addAttribute("departement", departement);
+            } else {
+                employes = employePointageService.findAll();
+            }
+            
+            // Ajouter les statistiques
+            model.addAttribute("employes", employes);
+            model.addAttribute("filtreActif", filtreActif);
+            model.addAttribute("totalEmployes", employes.size());
+            model.addAttribute("statistiquesDepartement", employePointageService.getStatistiquesDepartement());
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors du chargement des employés: " + e.getMessage());
+        }
+        
+        return "conge/listeEmployesPointage";
+    }
+
+    
+
+     // GET - Afficher le formulaire de pointage
+    @GetMapping("/rh/conge/formulaire")
+    public String formulairePointage(
+            @RequestParam("employeId") Integer employeId,
+            @RequestParam("type") String type,
+            Model model) {
+        
+        try {
+            // Récupérer les infos de l'employé
+            EmployePointage employe = employePointageService.findById(employeId);
+            
+            if (employe == null) {
+                model.addAttribute("error", "Employé non trouvé");
+                return "redirect:/rh/conge/pointage";
+            }
+            
+            // Préparer les données pour le formulaire
+            model.addAttribute("employe", employe);
+            model.addAttribute("typeEvenement", type);
+            model.addAttribute("aujourdhui", LocalDate.now());
+            
+            // SUPPRIMER cette partie - on gère dans le JSP
+            // Map<String, String> configType = getConfigType(type);
+            // model.addAttribute("configType", configType);
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur: " + e.getMessage());
+            return "redirect:/rh/conge/pointage";
+        }
+        
+        return "conge/formulairePointage";
+    }
+
+    // POST - Traiter la soumission du formulaire
+    @PostMapping("/rh/conge/pointage/sauvegarder")
+    public String sauvegarderPointage(
+            @RequestParam("employeId") Integer employeId,
+            @RequestParam("typeEvenement") String typeEvenement,
+            @RequestParam("sousType") String sousType,
+            @RequestParam("dateEvenement") String dateEvenement,
+            @RequestParam(value = "dureeJours", required = false) Double dureeJours,
+            @RequestParam(value = "heuresRetard", required = false) Integer heuresRetard,
+            @RequestParam(value = "minutesRetard", required = false) Integer minutesRetard,
+            @RequestParam("motif") String motif,
+            Model model) {
+        
+        try {
+            // Créer et sauvegarder le pointage
+            PointageEmploye pointage = pointageEmployeService.creerPointage(
+                employeId, typeEvenement, sousType, dateEvenement, 
+                dureeJours, heuresRetard, minutesRetard, motif
+            );
+            
+            // Message de succès avec l'impact
+            String impactMessage = "";
+            if (pointage.getImpactAnnuel() != null && pointage.getImpactAnnuel() > 0) {
+                impactMessage = pointage.getImpactAnnuel() + " jour(s) sur quota annuel";
+            } else if (pointage.getImpactExceptionnel() != null && pointage.getImpactExceptionnel() > 0) {
+                impactMessage = pointage.getImpactExceptionnel() + " jour(s) sur quota exceptionnel";
+            }
+            
+            model.addAttribute("success", "Pointage enregistré avec succès! Impact: " + impactMessage);
+                
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors de l'enregistrement: " + e.getMessage());
+        }
+        
+        return "redirect:/rh/conge/pointage";
     }
 }

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Soldes de Congés - BusinessSuite RH</title>
+    <title>Pointage des Employés - BusinessSuite RH</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -288,7 +288,12 @@
             background: #0baccc;
         }
 
-        /* Tableau des soldes */
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* Tableau des employés */
         .table-container {
             background: var(--white);
             border-radius: var(--border-radius);
@@ -389,6 +394,11 @@
             color: var(--white);
         }
 
+        .badge-secondary {
+            background: var(--gray);
+            color: var(--white);
+        }
+
         /* Message aucun résultat */
         .no-results {
             text-align: center;
@@ -478,6 +488,14 @@
             margin-left: auto;
         }
 
+        /* Actions */
+        .actions-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
         /* Responsive Design */
         @media (max-width: 1200px) {
             .sidebar {
@@ -504,6 +522,9 @@
             .stats-cards {
                 grid-template-columns: repeat(2, 1fr);
             }
+            .actions-container {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 768px) {
@@ -519,7 +540,7 @@
                 overflow-x: auto;
             }
             .data-table {
-                min-width: 1200px;
+                min-width: 1000px;
             }
             .filter-actions {
                 flex-direction: column;
@@ -540,16 +561,15 @@
 </head>
 <body>
     <div class="admin-container">
-        <!-- Sidebar Navigation -->
         <jsp:include page="sidebarRh.jsp" />
-
+        
         <!-- Contenu Principal -->
         <main class="main-content">
             <!-- Top Bar -->
             <div class="top-bar">
                 <div class="page-title">
-                    <h2><i class="fas fa-chart-bar me-2"></i>Liste des Soldes de Congés</h2>
-                    <p>Gestion des quotas et soldes des employés</p>
+                    <h2><i class="fas fa-clipboard-check me-2"></i>Pointage des Employés</h2>
+                    <p>Gestion des absences, retards et présences</p>
                 </div>
                 <div class="user-menu">
                     <a href="${pageContext.request.contextPath}/rh/dashboard" class="btn btn-secondary">
@@ -574,37 +594,36 @@
                     <div class="stat-label">Total Employés</div>
                 </div>
                 <div class="stat-card success">
-                    <i class="fas fa-thumbs-up"></i>
-                    <div class="stat-number">${totalEmployes - nbNegatifs}</div>
-                    <div class="stat-label">Soldes Positifs</div>
-                </div>
-                <div class="stat-card warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <div class="stat-number">${nbNegatifs}</div>
-                    <div class="stat-label">Soldes Négatifs</div>
-                </div>
-                <div class="stat-card info">
                     <i class="fas fa-filter"></i>
-                    <div class="stat-number">${soldesConges.size()}</div>
+                    <div class="stat-number">${employes.size()}</div>
                     <div class="stat-label">Résultats</div>
                 </div>
+                <c:forEach var="stat" items="${statistiquesDepartement}" varStatus="loop">
+                    <c:if test="${loop.index < 2}">
+                        <div class="stat-card info">
+                            <i class="fas fa-building"></i>
+                            <div class="stat-number">${stat.value}</div>
+                            <div class="stat-label">${stat.key}</div>
+                        </div>
+                    </c:if>
+                </c:forEach>
             </div>
 
             <!-- Section Filtres -->
             <div class="filter-section">
-                <h3><i class="fas fa-filter"></i> Filtres des soldes de congés</h3>
+                <h3><i class="fas fa-filter"></i> Filtres des employés</h3>
                 
                 <form method="get" class="filter-grid">
                     <div class="filter-group">
-                        <label for="annee">Année</label>
-                        <input type="number" id="annee" name="annee" class="filter-input" 
-                               value="${filtreAnnee}" placeholder="ex: 2025" min="2020" max="2030">
+                        <label for="departement">Département</label>
+                        <input type="text" id="departement" name="departement" class="filter-input" 
+                               value="${departement}" placeholder="ex: RH, IT, Marketing...">
                     </div>
                     
                     <div class="filter-group">
-                        <label for="departement">Département</label>
-                        <input type="text" id="departement" name="departement" class="filter-input" 
-                               value="${filtreDepartement}" placeholder="ex: RH">
+                        <label for="recherche">Recherche</label>
+                        <input type="text" id="recherche" name="recherche" class="filter-input" 
+                               value="${recherche}" placeholder="Nom ou prénom...">
                     </div>
                     
                     <div class="filter-group global-search">
@@ -617,132 +636,142 @@
                     <button type="submit" formmethod="get" class="btn btn-primary">
                         <i class="fas fa-filter me-2"></i>Filtrer
                     </button>
-                    <a href="${pageContext.request.contextPath}/rh/conge/list" class="btn btn-secondary">
+                    <a href="${pageContext.request.contextPath}/rh/conge/pointage" class="btn btn-secondary">
                         <i class="fas fa-refresh me-2"></i>Réinitialiser
-                    </a>
-                    <a href="${pageContext.request.contextPath}/rh/conge/solde-negatifs" class="btn btn-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Voir Soldes Négatifs
                     </a>
                 </div>
             </div>
 
-            <!-- Tableau des soldes -->
+            <!-- Tableau des employés -->
             <div class="table-container">
                 <div class="table-header">
-                    <h3>Soldes des Employés</h3>
+                    <h3>Liste des Employés</h3>
                     <div class="table-count" id="resultCount">
-                        ${soldesConges.size()} employé(s)
+                        ${employes.size()} employé(s)
                     </div>
                 </div>
                 
-                <table class="data-table" id="soldesTable">
+                <table class="data-table" id="employesTable">
                     <thead>
                         <tr>
                             <th onclick="sortTable(0)">Employé <i class="fas fa-sort"></i></th>
                             <th onclick="sortTable(1)">Département <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(2)">Année <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(3)">Quota Annuel <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(4)">Quota Exceptionnel <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(5)">Congés Pris <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(6)">Solde Annuel <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(7)">Solde Exceptionnel <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(8)">Solde Total <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(2)">Poste <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(3)">Date Embauche <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(4)">Soldes Congés <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="soldesBody">
-                        <c:forEach var="solde" items="${soldesConges}">
+                    <tbody id="employesBody">
+                        <c:forEach var="employe" items="${employes}">
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="avatar me-3">
-                                            ${solde.prenom.charAt(0)}${solde.nom.charAt(0)}
+                                            <c:choose>
+                                                <c:when test="${not empty employe.prenom and not empty employe.nom}">
+                                                    ${employe.prenom.charAt(0)}${employe.nom.charAt(0)}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    ??
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                         <div>
-                                            <strong>${solde.prenom} ${solde.nom}</strong>
+                                            <strong>
+                                                <c:choose>
+                                                    <c:when test="${not empty employe.prenom and not empty employe.nom}">
+                                                        ${employe.prenom} ${employe.nom}
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="text-muted">Non renseigné</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </strong>
                                             <br>
-                                            <small class="text-muted">ID: ${solde.employeId}</small>
+                                            <small class="text-muted">ID: ${employe.id}</small>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge badge-primary">${solde.departement}</span>
-                                </td>
-                                <td>
-                                    <span class="badge badge-info">${solde.annee}</span>
-                                </td>
-                                <td>
-                                    <span class="badge badge-primary">${solde.quotaAnnuelInitial} j</span>
-                                </td>
-                                <td>
-                                    <span class="badge badge-warning">${solde.quotaExceptionnelInitial} j</span>
-                                </td>
-                                <td>
                                     <span class="badge badge-primary">
-                                        ${solde.congesAnnuelPris + solde.congesExceptionnelPris} j
+                                        <c:choose>
+                                            <c:when test="${not empty employe.departement}">
+                                                ${employe.departement}
+                                            </c:when>
+                                            <c:otherwise>
+                                                Non assigné
+                                            </c:otherwise>
+                                        </c:choose>
                                     </span>
                                 </td>
                                 <td>
                                     <c:choose>
-                                        <c:when test="${solde.soldeAnnuel >= 0}">
-                                            <span class="badge badge-success">
-                                                <i class="fas fa-arrow-up me-1"></i>${solde.soldeAnnuel} j
-                                            </span>
+                                        <c:when test="${not empty employe.poste}">
+                                            ${employe.poste}
                                         </c:when>
                                         <c:otherwise>
-                                            <span class="badge badge-danger">
-                                                <i class="fas fa-arrow-down me-1"></i>${solde.soldeAnnuel} j
-                                            </span>
+                                            <span class="text-muted">Non défini</span>
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${solde.soldeExceptionnel >= 0}">
-                                            <span class="badge badge-success">
-                                                <i class="fas fa-arrow-up me-1"></i>${solde.soldeExceptionnel} j
-                                            </span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge badge-danger">
-                                                <i class="fas fa-arrow-down me-1"></i>${solde.soldeExceptionnel} j
-                                            </span>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <span class="badge badge-info">
+                                        ${employe.dateEmbauche}
+                                    </span>
                                 </td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${solde.soldeTotal >= 0}">
-                                            <span class="badge badge-success">
-                                                <i class="fas fa-check me-1"></i>${solde.soldeTotal} j
-                                            </span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge badge-danger">
-                                                <i class="fas fa-exclamation-triangle me-1"></i>${solde.soldeTotal} j
-                                            </span>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <div class="d-flex flex-column gap-1">
+                                        <span class="badge bg-primary" title="Solde annuel">
+                                            <i class="fas fa-calendar-day me-1"></i>${employe.soldeAnnuelActuel}j
+                                        </span>
+                                        <span class="badge bg-warning text-dark" title="Solde exceptionnel">
+                                            <i class="fas fa-star me-1"></i>${employe.soldeExceptionnelActuel}j
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="actions-container">
+                                        <!-- Absence -->
+                                        <button class="btn btn-outline-primary btn-sm" 
+                                                title="Déclarer une absence"
+                                                onclick="ouvrirFormulairePointage(${employe.id}, 'absence')">
+                                            <i class="fas fa-file-contract me-1"></i>Absence
+                                        </button>
+                                        
+                                        <!-- Retard -->
+                                        <button class="btn btn-outline-warning btn-sm" 
+                                                title="Déclarer un retard"
+                                                onclick="ouvrirFormulairePointage(${employe.id}, 'retard')">
+                                            <i class="fas fa-clock me-1"></i>Retard
+                                        </button>
+                                        
+                                        <!-- Maladie -->
+                                        <button class="btn btn-outline-danger btn-sm" 
+                                                title="Déclarer une maladie"
+                                                onclick="ouvrirFormulairePointage(${employe.id}, 'maladie')">
+                                            <i class="fas fa-head-side-cough me-1"></i>Maladie
+                                        </button>
+                                        
+                                        <!-- Mission/Formation -->
+                                        <button class="btn btn-outline-info btn-sm" 
+                                                title="Déclarer mission/formation"
+                                                onclick="ouvrirFormulairePointage(${employe.id}, 'mission')">
+                                            <i class="fas fa-briefcase me-1"></i>Mission
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         </c:forEach>
                     </tbody>
                 </table>
                 
-                <div id="noResults" class="no-results" style="${empty soldesConges ? 'display: block;' : 'display: none;'}">
-                    <i class="fas fa-inbox"></i>
-                    <h3>Aucun solde de congé trouvé</h3>
+                <div id="noResults" class="no-results" style="display: none;">
+                    <i class="fas fa-search"></i>
+                    <h3>Aucun employé trouvé</h3>
                     <p>Aucun employé ne correspond aux critères de recherche</p>
                 </div>
             </div>
-
-            <!-- Statistiques globales -->
-            <c:if test="${not empty statistiques}">
-                <div class="mt-3 text-center">
-                    <small class="text-muted">
-                        <i class="fas fa-chart-line me-1"></i> ${statistiques}
-                    </small>
-                </div>
-            </c:if>
         </main>
     </div>
 
@@ -753,16 +782,16 @@
 
         // Écouteurs d'événements pour les filtres
         document.getElementById('globalSearch').addEventListener('input', filterTable);
-        document.getElementById('annee').addEventListener('change', function() {
+        document.getElementById('departement').addEventListener('change', function() {
             this.form.submit();
         });
-        document.getElementById('departement').addEventListener('change', function() {
+        document.getElementById('recherche').addEventListener('change', function() {
             this.form.submit();
         });
 
         function filterTable() {
             const globalSearch = document.getElementById('globalSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#soldesBody tr');
+            const rows = document.querySelectorAll('#employesBody tr');
             let visibleCount = 0;
 
             rows.forEach(row => {
@@ -792,7 +821,7 @@
         }
 
         function sortTable(columnIndex) {
-            const tbody = document.getElementById('soldesBody');
+            const tbody = document.getElementById('employesBody');
             const rows = Array.from(tbody.getElementsByTagName('tr'));
 
             rows.sort((a, b) => {
@@ -802,8 +831,7 @@
                 let aValue, bValue;
 
                 // Gestion spéciale pour les colonnes numériques
-                if (columnIndex === 2 || columnIndex === 3 || columnIndex === 4 || 
-                    columnIndex === 5 || columnIndex === 6 || columnIndex === 7 || columnIndex === 8) {
+                if (columnIndex === 4) { // Soldes Congés
                     aValue = extractNumber(aCell);
                     bValue = extractNumber(bCell);
                 } else {
@@ -834,7 +862,7 @@
         }
 
         function updateSortIndicators(columnIndex) {
-            const headers = document.querySelectorAll('#soldesTable th');
+            const headers = document.querySelectorAll('#employesTable th');
             headers.forEach((header, index) => {
                 header.innerHTML = header.innerHTML.replace(/<i class="fas fa-sort-(up|down)"><\/i>/, '') + '<i class="fas fa-sort"></i>';
                 if (index === columnIndex) {
@@ -842,6 +870,11 @@
                         sortDirection === 1 ? '<i class="fas fa-sort-up"></i>' : '<i class="fas fa-sort-down"></i>');
                 }
             });
+        }
+
+        function ouvrirFormulairePointage(employeId, typeEvenement) {
+            // Redirection vers le formulaire de pointage
+            window.location.href = '${pageContext.request.contextPath}/rh/conge/formulaire?employeId=' + employeId + '&type=' + typeEvenement;
         }
 
         // Fermer les alertes
