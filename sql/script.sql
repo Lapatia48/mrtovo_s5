@@ -159,7 +159,7 @@ CREATE TABLE congee (
     id SERIAL PRIMARY KEY,
     id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
     quota INT DEFAULT 30,
-    quota_exceptionnel INT DEFAULT 5,
+    quota_exceptionnel INT DEFAULT 10,
     annee INT DEFAULT EXTRACT(YEAR FROM CURRENT_DATE)
 );
 
@@ -234,7 +234,7 @@ CREATE TABLE fiche_employe (
 -- merge erica
 
 ALTER TABLE congee 
-ADD COLUMN quota_exceptionnel INT DEFAULT 5;
+ADD COLUMN quota_exceptionnel INT DEFAULT 10;
 
 CREATE TABLE pointage_employe (
     id SERIAL PRIMARY KEY,

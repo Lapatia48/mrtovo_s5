@@ -644,9 +644,9 @@
                             <th onclick="sortTable(3)">Quota Annuel <i class="fas fa-sort"></i></th>
                             <th onclick="sortTable(4)">Quota Exceptionnel <i class="fas fa-sort"></i></th>
                             <th onclick="sortTable(5)">Congés Pris <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(6)">Solde Annuel <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(7)">Solde Exceptionnel <i class="fas fa-sort"></i></th>
-                            <th onclick="sortTable(8)">Solde Total <i class="fas fa-sort"></i></th>
+                            <!-- <th onclick="sortTable(6)">Solde Annuel <i class="fas fa-sort"></i></th> -->
+                            <!-- <th onclick="sortTable(7)">Solde Exceptionnel <i class="fas fa-sort"></i></th> -->
+                            <!-- <th onclick="sortTable(8)">Solde Total <i class="fas fa-sort"></i></th> -->
                         </tr>
                     </thead>
                     <tbody id="soldesBody">
@@ -681,7 +681,7 @@
                                         ${solde.congesAnnuelPris + solde.congesExceptionnelPris} j
                                     </span>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <c:choose>
                                         <c:when test="${solde.soldeAnnuel >= 0}">
                                             <span class="badge badge-success">
@@ -722,7 +722,7 @@
                                             </span>
                                         </c:otherwise>
                                     </c:choose>
-                                </td>
+                                </td> -->
                             </tr>
                         </c:forEach>
                     </tbody>

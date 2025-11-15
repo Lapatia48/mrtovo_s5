@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import service.*;
 import entity.*;
 import jakarta.servlet.http.HttpServletResponse;
+import repository.CongeeRepository;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -32,6 +33,9 @@ public class PaieController {
 
     @Autowired
     private EmployeService employeService;
+    
+    @Autowired
+    private CongeeRepository congeeRepository;
 
     @GetMapping("/rh/paie/list")
     public String listePaies(Model model) {
@@ -44,6 +48,9 @@ public class PaieController {
     public String formulairePaie(@RequestParam("id_emp") Integer idEmp, Model model) {
         Optional<Employe> employeOpt = employeService.findById(idEmp);
         if (employeOpt.isPresent()) {
+            Integer quotaConge = getQuotaAnnuel(idEmp);
+            model.addAttribute("quotaConge", quotaConge != null ? quotaConge : 0);
+
             model.addAttribute("employe", employeOpt.get());
             model.addAttribute("idEmp", idEmp);
             return "paie/formulairePaie";
@@ -517,7 +524,7 @@ public class PaieController {
             Employe employe = employeOpt.get();
             
             // Récupérer le quota de congé restant
-            Integer quotaConge = getQuotaCongeRestant(idEmploye);
+            Integer quotaConge = getQuotaAnnuel(idEmploye);
             
             model.addAttribute("employe", employe);
             model.addAttribute("quotaConge", quotaConge != null ? quotaConge : 0);
@@ -628,13 +635,14 @@ public class PaieController {
         return "paie/resultat-preavis";
     }
 
-
-
-
     // Méthode pour récupérer le quota de congé restant
-    private Integer getQuotaCongeRestant(Integer idEmploye) {
-        // Implémentation pour récupérer le quota de congé depuis la base
-        // Pour l'instant, retourne une valeur par défaut
-        return 15; // Exemple : 15 jours de congé restants
-    }
+    private Integer getQuotaAnnuel(Integer idEmploye) {
+        try {
+            Integer anneeCourante = LocalDate.now().getYear();
+            Congee congee = congeeRepository.findByIdEmployeAndAnnee(idEmploye, anneeCourante);
+            return congee != null ? congee.getQuota() : 30; // 30 jours par défaut si non trouvé
+        } catch (Exception e) {
+            return 30; // Valeur par défaut
+        }
+    }   
 }
