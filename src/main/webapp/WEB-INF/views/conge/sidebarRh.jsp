@@ -86,6 +86,12 @@
             </a>
         </div>
         <div class="nav-item">
+            <a href="${pageContext.request.contextPath}/rh/paie/preavis" class="nav-link">
+                <i class="fas fa-user-tie"></i>
+                Demande de preavis
+            </a>
+        </div>
+        <div class="nav-item">
             <a href="${pageContext.request.contextPath}/rh/paie/list" class="nav-link">
                 <i class="fas fa-user-tie"></i>
                 Historique des paiements
