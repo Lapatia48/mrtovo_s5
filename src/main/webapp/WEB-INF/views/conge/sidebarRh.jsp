@@ -97,5 +97,17 @@
                 Historique des paiements
             </a>
         </div>
+        <div class="nav-item">
+            <a href="${pageContext.request.contextPath}/rh/conge/list" class="nav-link active">
+                <i class="fas fa-user-tie"></i>
+                Liste Congees
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="${pageContext.request.contextPath}/rh/conge/pointage" class="nav-link active">
+                <i class="fas fa-clipboard-check"></i>
+                Pointage
+            </a>
+        </div>
     </div>
 </nav>

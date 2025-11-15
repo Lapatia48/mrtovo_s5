@@ -159,6 +159,7 @@ CREATE TABLE congee (
     id SERIAL PRIMARY KEY,
     id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
     quota INT DEFAULT 30,
+    quota_exceptionnel INT DEFAULT 5,
     annee INT DEFAULT EXTRACT(YEAR FROM CURRENT_DATE)
 );
 
@@ -197,6 +198,7 @@ CREATE TABLE paie (
     mode_paiement VARCHAR(50) DEFAULT 'Virement'
 );
 
+
 CREATE TABLE contrat (
     id SERIAL PRIMARY KEY,
     id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
@@ -228,3 +230,25 @@ CREATE TABLE fiche_employe (
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- merge erica
+
+ALTER TABLE congee 
+ADD COLUMN quota_exceptionnel INT DEFAULT 5;
+
+CREATE TABLE pointage_employe (
+    id SERIAL PRIMARY KEY,
+    id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
+    date_evenement DATE DEFAULT CURRENT_DATE,
+    type_evenement VARCHAR(50) NOT NULL,           -- 'absence', 'retard', 'maladie', 'mission'
+    sous_type VARCHAR(50),                         -- 'justifiee', 'non_justifiee'
+    duree_jours DECIMAL(4,2) DEFAULT 0,           -- 1.0, 0.5, etc.
+    heures_retard INT DEFAULT 0,                   -- minutes de retard
+    equivalent_jours DECIMAL(4,2) DEFAULT 0,       -- 0.125 pour 1h
+    impact_annuel DECIMAL(4,2) DEFAULT 0,          -- impact quota annuel
+    impact_exceptionnel DECIMAL(4,2) DEFAULT 0,    -- impact quota exceptionnel
+    motif TEXT,                                    -- raison
+    statut VARCHAR(50) DEFAULT 'valide',           -- 'valide', 'annule'
+    date_saisie TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

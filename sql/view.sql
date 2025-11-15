@@ -210,6 +210,7 @@ LEFT JOIN conge_etat ce ON c.id_employe = ce.id_employe
 GROUP BY c.id, c.id_employe, c.quota, c.annee, e.id
 ORDER BY e.nom, e.prenom, c.annee DESC;
 
+<<<<<<< HEAD
 
 
 CREATE OR REPLACE VIEW contrat_employe_view AS
@@ -302,3 +303,73 @@ UPDATE employe SET
     annee_experience = 5,
     departement = 'Informatique'
 WHERE id = 1;
+
+
+CREATE OR REPLACE VIEW vue_solde_conges AS
+SELECT 
+    e.id AS employe_id,
+    COALESCE(e.nom, 'Non renseigné') AS nom,
+    COALESCE(e.prenom, 'Non renseigné') AS prenom,
+    COALESCE(e.departement, 'Non assigné') AS departement,
+    c.annee,
+    c.quota AS quota_annuel_initial,
+    c.quota_exceptionnel AS quota_exceptionnel_initial,
+    
+    -- Congés annuels pris + impacts annuels
+    COALESCE(SUM(ce.duree), 0) 
+    + COALESCE(SUM(pe.impact_annuel), 0) AS conges_annuel_pris,
+    
+    -- Impacts exceptionnels
+    COALESCE(SUM(pe.impact_exceptionnel), 0) AS conges_exceptionnel_pris,
+    
+    -- Soldes avec impacts
+    (c.quota - COALESCE(SUM(ce.duree), 0) - COALESCE(SUM(pe.impact_annuel), 0)) AS solde_annuel,
+    (c.quota_exceptionnel - COALESCE(SUM(pe.impact_exceptionnel), 0)) AS solde_exceptionnel,
+    
+    -- Total avec impacts
+    (c.quota + c.quota_exceptionnel 
+     - COALESCE(SUM(ce.duree), 0) 
+     - COALESCE(SUM(pe.impact_annuel), 0)
+     - COALESCE(SUM(pe.impact_exceptionnel), 0)
+    ) AS solde_total
+
+FROM employe e
+JOIN congee c ON e.id = c.id_employe
+LEFT JOIN conge_etat ce ON e.id = ce.id_employe 
+    AND ce.statut = 'approuve'
+    AND EXTRACT(YEAR FROM ce.date_debut) = c.annee
+LEFT JOIN pointage_employe pe ON e.id = pe.id_employe 
+    AND EXTRACT(YEAR FROM pe.date_evenement) = c.annee
+    AND pe.statut = 'valide'
+WHERE e.statut = 'actif'
+GROUP BY e.id, e.nom, e.prenom, e.departement, c.quota, c.quota_exceptionnel, c.annee;
+
+CREATE OR REPLACE VIEW vue_employes_pointage AS
+SELECT 
+    e.id,
+    e.nom,
+    e.prenom,
+    e.departement,
+    e.poste,
+    e.date_embauche,
+    -- Infos congés actuelles (pour référence)
+    c.quota AS quota_annuel,
+    c.quota_exceptionnel,
+    (c.quota - COALESCE(SUM(ce.duree), 0)) AS solde_annuel_actuel,
+    c.quota_exceptionnel AS solde_exceptionnel_actuel
+FROM 
+    employe e
+LEFT JOIN 
+    congee c ON e.id = c.id_employe AND c.annee = EXTRACT(YEAR FROM CURRENT_DATE)
+LEFT JOIN 
+    conge_etat ce ON e.id = ce.id_employe 
+    AND ce.statut = 'approuve' 
+    AND EXTRACT(YEAR FROM ce.date_debut) = EXTRACT(YEAR FROM CURRENT_DATE)
+WHERE 
+    e.statut = 'actif'
+GROUP BY 
+    e.id, e.nom, e.prenom, e.departement, e.poste, e.date_embauche, 
+    c.quota, c.quota_exceptionnel
+ORDER BY 
+    e.departement, e.nom, e.prenom;
+
