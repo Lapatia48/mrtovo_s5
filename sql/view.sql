@@ -304,7 +304,7 @@ UPDATE employe SET
     departement = 'Informatique'
 WHERE id = 1;
 
-
+-- merge erica
 CREATE OR REPLACE VIEW vue_solde_conges AS
 SELECT 
     e.id AS employe_id,
