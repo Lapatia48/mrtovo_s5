@@ -693,6 +693,10 @@
                                     </span>
                                 </td>
                                 <td>
+                                    <a href="${pageContext.request.contextPath}/rh/employe/payer?id_emp=${e.id}" class="action-link success">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        Payer
+                                    </a><br>
                                     <a href="${pageContext.request.contextPath}/rh/paie/formPreavis?id_employe=${e.id}" class="action-link success" title="Exporter en PDF">
                                         <i class="fas fa-plane-departure"></i>
                                         Demande de preavis

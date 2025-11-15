@@ -147,7 +147,7 @@ public class CongeController {
     @GetMapping("/rh/conge/enCours")
     public String listeCongesEnCours(Model model) {
         List<CongeEtatDetails> congesEnCours = congeEtatDetailsService.findAllEnCoursGeneral();
-        System.out.println("Nombre de congés en cours: " + congesEnCours.size()); // Debug
+        System.out.println("Nombre de congés en cours: " + congesEnCours.size()); // Debuging
         model.addAttribute("congesEnCours", congesEnCours);
         return "conge/congeEnCours";
     }

@@ -693,17 +693,9 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="${pageContext.request.contextPath}/rh/candidats/pdf?id_cand=${e.idCandidat}" class="action-link success" title="Exporter en PDF">
-                                        <i class="fas fa-file-pdf"></i>
-                                        PDF
-                                    </a><br>
                                     <a href="${pageContext.request.contextPath}/rh/employe/demandeConge?id_emp=${e.id}" class="action-link success">
                                         <i class="fas fa-plane-departure"></i>
                                         Demande de congé
-                                    </a><br>
-                                    <a href="${pageContext.request.contextPath}/rh/employe/payer?id_emp=${e.id}" class="action-link success">
-                                        <i class="fas fa-sign-out-alt"></i>
-                                        Payer
                                     </a><br>
                                     <a href="${pageContext.request.contextPath}/rh/fiche-employe?id_employe=${e.id}" 
                                         class="action-link info" title="Voir fiche complète">

@@ -218,7 +218,7 @@
                     <p>Calculer la fiche de paie pour ${employe.prenom} ${employe.nom}</p>
                 </div>
                 <div class="user-menu">
-                    <a href="${pageContext.request.contextPath}/rh/employe" class="back-btn">
+                    <a href="${pageContext.request.contextPath}/rh/paie/preavis" class="back-btn">
                         <i class="fas fa-arrow-left"></i>
                         Retour à la liste
                     </a>
@@ -310,7 +310,7 @@
                     </div>
 
                     <div class="form-actions">
-                        <a href="${pageContext.request.contextPath}/rh/employe" class="btn btn-secondary">
+                        <a href="${pageContext.request.contextPath}/rh/paie/preavis" class="btn btn-secondary">
                             <i class="fas fa-times"></i>
                             Annuler
                         </a>

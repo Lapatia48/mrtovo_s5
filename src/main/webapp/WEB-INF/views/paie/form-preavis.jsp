@@ -44,8 +44,7 @@
             <div class="form-group">
                 <label for="quota_conge">Quota de congé restant (jours) :</label>
                 <input type="number" id="quota_conge" name="quota_conge" value="${quotaConge}" required min="0">
-            </div>
-
+                <a href="${pageContext.request.contextPath}/rh/paie/preavis" class="btn btn-secondary">Retour</a>
             <button type="submit" class="btn">Calculer le préavis</button>
         </form>
     </div>

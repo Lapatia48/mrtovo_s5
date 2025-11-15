@@ -408,6 +408,7 @@
                     <p>Informations complètes de ${employe.prenom} ${employe.nom}</p>
                 </div>
                 <div class="user-menu">
+                    <button onclick="window.print()" style="padding: 10px 20px; margin: 5px;">Imprimer</button>
                     <a href="${pageContext.request.contextPath}/rh/employe" class="back-btn">
                         <i class="fas fa-arrow-left"></i>
                         Retour aux employés

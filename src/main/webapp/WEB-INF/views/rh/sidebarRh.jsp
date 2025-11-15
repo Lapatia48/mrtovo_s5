@@ -88,7 +88,7 @@
         <div class="nav-item">
             <a href="${pageContext.request.contextPath}/rh/paie/preavis" class="nav-link">
                 <i class="fas fa-user-tie"></i>
-                Demande de preavis
+                Gestion paiement des employes
             </a>
         </div>
         <div class="nav-item">

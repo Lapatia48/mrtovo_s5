@@ -497,7 +497,7 @@ public class PaieController {
         paieService.save(paie);
 
         model.addAttribute("success", "Paiement enregistre avec succes pour " + employe.getPrenom() + " " + employe.getNom());
-        return "redirect:/rh/employe/liste";
+        return "redirect:/rh/paie/preavis";
     }
 
     @GetMapping("/rh/paie/preavis")
