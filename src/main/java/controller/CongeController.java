@@ -12,6 +12,7 @@ import service.*;
 import entity.CongeEtat;
 import entity.CongeEtatDetails;
 import entity.Employe;
+import entity.VueSoldeConges;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
@@ -32,6 +33,9 @@ public class CongeController {
 
     @Autowired
     private EmployeService employeService ;
+
+    @Autowired
+    private VueSoldeCongesService vueSoldeCongesService;
 
     // traitement demande de congee
     @GetMapping("/rh/employe/demandeConge") 
@@ -189,5 +193,84 @@ public class CongeController {
             congeEtatService.save(congeEtat);
         }
         return "redirect:/rh/conge/attente";
+    }
+
+
+    @GetMapping("/rh/conge/list")
+    public String listeSoldesConges(
+            @RequestParam(value = "annee", required = false) Integer annee,
+            @RequestParam(value = "departement", required = false) String departement,
+            @RequestParam(value = "showNegatifs", required = false) Boolean showNegatifs,
+            Model model) {
+        
+        try {
+            List<VueSoldeConges> soldesConges;
+            String filtreActif = "Tous les employés";
+            
+            // Appliquer les filtres
+            if (showNegatifs != null && showNegatifs) {
+                soldesConges = vueSoldeCongesService.findSoldesNegatifs();
+                filtreActif = "Soldes négatifs seulement";
+            } else if (annee != null && departement != null && !departement.isEmpty()) {
+                soldesConges = vueSoldeCongesService.findByAnneeAndDepartement(annee, departement);
+                filtreActif = String.format("Département %s - Année %d", departement, annee);
+                model.addAttribute("filtreAnnee", annee);
+                model.addAttribute("filtreDepartement", departement);
+            } else if (annee != null) {
+                soldesConges = vueSoldeCongesService.findByAnnee(annee);
+                filtreActif = String.format("Année %d", annee);
+                model.addAttribute("filtreAnnee", annee);
+            } else if (departement != null && !departement.isEmpty()) {
+                soldesConges = vueSoldeCongesService.findByDepartement(departement);
+                filtreActif = String.format("Département %s", departement);
+                model.addAttribute("filtreDepartement", departement);
+            } else {
+                soldesConges = vueSoldeCongesService.findAll();
+            }
+            
+            // Compter les soldes négatifs
+            long nbNegatifs = soldesConges.stream().filter(VueSoldeConges::isSoldeNegatif).count();
+            
+            // Ajouter les attributs au modèle
+            model.addAttribute("soldesConges", soldesConges);
+            model.addAttribute("filtreActif", filtreActif);
+            model.addAttribute("nbNegatifs", nbNegatifs);
+            model.addAttribute("statistiques", vueSoldeCongesService.getStatistiques());
+            model.addAttribute("totalEmployes", soldesConges.size());
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors de la récupération des soldes: " + e.getMessage());
+        }
+        
+        return "conge/congeListe";
+    }
+    
+    @GetMapping("/rh/conge/solde-negatifs")
+    public String listeSoldesNegatifs(Model model) {
+        try {
+            List<VueSoldeConges> soldesNegatifs = vueSoldeCongesService.findSoldesNegatifs();
+            model.addAttribute("soldesConges", soldesNegatifs);
+            model.addAttribute("filtreActif", "Soldes négatifs");
+            model.addAttribute("nbNegatifs", soldesNegatifs.size());
+            model.addAttribute("totalEmployes", soldesNegatifs.size());
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur: " + e.getMessage());
+        }
+        return "conge/congeListe";
+    }
+    
+    @GetMapping("/employe/mon-solde")
+    public String monSoldeConge(@RequestParam("id_emp") Integer employeId, Model model) {
+        try {
+            VueSoldeConges monSolde = vueSoldeCongesService.findByEmployeId(employeId);
+            if (monSolde != null) {
+                model.addAttribute("solde", monSolde);
+            } else {
+                model.addAttribute("error", "Aucun solde de congé trouvé pour cet employé");
+            }
+        } catch (Exception e) {
+            model.addAttribute("error", "Erreur lors de la récupération de votre solde: " + e.getMessage());
+        }
+        return "conge/monSoldeConge";
     }
 }

@@ -209,3 +209,30 @@ JOIN employe e ON c.id_employe = e.id
 LEFT JOIN conge_etat ce ON c.id_employe = ce.id_employe
 GROUP BY c.id, c.id_employe, c.quota, c.annee, e.id
 ORDER BY e.nom, e.prenom, c.annee DESC;
+
+CREATE OR REPLACE VIEW vue_solde_conges AS
+SELECT 
+    e.id AS employe_id,
+    COALESCE(e.nom, 'Non renseigné') AS nom,
+    COALESCE(e.prenom, 'Non renseigné') AS prenom,
+    COALESCE(e.departement, 'Non assigné') AS departement,
+    c.annee,
+    c.quota AS quota_annuel_initial,
+    c.quota_exceptionnel AS quota_exceptionnel_initial,
+    COALESCE(SUM(ce.duree), 0) AS conges_annuel_pris,
+    0 AS conges_exceptionnel_pris,
+    (c.quota - COALESCE(SUM(ce.duree), 0)) AS solde_annuel,
+    (c.quota_exceptionnel - 0) AS solde_exceptionnel,
+    (c.quota + c.quota_exceptionnel - COALESCE(SUM(ce.duree), 0)) AS solde_total
+FROM 
+    employe e
+JOIN 
+    congee c ON e.id = c.id_employe
+LEFT JOIN 
+    conge_etat ce ON e.id = ce.id_employe 
+    AND ce.statut = 'approuve'
+    AND EXTRACT(YEAR FROM ce.date_debut) = c.annee
+WHERE 
+    e.statut = 'actif'
+GROUP BY 
+    e.id, e.nom, e.prenom, e.departement, c.quota, c.quota_exceptionnel, c.annee;

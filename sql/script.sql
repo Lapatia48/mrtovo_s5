@@ -159,6 +159,7 @@ CREATE TABLE congee (
     id SERIAL PRIMARY KEY,
     id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
     quota INT DEFAULT 30,
+    quota_exceptionnel INT DEFAULT 5,
     annee INT DEFAULT EXTRACT(YEAR FROM CURRENT_DATE)
 );
 
@@ -196,3 +197,7 @@ CREATE TABLE paie (
     
     mode_paiement VARCHAR(50) DEFAULT 'Virement'
 );
+
+
+ALTER TABLE congee 
+ADD COLUMN quota_exceptionnel INT DEFAULT 5;
