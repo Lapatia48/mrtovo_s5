@@ -1,17 +1,22 @@
 package service;
 
+import entity.Contrat;
 import entity.Employe;
 import repository.EmployeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeService {
 
     @Autowired
     private EmployeRepository repository;
+
+    @Autowired
+    private ContratService contratService;
 
     // ===== Sauvegarder un employé =====
     public Employe save(Employe employe) {
@@ -40,4 +45,27 @@ public class EmployeService {
                 .filter(e -> e.getIdCandidat() != null && e.getIdCandidat().equals(idCandidat))
                 .findFirst();
     }
+
+    // ITO MODIFIER
+
+
+    // CORRECTION : Méthode pour trouver les employés sans contrat
+    public List<Employe> findEmployesSansContrat() {
+        List<Employe> tousLesEmployes = repository.findAll();
+        return tousLesEmployes.stream()
+                .filter(employe -> !contratService.existsContratActifByEmploye(employe.getId()))
+                .collect(Collectors.toList());
+    }
+
+    // Si vous avez besoin d'une version avec le repository directement :
+    public List<Employe> findEmployesSansContratV2() {
+        List<Employe> tousLesEmployes = repository.findAll();
+        return tousLesEmployes.stream()
+                .filter(employe -> {
+                    List<Contrat> contratsActifs = contratService.findContratsActifsByEmploye(employe.getId());
+                    return contratsActifs.isEmpty();
+                })
+                .collect(Collectors.toList());
+    }
+
 }

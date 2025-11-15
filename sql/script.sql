@@ -159,6 +159,7 @@ CREATE TABLE congee (
     id SERIAL PRIMARY KEY,
     id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
     quota INT DEFAULT 30,
+    quota_exceptionnel INT DEFAULT 10,
     annee INT DEFAULT EXTRACT(YEAR FROM CURRENT_DATE)
 );
 
@@ -196,3 +197,58 @@ CREATE TABLE paie (
     
     mode_paiement VARCHAR(50) DEFAULT 'Virement'
 );
+
+
+CREATE TABLE contrat (
+    id SERIAL PRIMARY KEY,
+    id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
+    numero_contrat VARCHAR(50) UNIQUE NOT NULL,
+    type_contrat VARCHAR(20) NOT NULL,           -- CDI, CDD, INTERIM, APPRENTISSAGE
+    statut_contrat VARCHAR(20) DEFAULT 'actif',  -- actif, termine, rompu
+    date_debut DATE NOT NULL,
+    date_fin DATE,                               -- NULL pour CDI
+    poste VARCHAR(100) NOT NULL,
+    classification VARCHAR(20),                  -- Cadre, ETAM, Ouvrier
+    salaire_base DECIMAL(10,2) NOT NULL,
+    duree_hebdomadaire INT DEFAULT 35,           -- Heures par semaine
+    temps_travail VARCHAR(10) DEFAULT 'Plein',   -- Plein, Partiel
+    periode_essai_jours INT DEFAULT 0,           -- 0 si aucune
+    date_fin_essai DATE,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE fiche_employe (
+    id SERIAL PRIMARY KEY,
+    id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
+    photo_url VARCHAR(255),
+    telephone VARCHAR(20),
+    contact_urgence_nom VARCHAR(100),
+    contact_urgence_telephone VARCHAR(20),
+    numero_securite_sociale VARCHAR(50),
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- merge erica
+
+ALTER TABLE congee 
+ADD COLUMN quota_exceptionnel INT DEFAULT 10;
+
+CREATE TABLE pointage_employe (
+    id SERIAL PRIMARY KEY,
+    id_employe INT REFERENCES employe(id) ON DELETE CASCADE,
+    date_evenement DATE DEFAULT CURRENT_DATE,
+    type_evenement VARCHAR(50) NOT NULL,           -- 'absence', 'retard', 'maladie', 'mission'
+    sous_type VARCHAR(50),                         -- 'justifiee', 'non_justifiee'
+    duree_jours DECIMAL(4,2) DEFAULT 0,           -- 1.0, 0.5, etc.
+    heures_retard INT DEFAULT 0,                   -- minutes de retard
+    equivalent_jours DECIMAL(4,2) DEFAULT 0,       -- 0.125 pour 1h
+    impact_annuel DECIMAL(4,2) DEFAULT 0,          -- impact quota annuel
+    impact_exceptionnel DECIMAL(4,2) DEFAULT 0,    -- impact quota exceptionnel
+    motif TEXT,                                    -- raison
+    statut VARCHAR(50) DEFAULT 'valide',           -- 'valide', 'annule'
+    date_saisie TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

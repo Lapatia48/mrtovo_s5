@@ -1,11 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulaire de Paiement - BusinessSuite RH</title>
+    <title>Demande de Préavis - BusinessSuite RH</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -121,48 +121,37 @@
             padding: 30px;
         }
 
-        .info-employe {
-            background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
-            border: 1px solid #b8daff;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .info-employe-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            gap: 20px;
+            margin-bottom: 25px;
         }
 
         .info-item {
-            background: var(--white);
-            padding: 15px;
-            border-radius: 8px;
+            background: var(--light);
+            padding: 20px;
+            border-radius: 12px;
             border-left: 4px solid var(--secondary);
+            transition: var(--transition);
+        }
+
+        .info-item:hover {
+            background: #e3e8ea;
+            transform: translateX(5px);
         }
 
         .info-label {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--gray);
             font-weight: 500;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .info-value {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--primary);
         }
@@ -171,44 +160,37 @@
             background: linear-gradient(135deg, #e8f5e8, #d4edda);
             border: 1px solid #c3e6cb;
             border-radius: 12px;
-            padding: 20px;
+            padding: 25px;
             margin-bottom: 30px;
             text-align: center;
         }
 
         .quota-icon {
-            font-size: 2.5rem;
+            font-size: 3rem;
             color: var(--success);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .quota-label {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--gray);
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .quota-value {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: var(--success);
             line-height: 1;
         }
 
         .quota-unit {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--gray);
             font-weight: 500;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
         }
 
         .form-group {
@@ -248,6 +230,17 @@
             border-color: var(--secondary);
             box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
             transform: translateY(-2px);
+        }
+
+        .form-control:invalid {
+            border-color: var(--danger);
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 8px;
+            display: block;
         }
 
         .form-actions {
@@ -320,10 +313,6 @@
                 max-width: 100%;
             }
 
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
             .info-grid {
                 grid-template-columns: 1fr;
             }
@@ -345,6 +334,26 @@
             }
         }
 
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: var(--success);
+            color: var(--white);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-warning {
+            background: var(--warning);
+        }
+
+        .badge-danger {
+            background: var(--danger);
+        }
+
         .animation-pulse {
             animation: pulse 2s infinite;
         }
@@ -353,11 +362,6 @@
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
-        }
-
-        .required::after {
-            content: " *";
-            color: var(--danger);
         }
     </style>
 </head>
@@ -371,43 +375,51 @@
             <div class="subtitle">Système de Gestion des Ressources Humaines</div>
         </div>
 
-        <!-- Carte Formulaire de Paiement -->
+        <!-- Carte Informations Employé -->
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
-                    <i class="fas fa-calculator"></i>
-                    Formulaire de Paiement
+                    <i class="fas fa-user-tie"></i>
+                    Informations de l'Employé
                 </div>
-                <div class="card-subtitle">Calcul de la fiche de paie pour ${employe.prenom} ${employe.nom}</div>
+                <div class="card-subtitle">Détails complets du collaborateur</div>
             </div>
             <div class="card-body">
-                <!-- Informations Employé -->
-                <div class="info-employe">
-                    <div class="info-employe-title">
-                        <i class="fas fa-user-tie"></i>
-                        Informations du Collaborateur
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Nom et Prénoms</div>
+                        <div class="info-value">${employe.prenom} ${employe.nom}</div>
                     </div>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <div class="info-label">Nom et Prénoms</div>
-                            <div class="info-value">${employe.prenom} ${employe.nom}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Poste</div>
-                            <div class="info-value">${employe.poste}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Département</div>
-                            <div class="info-value">${employe.departement}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Salaire de base</div>
-                            <div class="info-value">${employe.salaire} Ar</div>
-                        </div>
+                    <div class="info-item">
+                        <div class="info-label">Poste</div>
+                        <div class="info-value">${employe.poste}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Département</div>
+                        <div class="info-value">${employe.departement}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Salaire de base</div>
+                        <div class="info-value">${employe.salaire} Ar</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Date d'embauche</div>
+                        <div class="info-value">${employe.dateEmbauche}</div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Quota de Congé -->
+        <!-- Carte Quota de Congé -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Situation des Congés
+                </div>
+                <div class="card-subtitle">Quota disponible pour le préavis</div>
+            </div>
+            <div class="card-body">
                 <div class="quota-section animation-pulse">
                     <div class="quota-icon">
                         <i class="fas fa-calendar-check"></i>
@@ -416,103 +428,99 @@
                     <div class="quota-value">${quotaConge}</div>
                     <div class="quota-unit">jours</div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Formulaire -->
-                <form action="${pageContext.request.contextPath}/rh/employe/calculerPaie" method="post">
-                    <input type="hidden" name="id_emp" value="${idEmp}">
+        <!-- Carte Formulaire Préavis -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-file-contract"></i>
+                    Demande de Préavis
+                </div>
+                <div class="card-subtitle">Configuration des paramètres du préavis</div>
+            </div>
+            <div class="card-body">
+                <form action="${pageContext.request.contextPath}/rh/paie/calculerPreavis" method="post">
+                    <input type="hidden" name="id_emp" value="${employe.id}">
                     
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label required" for="periode_debut">
-                                <i class="fas fa-calendar-alt"></i>
-                                Période début
-                            </label>
-                            <input type="date" class="form-control" id="periode_debut" name="periode_debut" value="2025-12-01" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label required" for="periode_fin">
-                                <i class="fas fa-calendar-alt"></i>
-                                Période fin
-                            </label>
-                            <input type="date" class="form-control" id="periode_fin" name="periode_fin" value="2025-12-31" required>
-                        </div>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="heures_sup_normales">
-                                <i class="fas fa-clock"></i>
-                                Heures supplémentaires normales
-                            </label>
-                            <input type="number" class="form-control" id="heures_sup_normales" name="heures_sup_normales" 
-                                   step="0.5" value="0" min="0" placeholder="0">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="heures_sup_weekend">
-                                <i class="fas fa-weekend"></i>
-                                Heures supplémentaires weekend
-                            </label>
-                            <input type="number" class="form-control" id="heures_sup_weekend" name="heures_sup_weekend" 
-                                   step="0.5" value="0" min="0" placeholder="0">
-                        </div>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="prime_anciennete">
-                                <i class="fas fa-award"></i>
-                                Prime ancienneté (Ar)
-                            </label>
-                            <input type="number" class="form-control" id="prime_anciennete" name="prime_anciennete" 
-                                   value="0" min="0" placeholder="0">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="absences">
-                                <i class="fas fa-user-clock"></i>
-                                Absences (heures)
-                            </label>
-                            <input type="number" class="form-control" id="absences" name="absences" 
-                                   value="0" min="0" placeholder="0">
-                        </div>
-                    </div>
-
                     <div class="form-group">
-                        <label class="form-label" for="autres_primes">
-                            <i class="fas fa-gift"></i>
-                            Autres primes (Ar)
+                        <label class="form-label" for="motif">
+                            <i class="fas fa-clipboard-list"></i>
+                            Motif du préavis
                         </label>
-                        <input type="number" class="form-control" id="autres_primes" name="autres_primes" 
-                               value="0" min="0" placeholder="0">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="mode_paiement">
-                            <i class="fas fa-credit-card"></i>
-                            Mode de paiement
-                        </label>
-                        <select class="form-control" id="mode_paiement" name="mode_paiement">
-                            <option value="Virement" selected>Virement bancaire</option>
-                            <option value="Chèque">Chèque</option>
-                            <option value="Espèces">Espèces</option>
+                        <select class="form-control" id="motif" name="motif" required>
+                            <option value="">Sélectionnez un motif</option>
+                            <option value="renvoi">Renvoi</option>
+                            <option value="demission">Démission</option>
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label class="form-label" for="duree_preavis">
+                            <i class="fas fa-clock"></i>
+                            Durée du préavis
+                        </label>
+                        <select class="form-control" id="duree_preavis" name="duree_preavis" required>
+                            <option value="3">3 mois</option>
+                            <option value="2">2 mois</option>
+                            <option value="1">1 mois</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="quota_conge">
+                            <i class="fas fa-calendar-alt"></i>
+                            Quota de congé à utiliser
+                        </label>
+                        <input type="number" class="form-control" id="quota_conge" name="quota_conge" 
+                               value="${quotaConge}" 
+                               required min="0" max="${quotaConge}"
+                               title="Le nombre de jours de congé restant ne peut pas dépasser ${quotaConge} jours">
+                        <span class="form-text">Maximum : ${quotaConge} jours disponibles</span>
+                    </div>
+
                     <div class="form-actions">
-                        <a href="${pageContext.request.contextPath}/rh/paie/preavis" class="btn btn-secondary">
+                        <button type="button" onclick="window.history.back()" class="btn btn-secondary">
                             <i class="fas fa-times"></i>
                             Annuler
-                        </a>
+                        </button>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-calculator"></i>
-                            Calculer la paie
+                            Calculer le préavis
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+    <script>
+        // Validation côté client pour empêcher de saisir plus que le quota disponible
+        document.getElementById('quota_conge').addEventListener('input', function() {
+            const maxQuota = ${quotaConge};
+            if (this.value > maxQuota) {
+                this.value = maxQuota;
+                alert(`Le nombre de jours ne peut pas dépasser ${maxQuota} jours`);
+            }
+        });
+
+        // Ajustement automatique du quota en fonction du motif
+        document.getElementById('motif').addEventListener('change', function() {
+            const motif = this.value;
+            const quotaInput = document.getElementById('quota_conge');
+            const maxQuota = ${quotaConge};
+            
+            if (motif === 'demission') {
+                // Pour les démissions, on peut utiliser tout le quota
+                quotaInput.max = maxQuota;
+                quotaInput.title = `Le nombre de jours de congé ne peut pas dépasser ${maxQuota} jours`;
+            } else if (motif === 'renvoi') {
+                // Pour les renvois, même règle
+                quotaInput.max = maxQuota;
+                quotaInput.title = `Le nombre de jours de congé ne peut pas dépasser ${maxQuota} jours`;
+            }
+        });
+    </script>
 </body>
 </html>

@@ -722,6 +722,9 @@
                             Confirmer et Enregistrer
                         </button>
                     </form>
+                    <button onclick="window.print()" style="padding: 10px 20px; margin: 5px;">
+                        Imprimer
+                    </button>
 
                     <a href="${pageContext.request.contextPath}/rh/employe/payer?id_emp=${idEmp}" class="btn btn-secondary">
                         <i class="fas fa-edit"></i>

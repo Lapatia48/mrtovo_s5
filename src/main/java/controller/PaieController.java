@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import service.*;
 import entity.*;
 import jakarta.servlet.http.HttpServletResponse;
+import repository.CongeeRepository;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -32,6 +33,9 @@ public class PaieController {
 
     @Autowired
     private EmployeService employeService;
+    
+    @Autowired
+    private CongeeRepository congeeRepository;
 
     @GetMapping("/rh/paie/list")
     public String listePaies(Model model) {
@@ -44,6 +48,9 @@ public class PaieController {
     public String formulairePaie(@RequestParam("id_emp") Integer idEmp, Model model) {
         Optional<Employe> employeOpt = employeService.findById(idEmp);
         if (employeOpt.isPresent()) {
+            Integer quotaConge = getQuotaAnnuel(idEmp);
+            model.addAttribute("quotaConge", quotaConge != null ? quotaConge : 0);
+
             model.addAttribute("employe", employeOpt.get());
             model.addAttribute("idEmp", idEmp);
             return "paie/formulairePaie";
@@ -497,6 +504,145 @@ public class PaieController {
         paieService.save(paie);
 
         model.addAttribute("success", "Paiement enregistre avec succes pour " + employe.getPrenom() + " " + employe.getNom());
-        return "redirect:/rh/employe/liste";
+        return "redirect:/rh/paie/preavis";
     }
+
+    @GetMapping("/rh/paie/preavis")
+    public String pagePreavis(Model model) {
+
+        List<Employe> employes = employeService.findAll();
+        model.addAttribute("employes", employes);
+        return "paie/demande-preavis";
+    }
+
+    
+    // Ajouter ces méthodes dans PaieController
+    @GetMapping("/rh/paie/formPreavis")
+    public String formulairePreavis(@RequestParam("id_employe") Integer idEmploye, Model model) {
+        Optional<Employe> employeOpt = employeService.findById(idEmploye);
+        if (employeOpt.isPresent()) {
+            Employe employe = employeOpt.get();
+            
+            // Récupérer le quota de congé restant
+            Integer quotaConge = getQuotaAnnuel(idEmploye);
+            
+            model.addAttribute("employe", employe);
+            model.addAttribute("quotaConge", quotaConge != null ? quotaConge : 0);
+            return "paie/form-preavis";
+        } else {
+            model.addAttribute("error", "Employé non trouvé");
+            return "redirect:/rh/employe/liste";
+        }
+    }
+
+    @PostMapping("/rh/paie/calculerPreavis")
+    public String calculerPreavis(
+            @RequestParam("id_emp") Integer idEmploye,
+            @RequestParam("motif") String motif,
+            @RequestParam("duree_preavis") Integer dureePreavis,
+            @RequestParam("quota_conge") Integer quotaConge,
+            Model model) {
+
+        Optional<Employe> employeOpt = employeService.findById(idEmploye);
+        if (!employeOpt.isPresent()) {
+            model.addAttribute("error", "Employé non trouvé");
+            return "redirect:/rh/employe/liste";
+        }
+
+        Employe employe = employeOpt.get();
+        
+        BigDecimal salaireBase = employe.getSalaire() != null ? 
+            new BigDecimal(employe.getSalaire()) : BigDecimal.ZERO;
+        
+        // Calcul du préavis
+        BigDecimal montantPreavis = salaireBase.multiply(new BigDecimal(dureePreavis));
+        
+        // Calcul des congés payés
+        BigDecimal tauxJournalier = salaireBase.divide(new BigDecimal("30"), 2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal tauxHoraire = tauxJournalier.divide(new BigDecimal("8"), 2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal montantConges = tauxJournalier.multiply(new BigDecimal(quotaConge));
+        
+        BigDecimal totalBrut;
+        BigDecimal netAPayer;
+        
+        if ("renvoi".equals(motif)) {
+            // En cas de renvoi : préavis + congés payés
+            totalBrut = montantPreavis.add(montantConges);
+            
+            // Calcul CNaPS (1% du total brut, max 28,000 Ar)
+            BigDecimal retenueCnaps = totalBrut.multiply(new BigDecimal("0.01"));
+            if (retenueCnaps.compareTo(new BigDecimal("28000")) > 0) {
+                retenueCnaps = new BigDecimal("28000");
+            }
+            
+            BigDecimal retenueOstie = totalBrut.multiply(new BigDecimal("0.01"));
+            
+            // Calcul IRSA avec détails des tranches (MÊME MÉTHODE QUE PAIE NORMALE)
+            Map<String, BigDecimal> irsaDetails = calculerIrsaDetails(totalBrut);
+            BigDecimal retenueIrsa = irsaDetails.get("total");
+            
+            BigDecimal totalRetenues = retenueCnaps.add(retenueOstie).add(retenueIrsa);
+            netAPayer = totalBrut.subtract(totalRetenues);
+            
+            // Préparation des données pour l'affichage détaillé
+            model.addAttribute("retenueCnaps", retenueCnaps);
+            model.addAttribute("retenueOstie", retenueOstie);
+            model.addAttribute("retenueIrsa", retenueIrsa);
+            model.addAttribute("totalRetenues", totalRetenues);
+            
+            // Détails IRSA pour l'affichage
+            model.addAttribute("irsaTranche2", irsaDetails.get("tranche2"));
+            model.addAttribute("irsaTranche3", irsaDetails.get("tranche3"));
+            model.addAttribute("irsaTranche4", irsaDetails.get("tranche4"));
+            model.addAttribute("irsaTranche5", irsaDetails.get("tranche5"));
+            model.addAttribute("irsaTranche6", irsaDetails.get("tranche6"));
+            
+        } else {
+            // En cas de démission : préavis dû par l'employé - congés payés dus par l'entreprise
+            totalBrut = montantPreavis.subtract(montantConges);
+            if (totalBrut.compareTo(BigDecimal.ZERO) > 0) {
+                // L'employé doit de l'argent
+                netAPayer = totalBrut.negate();
+            } else {
+                // L'entreprise doit de l'argent
+                netAPayer = totalBrut.abs();
+            }
+            
+            // Pas de retenues pour les démissions
+            model.addAttribute("retenueCnaps", BigDecimal.ZERO);
+            model.addAttribute("retenueOstie", BigDecimal.ZERO);
+            model.addAttribute("retenueIrsa", BigDecimal.ZERO);
+            model.addAttribute("totalRetenues", BigDecimal.ZERO);
+            model.addAttribute("irsaTranche2", BigDecimal.ZERO);
+            model.addAttribute("irsaTranche3", BigDecimal.ZERO);
+            model.addAttribute("irsaTranche4", BigDecimal.ZERO);
+            model.addAttribute("irsaTranche5", BigDecimal.ZERO);
+            model.addAttribute("irsaTranche6", BigDecimal.ZERO);
+        }
+        
+        model.addAttribute("employe", employe);
+        model.addAttribute("motif", motif);
+        model.addAttribute("dureePreavis", dureePreavis);
+        model.addAttribute("quotaConge", quotaConge);
+        model.addAttribute("salaireBase", salaireBase);
+        model.addAttribute("tauxJournalier", tauxJournalier);
+        model.addAttribute("tauxHoraire", tauxHoraire);
+        model.addAttribute("montantPreavis", montantPreavis);
+        model.addAttribute("montantConges", montantConges);
+        model.addAttribute("totalBrut", totalBrut);
+        model.addAttribute("netAPayer", netAPayer);
+        
+        return "paie/resultat-preavis";
+    }
+
+    // Méthode pour récupérer le quota de congé restant
+    private Integer getQuotaAnnuel(Integer idEmploye) {
+        try {
+            Integer anneeCourante = LocalDate.now().getYear();
+            Congee congee = congeeRepository.findByIdEmployeAndAnnee(idEmploye, anneeCourante);
+            return congee != null ? congee.getQuota() : 30; // 30 jours par défaut si non trouvé
+        } catch (Exception e) {
+            return 30; // Valeur par défaut
+        }
+    }   
 }
