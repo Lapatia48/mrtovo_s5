@@ -1,11 +1,14 @@
 package repository;
 
 import entity.Contrat;
+import entity.ContratEmployeView;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,4 +37,16 @@ public interface ContratRepository extends JpaRepository<Contrat, Integer> {
     
  // AJOUTEZ CETTE MÉTHODE
     List<Contrat> findByIdEmployeAndStatutContrat(Integer idEmploye, String statutContrat);
+
+    //Expiration contrat
+     @Query("""
+        SELECT c FROM ContratEmployeView c
+        WHERE c.dateFin >= :today
+        AND c.dateFin <= :limit
+        ORDER BY c.dateFin ASC
+    """)
+    List<ContratEmployeView> findContractsExpiringSoon(
+            @Param("today") LocalDate today,
+            @Param("limit") LocalDate limit
+    );
 }

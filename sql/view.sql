@@ -210,7 +210,7 @@ LEFT JOIN conge_etat ce ON c.id_employe = ce.id_employe
 GROUP BY c.id, c.id_employe, c.quota, c.annee, e.id
 ORDER BY e.nom, e.prenom, c.annee DESC;
 
-<<<<<<< HEAD
+
 
 
 CREATE OR REPLACE VIEW contrat_employe_view AS

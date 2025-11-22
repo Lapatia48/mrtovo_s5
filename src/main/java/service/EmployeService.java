@@ -68,4 +68,14 @@ public class EmployeService {
                 .collect(Collectors.toList());
     }
 
+    // ==== Statistiques par année de naissance =====
+    public List<Object[]> getBirthYearStats() {
+        return repository.countByBirthYear();
+    }
+
+    // ==== Statistiques par année de naissance =====
+    public List<Object[]> countByDepartement() {
+        return repository.countByDepartement();
+    }
+
 }
