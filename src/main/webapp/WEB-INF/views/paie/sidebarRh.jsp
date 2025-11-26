@@ -109,5 +109,17 @@
                 Pointage
             </a>
         </div>
+        <div class="nav-item">
+            <a href="${pageContext.request.contextPath}/rh/statistiques/dashboard" class="nav-link active">
+                <i class="fas fa-clipboard-check"></i>
+                Stats employes
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="${pageContext.request.contextPath}/rh/statistiques/performance-rh" class="nav-link active">
+                <i class="fas fa-clipboard-check"></i>
+                Stats entreprise
+            </a>
+        </div>
     </div>
 </nav>
