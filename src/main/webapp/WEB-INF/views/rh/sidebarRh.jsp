@@ -109,29 +109,5 @@
                 Pointage
             </a>
         </div>
-        <div class="nav-item">
-            <a href="#" class="nav-link active">
-                <i class="fas fa-user-tie"></i>
-                --Statistique--
-            </a>
-        </div>
-        <div class="nav-item">
-            <a href="${pageContext.request.contextPath}/statistique/employe" class="nav-link">
-                <i class="fas fa-user-tie"></i>
-                Statistique Employés
-            </a>
-        </div>
-         <div class="nav-item">
-            <a href="${pageContext.request.contextPath}/statistique/contrat" class="nav-link">
-                <i class="fas fa-user-tie"></i>
-                Statistique Contrats
-            </a>
-        </div>
-         <div class="nav-item">
-            <a href="${pageContext.request.contextPath}/statistique/conge" class="nav-link">
-                <i class="fas fa-user-tie"></i>
-                Statistique Absentéisme
-            </a>
-        </div>
     </div>
 </nav>

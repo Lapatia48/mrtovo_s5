@@ -18,7 +18,7 @@ public class CongeeEmployeDetails {
     private Integer quota;
 
     @Column(name = "annee")
-    private Integer annee;  
+    private Integer annee;
 
     @Column(name = "nom", length = 100)
     private String nom;

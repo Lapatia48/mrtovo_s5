@@ -1,12 +1,10 @@
 package service;
 
 import entity.Contrat;
-import entity.ContratEmployeView;
 import repository.ContratRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,10 +13,6 @@ public class ContratService {
 
     @Autowired
     private ContratRepository contratRepository;
-
-    public ContratService(ContratRepository repository) {
-        this.contratRepository = repository;
-    }
 
     // Ajouter un contrat
     public Contrat save(Contrat contrat) {
@@ -80,12 +74,5 @@ public class ContratService {
     public void deleteByNumeroContrat(String numeroContrat) {
         Optional<Contrat> contrat = contratRepository.findByNumeroContrat(numeroContrat);
         contrat.ifPresent(c -> contratRepository.delete(c));
-    }
-
-    //liste des contrats qui expirent bientôt(2mois)
-    public List<ContratEmployeView> getContractsExpiringInTwoMonths() {
-        LocalDate today = LocalDate.now();
-        LocalDate limit = today.plusMonths(2);
-        return contratRepository.findContractsExpiringSoon(today, limit);
     }
 }

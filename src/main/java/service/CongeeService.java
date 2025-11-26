@@ -1,11 +1,8 @@
 package service;
 
-import java.util.List;
-
 import entity.Congee;
 import jakarta.transaction.Transactional;
 import repository.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +32,5 @@ public class CongeeService {
     @Transactional
     public void updateQuota(Integer idEmploye, Integer duree) {
         congeeRepository.updateQuota(idEmploye, duree);
-    }
-
-    public List<Object[]> getRemainingLeavePerEmployee() {
-        return congeeRepository.getRemainingLeavePerEmployee();
     }
 }

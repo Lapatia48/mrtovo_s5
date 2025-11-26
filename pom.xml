@@ -12,8 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>22</maven.compiler.target>
+        <maven.compiler.source>22</maven.compiler.source>
         <junit.version>5.11.0</junit.version>
     </properties>
 
@@ -69,18 +69,6 @@
             <version>6.4.4.Final</version>
         </dependency>
 
-        <!-- changing the current antlr runtime according to tomcat version -->
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
-            <version>4.13.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4</artifactId>
-            <version>4.13.0</version>
-        </dependency>
-
         <!-- Driver PostgreSQL -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -99,7 +87,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>6.2.0</version>
+            <version>6.1.5</version>
         </dependency>
 
 
@@ -147,19 +135,6 @@
             <version>2.15.3</version>
         </dependency>
 
-        <!-- Force ANTLR runtime/tool to 4.13.0 to match generated parser -->
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
-            <version>4.13.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4</artifactId>
-            <version>4.13.0</version>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -184,7 +159,7 @@
                         <configuration>
                             <target>
                                 <copy file="${project.build.directory}/projet_MrTovo.war"
-                                    todir="G:\ITU\tomcat10\webapps"
+                                    todir="C:\Program Files\Apache Software Foundation\Tomcat 11.0\webapps"
                                     overwrite="true" />
                             </target>
                         </configuration>
