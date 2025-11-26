@@ -34,4 +34,8 @@ public interface ContratRepository extends JpaRepository<Contrat, Integer> {
     
  // AJOUTEZ CETTE MÉTHODE
     List<Contrat> findByIdEmployeAndStatutContrat(Integer idEmploye, String statutContrat);
+
+    // Effectif par type de contrat
+    @Query("SELECT c.typeContrat, COUNT(c) FROM Contrat c WHERE c.statutContrat = 'actif' GROUP BY c.typeContrat")
+    List<Object[]> countEmployesByTypeContrat();
 }
