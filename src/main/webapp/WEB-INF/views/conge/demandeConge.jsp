@@ -327,7 +327,7 @@
 <body>
     <div class="admin-container">
 
-        <jsp:include page="sidebarRh.jsp" />
+        <jsp:include page="../sidebar/sidebarRh.jsp" />
 
         <div class="main-content">
             <div class="top-bar">

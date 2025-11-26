@@ -426,7 +426,7 @@
 <body>
     <div class="admin-container">
         <!-- Sidebar Navigation (identique à l'accueil) -->
-        <jsp:include page="sidebarRh.jsp" />
+        <jsp:include page="../sidebar/sidebarRh.jsp" />
 
         <!-- Contenu Principal -->
         <main class="main-content">

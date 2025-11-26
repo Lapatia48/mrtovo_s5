@@ -561,7 +561,7 @@
 </head>
 <body>
     <div class="admin-container">
-        <jsp:include page="sidebarRh.jsp" />
+        <jsp:include page="../sidebar/sidebarRh.jsp" />
         
         <!-- Contenu Principal -->
         <main class="main-content">

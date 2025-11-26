@@ -541,7 +541,7 @@
 <body>
     <div class="admin-container">
         <!-- Sidebar Navigation -->
-        <jsp:include page="sidebarRh.jsp" />
+        <jsp:include page="../sidebar/sidebarRh.jsp" />
 
         <!-- Contenu Principal -->
         <main class="main-content">

@@ -472,7 +472,7 @@
                         <div class="form-group">
                             <label class="form-label" for="absences">
                                 <i class="fas fa-user-clock"></i>
-                                Absences (heures)
+                                Heures d'absences et retard (SI SOLDE CONGE NEG)
                             </label>
                             <input type="number" class="form-control" id="absences" name="absences" 
                                    value="0" min="0" placeholder="0">
