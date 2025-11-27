@@ -69,7 +69,7 @@
 </head>
 <body>
 <div class="container">
-    <h2>📊 Statistiques d’évaluation des employés</h2>
+    <h2>📊 Rapport d’évaluation des employés</h2>
 
     <table>
         <thead>
