@@ -1,6 +1,6 @@
 -- Création de la base
-CREATE DATABASE tovo_s5;
-\c tovo_s5;
+CREATE DATABASE tovoo_s5;
+\c tovoo_s5;
 
 -- =====================
 -- Côté candidat
@@ -251,4 +251,14 @@ CREATE TABLE pointage_employe (
     statut VARCHAR(50) DEFAULT 'valide',           -- 'valide', 'annule'
     date_saisie TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE evaluation (
+  id BIGSERIAL PRIMARY KEY,
+  mois VARCHAR(20),
+  annee INT,
+  note INT,
+  employe_id BIGINT,
+  FOREIGN KEY (employe_id) REFERENCES employe(id),
+  UNIQUE (employe_id, mois, annee)
+);
+
 

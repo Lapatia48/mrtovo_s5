@@ -84,6 +84,9 @@ public class rh {
     @Autowired
     private FicheEmployeService ficheEmployeService;
 
+    @Autowired
+    private EvaluationService evaluationService;
+
     @GetMapping("/chatbot")
     public String chatbot() {
         return "rh/chatbot";
@@ -157,6 +160,41 @@ public class rh {
         model.addAttribute("employes", employes);
         return "rh/listeEmploye";  
     }
+   @GetMapping("/rh/employe/evaluation")
+public String afficherEvaluation(@RequestParam("id_employe") Long id, Model model) {
+    Optional<Employe> employeOpt = employeService.findById(id.intValue());
+    if (employeOpt.isPresent()) {
+        model.addAttribute("employe", employeOpt.get());
+        return "rh/evaluation"; // JSP à créer
+    } else {
+        // Si l'employé n'existe pas, on redirige vers la liste
+        return "redirect:/rh/employe";
+    }
+}
+
+
+@PostMapping("/rh/employe/evaluation/soumettre")
+public String soumettreEvaluation(@RequestParam("id_employe") Long id_employe,
+                                  @RequestParam("mois") String mois,
+                                  @RequestParam("annee") int annee,
+                                  @RequestParam("note") int note) {
+    evaluationService.enregistrerEvaluation(id_employe, mois, annee, note);
+    return "redirect:/rh/employe";
+}
+@GetMapping("/rh/employe/scoring")
+public String afficherScoring(Model model) {
+    List<Evaluation> evaluations = evaluationService.getToutesLesEvaluations();
+    model.addAttribute("evaluations", evaluations);
+    return "rh/scoring";
+}
+
+
+
+
+    
+
+
+
 
 
     // Génération et téléchargement du PDF
