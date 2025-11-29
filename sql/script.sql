@@ -251,4 +251,13 @@ CREATE TABLE pointage_employe (
     statut VARCHAR(50) DEFAULT 'valide',           -- 'valide', 'annule'
     date_saisie TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE evaluation (
+  id BIGSERIAL PRIMARY KEY,
+  mois VARCHAR(20),
+  annee INT,
+  note INT,
+  employe_id BIGINT,
+  FOREIGN KEY (employe_id) REFERENCES employe(id),
+  UNIQUE (employe_id, mois, annee)
+);
 
