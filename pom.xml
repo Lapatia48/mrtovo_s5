@@ -159,7 +159,7 @@
                         <configuration>
                             <target>
                                 <copy file="${project.build.directory}/projet_MrTovo.war"
-                                    todir="C:\Program Files\Apache Software Foundation\Tomcat 11.0\webapps"
+                                    todir="C:\Program Files\Apache Software Foundation\Tomcat 10.1\webapps"
                                     overwrite="true" />
                             </target>
                         </configuration>
