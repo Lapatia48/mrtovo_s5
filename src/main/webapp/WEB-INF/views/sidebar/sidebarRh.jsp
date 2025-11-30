@@ -80,21 +80,28 @@
         </div>
 
         <!-- Section EMPLOYÉS avec dropdown -->
-        <div class="nav-item nav-group">
-            <button class="nav-link nav-toggle" data-toggle="employes-menu">
+<div class="nav-item nav-group">
+    <button class="nav-link nav-toggle" data-toggle="employes-menu">
+        <i class="fas fa-user-tie"></i>
+        EMPLOYÉS
+        <i class="fas fa-chevron-down nav-chevron"></i>
+    </button>
+    <div class="nav-submenu" id="employes-menu">
+        <div class="nav-item nav-subitem">
+            <a href="${pageContext.request.contextPath}/rh/employe" class="nav-link">
                 <i class="fas fa-user-tie"></i>
-                EMPLOYÉS
-                <i class="fas fa-chevron-down nav-chevron"></i>
-            </button>
-            <div class="nav-submenu" id="employes-menu">
-                <div class="nav-item nav-subitem">
-                    <a href="${pageContext.request.contextPath}/rh/employe" class="nav-link">
-                        <i class="fas fa-user-tie"></i>
-                        Gestion des employés
-                    </a>
-                </div>
-            </div>
+                Gestion des employés
+            </a>
         </div>
+        <div class="nav-item nav-subitem">
+            <a href="${pageContext.request.contextPath}/rh/employe/scoring" class="nav-link">
+                <i class="fas fa-chart-bar"></i>
+                Scoring des employés
+            </a>
+        </div>
+    </div>
+</div>
+
 
         <!-- Section Congées avec dropdown -->
         <div class="nav-item nav-group">

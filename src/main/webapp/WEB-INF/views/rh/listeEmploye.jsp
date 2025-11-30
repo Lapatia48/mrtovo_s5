@@ -702,6 +702,13 @@
                                             <i class="fas fa-id-card"></i>
                                             Fiche
                                     </a><br>
+                                    <a href="${pageContext.request.contextPath}/rh/employe/evaluation?id_employe=${e.id}" 
+   class="action-link warning" title="Évaluer l'employé">
+    <i class="fas fa-star"></i>
+    Évaluer
+</a><br>
+
+                                    
                                 </td>
                                 <!-- Contrats -->
                                 <!-- <td>
