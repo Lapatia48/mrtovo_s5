@@ -1,14 +1,18 @@
 package service;
 
-import repository.EmployeRepository;
-import repository.ContratRepository;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import java.util.*;
+import repository.ContratRepository;
+import repository.EmployeRepository;
 
 @Service
 public class StatistiqueService {
@@ -53,15 +57,16 @@ public class StatistiqueService {
     public Map<String, Object> getTauxTurnover() {
         String sql = """
             SELECT 
-                COUNT(*) as departs,
-                (SELECT COUNT(*) FROM employe WHERE date_embauche >= CURRENT_DATE - INTERVAL '12 months') as embauches_total,
+                EXTRACT(YEAR FROM date_embauche) as annee,
+                COUNT(*) FILTER (WHERE statut != 'actif') as departs,
+                COUNT(*) as embauches_total,
                 ROUND(
-                    CAST(COUNT(*) * 100.0 / 
-                    NULLIF((SELECT COUNT(*) FROM employe WHERE date_embauche >= CURRENT_DATE - INTERVAL '12 months'), 0) AS NUMERIC)
+                    CAST(COUNT(*) FILTER (WHERE statut != 'actif') * 100.0 / 
+                    NULLIF(COUNT(*), 0) AS NUMERIC)
                 , 1) as taux_turnover_pourcent
             FROM employe 
-            WHERE statut != 'actif' 
-            AND date_embauche >= CURRENT_DATE - INTERVAL '12 months'
+            GROUP BY EXTRACT(YEAR FROM date_embauche)
+            ORDER BY annee DESC
             """;
         
         try {

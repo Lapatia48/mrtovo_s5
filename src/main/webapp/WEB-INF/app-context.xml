@@ -17,9 +17,9 @@
     <!-- Définition de la source de données PostgreSQL -->
     <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://localhost:5432/tovoo_s5" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/tovo_s5" />
         <property name="username" value="postgres" />
-        <property name="password" value="andie1234" />
+        <property name="password" value="lapatia1706" />
     </bean>
 
     <!-- Entity Manager Factory avec Hibernate -->
