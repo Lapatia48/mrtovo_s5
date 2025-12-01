@@ -762,18 +762,7 @@
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
-                                <td>
-                                    <a href="${pageContext.request.contextPath}/rh/employe/evaluation/detail?id=${e.id}" 
-                                       class="action-link" title="Voir les détails">
-                                        <i class="fas fa-eye"></i>
-                                        Détails
-                                    </a><br>
-                                    <a href="${pageContext.request.contextPath}/rh/employe/evaluation/modifier?id=${e.id}" 
-                                       class="action-link success" title="Modifier l'évaluation">
-                                        <i class="fas fa-edit"></i>
-                                        Modifier
-                                    </a>
-                                </td>
+                                
                             </tr>
                         </c:forEach>
                     </tbody>
