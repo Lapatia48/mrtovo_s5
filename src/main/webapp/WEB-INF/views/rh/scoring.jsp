@@ -17,6 +17,28 @@
             margin-bottom: 30px;
         }
 
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input, select, button {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -71,6 +93,24 @@
 <div class="container">
     <h2>📊 Rapport d’évaluation des employés</h2>
 
+    <!-- Formulaire de filtres -->
+    <form action="${pageContext.request.contextPath}/rh/employe/scoring" method="get">
+        <input type="text" name="global" placeholder="Recherche globale..." />
+        <input type="text" name="nom" placeholder="Nom employé" />
+        <input type="text" name="mois" placeholder="Mois" />
+        <input type="number" name="annee" placeholder="Année" />
+        <select name="note">
+            <option value="">-- Note --</option>
+            <option value="1">1 ⭐</option>
+            <option value="2">2 ⭐⭐</option>
+            <option value="3">3 ⭐⭐⭐</option>
+            <option value="4">4 ⭐⭐⭐⭐</option>
+            <option value="5">5 ⭐⭐⭐⭐⭐</option>
+        </select>
+        <button type="submit">Filtrer</button>
+    </form>
+
+    <!-- Tableau des évaluations -->
     <table>
         <thead>
             <tr>
