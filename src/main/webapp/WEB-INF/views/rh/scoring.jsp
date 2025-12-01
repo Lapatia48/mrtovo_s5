@@ -556,7 +556,7 @@
             <!-- Top Bar -->
             <div class="top-bar">
                 <div class="page-title">
-                    <h2>📊 Rapport d'Évaluation des Employés</h2>
+                    <h2>Rapport d'Évaluation des Employés</h2>
                     <p>Suivi des performances et scoring mensuel des collaborateurs</p>
                 </div>
                 <div class="user-menu">
