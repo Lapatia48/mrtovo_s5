@@ -1,2 +1,0 @@
-on va creer un CRUD des qcm
-- une vue listQcm.jsp pour afficher ces questions et ces reponses

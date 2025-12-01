@@ -69,7 +69,7 @@ public class GeminiService {
 
     private List<Map<String, Object>> getSampleData(String tableName) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        String sql = String.format("SELECT * FROM %s LIMIT 25", tableName);
+        String sql = String.format("SELECT * FROM %s", tableName);
         return jdbcTemplate.queryForList(sql);
     }
 
@@ -87,7 +87,7 @@ public class GeminiService {
             
             // Construction directe sans méthode séparée
             Map<String, Object> part = new HashMap<>();
-            part.put("text", "Tu es un expert en bases de données. Analyse ces données et réponds en français.\n\n" +
+            part.put("text", "Tu es un expert en bases de données. Analyse ces données et réponds en français sans nous doner les contenues des tables mais juste de quelles tables tu les tire.\n\n" +
                             "DONNÉES: " + data.toString() + "\n\n" +
                             "QUESTION: " + question);
             
