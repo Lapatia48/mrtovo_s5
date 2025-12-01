@@ -514,73 +514,85 @@
     <script>
         // Graphique historique turnover
         const historiqueCtx = document.getElementById('historiqueTurnoverChart').getContext('2d');
-        
-        // Données depuis le modèle
+
         const historiqueData = [
-            <c:forEach var="mois" items="${historiqueTurnover}">
+            <c:forEach var="annee" items="${historiqueTurnover}">
             {
-                mois: '${mois.mois}',
-                taux: ${mois.taux != null ? mois.taux : 0},
-                departs: ${mois.departs},
-                embauches: ${mois.embauches}
+                annee: ${annee.annee},                        
+                taux: ${annee.tauxPourcent != null ? annee.tauxPourcent : 0},  
+                departs: ${annee.departs},                         
+                embauches: ${annee.embauchesTotal}               
             },
             </c:forEach>
         ];
 
-        const moisLabels = historiqueData.map(item => {
-            const [annee, mois] = item.mois.split('-');
-            return new Date(annee, mois - 1).toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
-        });
+        historiqueData.sort((a, b) => a.annee - b.annee);
 
+        const anneeLabels = historiqueData.map(item => item.annee);
         const tauxData = historiqueData.map(item => item.taux);
 
-        new Chart(historiqueCtx, {
-            type: 'line',
-            data: {
-                labels: moisLabels,
-                datasets: [{
-                    label: 'Taux de Turnover (%)',
-                    data: tauxData,
-                    borderColor: '#e74a3b',
-                    backgroundColor: 'rgba(231, 74, 59, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true
+        console.log('Données historique turnover:', historiqueData);
+        console.log('Labels (années):', anneeLabels);
+        console.log('Taux (%):', tauxData);
+
+        if (historiqueData.length > 0) {
+            new Chart(historiqueCtx, {
+                type: 'line',
+                data: {
+                    labels: anneeLabels,
+                    datasets: [{
+                        label: 'Taux de Turnover (%)',
+                        data: tauxData,
+                        borderColor: '#e74a3b',
+                        backgroundColor: 'rgba(231, 74, 59, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true
+                        },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    const data = historiqueData[context.dataIndex];
+                                    return `Départs: ${data.departs} | Embauches: ${data.embauches}`;
+                                }
+                            }
+                        }
                     },
-                    tooltip: {
-                        callbacks: {
-                            afterLabel: function(context) {
-                                const data = historiqueData[context.dataIndex];
-                                return `Départs: ${data.departs} | Embauches: ${data.embauches}`;
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Taux de Turnover (%)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Année'
                             }
                         }
                     }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Taux de Turnover (%)'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Mois'
-                        }
-                    }
                 }
-            }
-        });
+            });
+        } else {
+            historiqueCtx.font = '16px Arial';
+            historiqueCtx.fillStyle = '#666';
+            historiqueCtx.textAlign = 'center';
+            historiqueCtx.fillText('Aucune donnée historique disponible', 
+                historiqueCtx.canvas.width / 2, 
+                historiqueCtx.canvas.height / 2
+            );
+            console.warn('Aucune donnée disponible pour le graphique turnover');
+        }
 
         // Menu responsive
         document.addEventListener('DOMContentLoaded', function() {

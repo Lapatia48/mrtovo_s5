@@ -1,5 +1,8 @@
 package controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import service.StatistiqueService;
-import java.util.Map;
-import java.util.List;
 
 @Controller
 @RequestMapping("/rh/statistiques")
@@ -42,29 +43,29 @@ public class statistique {
         }
     }
     
-    @GetMapping("/performance-rh")
+   @GetMapping("/performance-rh")
     public String showPerformanceRH(Model model) {
         try {
-            // Turnover
+            // ✅ KPI Turnover actuel (12 derniers mois)
             Map<String, Object> turnover = statistiqueService.getTauxTurnover();
             model.addAttribute("turnover", turnover);
             
-            // Absentéisme
+            // ✅ Absentéisme
             Map<String, Object> absenteisme = statistiqueService.getTauxAbsenteisme();
             model.addAttribute("absenteisme", absenteisme);
             
-            // Détails des absences
+            // ✅ Détails des absences
             List<Map<String, Object>> detailsAbsences = statistiqueService.getDetailsAbsencesParEmploye();
             model.addAttribute("detailsAbsences", detailsAbsences);
             
-            // Historique turnover - 
+            // ✅ HISTORIQUE CORRIGÉ : données complètes pour le graphique
             List<Map<String, Object>> historiqueTurnover = statistiqueService.getHistoriqueTurnover();
             model.addAttribute("historiqueTurnover", historiqueTurnover);
             
             return "statistique/performance";
             
         } catch (Exception e) {
-            model.addAttribute("error", "Erreur lors du chargement des statistiques de performance RH");
+            model.addAttribute("error", "Erreur lors du chargement des statistiques de performance RH: " + e.getMessage());
             return "statistique/performance";
         }
     }
